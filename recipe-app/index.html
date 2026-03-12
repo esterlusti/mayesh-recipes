@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מה יש בבית? 🍳</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Assistant:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blush:#f9f0eb;--petal:#fdf6f0;--rose:#d4826a;--rose-dk:#b5614a;--rose-lt:#e8a990;
+  --rose-gl:rgba(212,130,106,0.15);--mauve:#c4879d;--sage:#7a9e7e;--sage-lt:rgba(122,158,126,0.12);
+  --gold:#c9a96e;--gold-lt:rgba(201,169,110,0.15);
+  --ink:#2c1f18;--ink-60:rgba(44,31,24,0.6);--ink-30:rgba(44,31,24,0.3);--ink-10:rgba(44,31,24,0.08);
+  --milk:#4a8ab5;--milk-lt:rgba(74,138,181,0.12);--meat:#9b3a48;--meat-lt:rgba(155,58,72,0.12);
+  --border:rgba(44,31,24,0.09);--r:20px;--r-sm:13px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Assistant',sans-serif;background:var(--blush);color:var(--ink);min-height:100vh;direction:rtl;}
+.blob{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;}
+.b1{width:520px;height:520px;background:rgba(212,130,106,0.07);top:-120px;right:-120px;}
+.b2{width:420px;height:420px;background:rgba(196,135,157,0.06);bottom:-100px;left:-100px;}
+.b3{width:280px;height:280px;background:rgba(201,169,110,0.05);top:45%;left:50%;transform:translate(-50%,-50%);}
+
+/* ── AUTH BAR ── */
+.auth-bar{
+  position:fixed;top:0;right:0;left:0;z-index:100;
+  background:rgba(249,240,235,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 20px;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.auth-bar-logo{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--rose);letter-spacing:-0.3px;}
+.auth-bar-right{display:flex;align-items:center;gap:10px;}
+.auth-avatar{
+  width:32px;height:32px;border-radius:50%;background:var(--rose-gl);
+  border:2px solid var(--rose-lt);display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:var(--rose);overflow:hidden;cursor:pointer;
+}
+.auth-avatar img{width:100%;height:100%;object-fit:cover;}
+.auth-name{font-size:13px;font-weight:600;color:var(--ink);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.btn-signin{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--rose);color:white;border:none;
+  padding:7px 16px;border-radius:100px;
+  font-size:13px;font-weight:600;font-family:'Assistant',sans-serif;
+  cursor:pointer;transition:all 0.2s;
+}
+.btn-signin:hover{background:var(--rose-dk);}
+.btn-sm-ghost{
+  display:inline-flex;align-items:center;gap:5px;
+  background:transparent;color:var(--ink-60);border:1px solid var(--border);
+  padding:6px 12px;border-radius:100px;font-size:12px;font-weight:600;
+  font-family:'Assistant',sans-serif;cursor:pointer;transition:all 0.2s;
+}
+.btn-sm-ghost:hover{border-color:var(--rose-lt);color:var(--rose);}
+
+/* ── AUTH MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(44,31,24,0.4);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity 0.25s;
+}
+.modal-overlay.show{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--petal);border-radius:24px;padding:36px 32px;
+  max-width:380px;width:100%;position:relative;
+  box-shadow:0 24px 80px rgba(44,31,24,0.2);
+  transform:translateY(16px);transition:transform 0.3s;
+}
+.modal-overlay.show .modal{transform:translateY(0);}
+.modal-close{
+  position:absolute;top:14px;left:14px;
+  width:30px;height:30px;border-radius:50%;background:var(--ink-10);
+  border:none;cursor:pointer;font-size:16px;color:var(--ink-60);
+  display:flex;align-items:center;justify-content:center;
+}
+.modal-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:6px;text-align:center;}
+.modal-sub{font-size:13px;color:var(--ink-60);text-align:center;margin-bottom:28px;font-weight:300;line-height:1.5;}
+.auth-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:13px 20px;border-radius:100px;border:1.5px solid var(--border);
+  background:white;font-size:14px;font-weight:600;font-family:'Assistant',sans-serif;
+  color:var(--ink);cursor:pointer;transition:all 0.2s;margin-bottom:10px;
+}
+.auth-btn:hover{border-color:var(--rose-lt);box-shadow:0 4px 14px var(--rose-gl);}
+.auth-btn-icon{width:20px;height:20px;object-fit:contain;}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--ink-30);font-size:12px;}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.btn-guest{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:11px 20px;border-radius:100px;border:none;
+  background:var(--ink-10);font-size:13px;font-weight:600;
+  font-family:'Assistant',sans-serif;color:var(--ink-60);cursor:pointer;transition:all 0.2s;
+}
+.btn-guest:hover{background:rgba(44,31,24,0.13);}
+
+/* ── PROFILE PANEL ── */
+.profile-panel{
+  position:fixed;top:60px;left:16px;z-index:150;
+  background:var(--petal);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;width:280px;
+  box-shadow:var(--shadow-lg,0 16px 48px rgba(44,31,24,0.14));
+  display:none;
+}
+.profile-panel.show{display:block;animation:fadeUp 0.25s ease;}
+.pp-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.pp-avatar{width:42px;height:42px;border-radius:50%;background:var(--rose-gl);border:2px solid var(--rose-lt);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--rose);overflow:hidden;flex-shrink:0;}
+.pp-avatar img{width:100%;height:100%;object-fit:cover;}
+.pp-name{font-size:14px;font-weight:700;color:var(--ink);}
+.pp-email{font-size:11px;color:var(--ink-60);margin-top:2px;}
+.pp-section-title{font-size:11px;font-weight:700;color:var(--ink-30);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+.pp-recent-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
+.pp-recipe-item{
+  background:var(--blush);border-radius:var(--r-sm);padding:9px 12px;cursor:pointer;
+  transition:all 0.2s;border:1px solid transparent;
+}
+.pp-recipe-item:hover{border-color:var(--rose-lt);background:white;}
+.pp-recipe-name{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.pp-recipe-meta{font-size:10px;color:var(--ink-60);}
+.pp-empty{font-size:12px;color:var(--ink-30);font-style:italic;text-align:center;padding:8px 0;}
+.btn-signout{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  width:100%;padding:9px;border-radius:100px;border:1px solid var(--border);
+  background:transparent;font-size:12px;font-weight:600;
+  font-family:'Assistant',sans-serif;color:var(--ink-60);cursor:pointer;transition:all 0.2s;
+  margin-top:12px;
+}
+.btn-signout:hover{border-color:var(--rose-lt);color:var(--rose);}
+
+/* ── EQUIPMENT SETTINGS in profile ── */
+.pp-equip-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.pp-equip-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:100px;border:1.5px solid var(--border);
+  background:var(--blush);font-size:11px;font-weight:500;color:var(--ink);
+  cursor:pointer;transition:all 0.15s;
+}
+.pp-equip-chip.on{background:var(--rose);border-color:var(--rose);color:white;}
+.pp-save-btn{
+  width:100%;padding:9px;border-radius:100px;border:none;
+  background:var(--rose);color:white;font-size:12px;font-weight:700;
+  font-family:'Assistant',sans-serif;cursor:pointer;transition:all 0.2s;margin-top:8px;
+}
+.pp-save-btn:hover{background:var(--rose-dk);}
+.pp-save-ok{font-size:11px;color:var(--sage);text-align:center;margin-top:6px;display:none;}
+
+/* ── HERO ── */
+.hero{padding:88px 24px 40px;text-align:center;position:relative;z-index:1;}
+.hero-deco{display:inline-flex;align-items:center;gap:10px;margin-bottom:18px;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--rose);}
+.hero-deco::before,.hero-deco::after{content:'';display:block;width:30px;height:1px;background:var(--rose);opacity:0.4;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(46px,9vw,84px);font-weight:900;line-height:1.0;letter-spacing:-2.5px;color:var(--ink);margin-bottom:10px;}
+.hero h1 em{font-style:italic;color:var(--rose);position:relative;display:inline-block;}
+.hero h1 em::after{content:'';position:absolute;bottom:5px;right:0;left:0;height:6px;background:var(--gold);opacity:0.32;border-radius:3px;z-index:-1;}
+.hero-sub{font-size:15px;font-weight:300;color:var(--ink-60);line-height:1.65;margin-bottom:5px;}
+.hero-joke{font-family:'Playfair Display',serif;font-style:italic;font-size:13px;color:var(--ink-30);}
+
+/* ── PROGRESS ── */
+.prog-wrap{max-width:600px;margin:26px auto 0;padding:0 28px;position:relative;z-index:1;}
+.prog-track{display:flex;align-items:flex-start;justify-content:space-between;position:relative;}
+.prog-track::before{content:'';position:absolute;top:15px;right:15px;left:15px;height:1px;background:var(--border);z-index:0;}
+.pfill{position:absolute;top:15px;right:15px;height:1px;background:linear-gradient(to left,var(--rose),var(--mauve));z-index:0;transition:width 0.5s ease;width:0%;}
+.ps{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;z-index:1;flex:1;}
+.ps-dot{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border);background:var(--blush);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--ink-30);transition:all 0.35s;}
+.ps-lbl{font-size:10px;font-weight:500;color:var(--ink-30);transition:all 0.3s;white-space:nowrap;}
+.ps.active .ps-dot{background:var(--rose);border-color:var(--rose);color:white;box-shadow:0 0 0 5px var(--rose-gl);}
+.ps.active .ps-lbl{color:var(--rose);font-weight:700;}
+.ps.done .ps-dot{background:var(--sage);border-color:var(--sage);color:white;}
+.ps.done .ps-lbl{color:var(--sage);}
+
+/* ── LAYOUT ── */
+.container{max-width:700px;margin:0 auto;padding:26px 18px 90px;}
+.screen{display:none;}
+.screen.active{display:block;animation:fadeUp 0.38s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── SECTION HEAD ── */
+.sec-head{margin-bottom:20px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:23px;font-weight:700;color:var(--ink);margin-bottom:5px;letter-spacing:-0.3px;}
+.sec-sub{font-size:13px;font-weight:300;color:var(--ink-60);line-height:1.55;}
+
+/* ── KOSHER CHOICE ── */
+.kc-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.kc{border-radius:var(--r);padding:28px 20px 22px;text-align:center;cursor:pointer;transition:all 0.3s;border:2px solid var(--border);background:var(--petal);position:relative;overflow:hidden;}
+.kc::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s;}
+.kc-m::before{background:linear-gradient(145deg,var(--meat-lt),transparent 70%);}
+.kc-d::before{background:linear-gradient(145deg,var(--milk-lt),transparent 70%);}
+.kc:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(44,31,24,0.1);}
+.kc:hover::before,.kc.on::before{opacity:1;}
+.kc.on{transform:translateY(-4px);box-shadow:0 16px 44px rgba(44,31,24,0.12);}
+.kc-m.on{border-color:var(--meat);}
+.kc-d.on{border-color:var(--milk);}
+.kc-emoji{font-size:54px;display:block;margin-bottom:13px;position:relative;z-index:1;}
+.kc-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px;position:relative;z-index:1;}
+.kc-m.on .kc-name{color:var(--meat);}
+.kc-d.on .kc-name{color:var(--milk);}
+.kc-desc{font-size:13px;color:var(--ink-60);font-weight:300;position:relative;z-index:1;line-height:1.5;margin-bottom:11px;}
+.kc-rule{display:inline-block;padding:5px 13px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:0.3px;position:relative;z-index:1;}
+.kc-m .kc-rule{background:var(--meat-lt);color:var(--meat);}
+.kc-d .kc-rule{background:var(--milk-lt);color:var(--milk);}
+
+/* ── CAT CARDS ── */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;}
+.cat-card{background:var(--petal);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all 0.25s;}
+.cat-card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(44,31,24,0.1);}
+.cat-card.on{border-color:var(--rose);box-shadow:0 8px 26px var(--rose-gl);transform:translateY(-2px);}
+.cat-img-box{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:42px;background:linear-gradient(135deg,var(--ink-10),var(--rose-gl));overflow:hidden;position:relative;}
+.cat-img-box img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.cat-body{padding:10px 13px 13px;}
+.cat-name{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.cat-card.on .cat-name{color:var(--rose);}
+.cat-desc{font-size:11px;color:var(--ink-60);line-height:1.3;font-weight:300;}
+
+/* ── DISH TYPES ── */
+.dish-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:9px;}
+.dish-card{background:var(--petal);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:13px 9px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.dish-card:hover{border-color:var(--rose-lt);background:white;}
+.dish-card.on{border-color:var(--rose);background:white;box-shadow:0 4px 14px var(--rose-gl);}
+.dish-icon{font-size:28px;display:block;margin-bottom:6px;line-height:1;}
+.dish-name{font-size:12px;font-weight:600;color:var(--ink);}
+.dish-card.on .dish-name{color:var(--rose);}
+
+/* ── CARDS ── */
+.card{background:var(--petal);border:1px solid var(--border);border-radius:var(--r);padding:19px;margin-bottom:11px;}
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.card-ico{width:33px;height:33px;border-radius:9px;background:var(--ink-10);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.card-ttl{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--ink);}
+.card-sub{font-size:12px;color:var(--ink-60);margin-top:1px;font-weight:300;}
+
+/* ── KOSHER SPLIT ── */
+.k-split{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.k-half{border-radius:var(--r-sm);padding:13px;}
+.k-half.dairy{background:var(--milk-lt);}
+.k-half.meat{background:var(--meat-lt);}
+.k-half-ttl{font-size:12px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.k-half.dairy .k-half-ttl{color:var(--milk);}
+.k-half.meat  .k-half-ttl{color:var(--meat);}
+
+/* ── CHIPS ── */
+.chips{display:flex;flex-wrap:wrap;gap:7px;}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:100px;border:1.5px solid var(--border);background:var(--blush);font-size:12px;font-weight:500;color:var(--ink);cursor:pointer;transition:all 0.2s;user-select:none;white-space:nowrap;}
+.chip:hover{background:white;border-color:var(--rose-lt);}
+.chip.on{background:var(--rose);border-color:var(--rose);color:white;box-shadow:0 2px 9px var(--rose-gl);}
+.chip.on-d{background:var(--milk);border-color:var(--milk);color:white;}
+.chip.on-m{background:var(--meat);border-color:var(--meat);color:white;}
+.ce{font-size:13px;}
+
+/* ── SERVINGS ── */
+.srv-row{display:flex;align-items:center;}
+.srv-btn{width:38px;height:38px;background:none;border:none;font-size:20px;font-weight:700;color:var(--rose);cursor:pointer;border-radius:9px;transition:background 0.2s;display:flex;align-items:center;justify-content:center;}
+.srv-btn:hover{background:var(--rose-gl);}
+.srv-num{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);width:46px;text-align:center;}
+
+/* ── BUTTONS ── */
+.btn-main{display:inline-flex;align-items:center;gap:8px;background:var(--rose);color:white;border:none;padding:13px 26px;border-radius:100px;font-size:15px;font-weight:600;font-family:'Assistant',sans-serif;cursor:pointer;transition:all 0.25s;box-shadow:0 5px 18px var(--rose-gl);}
+.btn-main:hover{background:var(--rose-dk);transform:translateY(-2px);box-shadow:0 9px 26px rgba(212,130,106,0.38);}
+.btn-main:disabled{background:var(--border);color:var(--ink-30);cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-ghost{display:inline-flex;align-items:center;gap:7px;background:transparent;color:var(--ink);border:1.5px solid var(--border);padding:12px 20px;border-radius:100px;font-size:14px;font-weight:600;font-family:'Assistant',sans-serif;cursor:pointer;transition:all 0.2s;}
+.btn-ghost:hover{border-color:var(--rose-lt);background:white;}
+.actions{display:flex;align-items:center;gap:10px;margin-top:22px;flex-wrap:wrap;}
+
+/* ── RECIPE ── */
+.recipe-card{background:var(--petal);border:1px solid var(--border);border-radius:24px;overflow:hidden;}
+.recipe-top{padding:26px 26px 18px;background:linear-gradient(135deg,rgba(212,130,106,0.06),rgba(196,135,157,0.03));border-bottom:1px solid var(--border);}
+.rbadges{display:flex;align-items:center;gap:7px;margin-bottom:9px;flex-wrap:wrap;}
+.rb{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:0.3px;}
+.rb-m{background:var(--meat-lt);color:var(--meat);}
+.rb-d{background:var(--milk-lt);color:var(--milk);}
+.rb-cat{background:var(--ink-10);color:var(--ink-60);}
+.recipe-title{font-family:'Playfair Display',serif;font-size:clamp(21px,4vw,29px);font-weight:900;letter-spacing:-0.5px;color:var(--ink);line-height:1.1;margin-bottom:13px;}
+.recipe-meta{display:flex;flex-wrap:wrap;gap:13px;}
+.rmeta{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--ink-60);font-weight:500;}
+.recipe-body{padding:22px 26px;}
+.recipe-text{font-size:14.5px;line-height:1.85;color:var(--ink);font-weight:300;}
+.recipe-text h3{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ink);margin:20px 0 9px;}
+.recipe-text h3:first-child{margin-top:0;}
+.recipe-text ul,.recipe-text ol{padding-right:18px;margin:7px 0 13px;}
+.recipe-text li{margin-bottom:6px;line-height:1.7;}
+.recipe-text strong{font-weight:600;}
+.tip-box{background:linear-gradient(135deg,var(--gold-lt),rgba(201,169,110,0.05));border:1px solid rgba(201,169,110,0.22);border-radius:var(--r-sm);padding:13px 15px;margin-top:15px;display:flex;gap:9px;align-items:flex-start;}
+.tip-ico{font-size:15px;flex-shrink:0;margin-top:2px;}
+.tip-txt{font-size:13px;line-height:1.65;color:var(--ink);}
+
+/* ── SAVE INDICATOR ── */
+.save-toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--sage);color:white;padding:10px 22px;border-radius:100px;
+  font-size:13px;font-weight:600;z-index:300;
+  opacity:0;transition:opacity 0.3s;pointer-events:none;
+}
+.save-toast.show{opacity:1;}
+
+/* ── LOADING ── */
+.loading{display:flex;flex-direction:column;align-items:center;padding:60px 20px;gap:13px;}
+.spin{width:44px;height:44px;border-radius:50%;border:2.5px solid var(--rose-gl);border-top-color:var(--rose);animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.load-txt{font-size:15px;color:var(--ink-60);}
+.load-sub{font-size:12px;color:var(--ink-30);font-weight:300;}
+.dots{display:flex;gap:5px;}
+.dots span{width:5px;height:5px;background:var(--rose);border-radius:50%;animation:dot 1.2s ease-in-out infinite;}
+.dots span:nth-child(2){animation-delay:.2s;}
+.dots span:nth-child(3){animation-delay:.4s;}
+@keyframes dot{0%,80%,100%{transform:scale(.5);opacity:.3;}40%{transform:scale(1);opacity:1;}}
+.err-box{background:rgba(212,130,106,0.07);border:1px solid rgba(212,130,106,0.2);border-radius:var(--r-sm);padding:16px 20px;color:var(--rose-dk);font-size:14px;}
+
+@media(max-width:520px){
+  .cat-grid,.kc-grid{grid-template-columns:1fr 1fr;}
+  .k-split{grid-template-columns:1fr;}
+  .dish-grid{grid-template-columns:repeat(3,1fr);}
+  .recipe-top,.recipe-body{padding:16px;}
+  .kc-emoji{font-size:40px;}
+  .kc-name{font-size:19px;}
+  .profile-panel{left:8px;right:8px;width:auto;}
+}
+</style>
+</head>
+<body>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
+
+<!-- ── AUTH BAR ── -->
+<div class="auth-bar">
+  <div class="auth-bar-logo">🍳 מה יש בבית?</div>
+  <div class="auth-bar-right" id="auth-bar-right">
+    <button class="btn-signin" onclick="openAuthModal()">כניסה / הרשמה</button>
+  </div>
+</div>
+
+<!-- ── AUTH MODAL ── -->
+<div class="modal-overlay" id="auth-modal" onclick="closeOnOverlay(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    <div class="modal-title">ברוכה הבאה 🌿</div>
+    <div class="modal-sub">היכנסי כדי לשמור מתכונים ולנהל את הציוד שלך</div>
+
+    <button class="auth-btn" onclick="signInGoogle()">
+      <img class="auth-btn-icon" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+      המשיכי עם Google
+    </button>
+    <button class="auth-btn" onclick="signInMicrosoft()">
+      <img class="auth-btn-icon" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft">
+      המשיכי עם Microsoft
+    </button>
+
+    <div class="auth-divider">או</div>
+    <button class="btn-guest" onclick="signInGuest()">
+      👤 המשיכי כאורחת (ללא שמירה)
+    </button>
+    <div id="auth-error" style="color:var(--rose-dk);font-size:12px;text-align:center;margin-top:10px;display:none;"></div>
+  </div>
+</div>
+
+<!-- ── PROFILE PANEL ── -->
+<div class="profile-panel" id="profile-panel">
+  <div class="pp-head">
+    <div class="pp-avatar" id="pp-avatar">?</div>
+    <div>
+      <div class="pp-name" id="pp-name">—</div>
+      <div class="pp-email" id="pp-email">—</div>
+    </div>
+  </div>
+
+  <!-- Recent recipes -->
+  <div class="pp-section-title">מתכונים אחרונים</div>
+  <div class="pp-recent-list" id="pp-recent">
+    <div class="pp-empty">עוד לא הכנת מתכונים</div>
+  </div>
+
+  <!-- Equipment settings -->
+  <div class="pp-section-title" style="margin-top:14px;">הציוד שלי</div>
+  <div class="pp-equip-grid" id="pp-equip-chips"></div>
+  <button class="pp-save-btn" onclick="saveEquipment()">💾 שמור ציוד</button>
+  <div class="pp-save-ok" id="pp-save-ok">✓ נשמר!</div>
+
+  <button class="btn-signout" onclick="doSignOut()">🚪 התנתקי</button>
+</div>
+
+<!-- ── SAVE TOAST ── -->
+<div class="save-toast" id="save-toast">✓ המתכון נשמר!</div>
+
+<!-- ── HERO ── */
+<div class="hero">
+  <div class="hero-deco">✡️ כשר &nbsp;•&nbsp; בישול ביתי</div>
+  <h1>מה יש<br>ב<em>בית?</em></h1>
+  <p class="hero-sub">ספרי לנו מה יש לך במקרר ובמזווה —<br>נמציא לך מתכון כשר ומגניב שאפשר להכין עכשיו</p>
+  <p class="hero-joke">חוץ מאסוך שמן 🫙</p>
+</div>
+
+<!-- ── PROGRESS ── -->
+<div class="prog-wrap">
+  <div class="prog-track">
+    <div class="pfill" id="pfill"></div>
+    <div class="ps active" id="ps1"><div class="ps-dot">1</div><div class="ps-lbl">כשרות</div></div>
+    <div class="ps" id="ps2"><div class="ps-dot">2</div><div class="ps-lbl">ציוד</div></div>
+    <div class="ps" id="ps3"><div class="ps-dot">3</div><div class="ps-lbl">קטגוריה</div></div>
+    <div class="ps" id="ps4"><div class="ps-dot">4</div><div class="ps-lbl">מנה</div></div>
+    <div class="ps" id="ps5"><div class="ps-dot">5</div><div class="ps-lbl">חומרים</div></div>
+    <div class="ps" id="ps6"><div class="ps-dot">6</div><div class="ps-lbl">מתכון</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- STEP 1 -->
+<div class="screen active" id="scr-1">
+  <div class="sec-head">
+    <div class="sec-title">מה בא לכם לאכול היום?</div>
+    <div class="sec-sub">בחרו קודם כל — בשרי או חלבי</div>
+  </div>
+  <div class="kc-grid">
+    <div class="kc kc-m" onclick="selKosher(this,'meat')">
+      <span class="kc-emoji">🥩</span>
+      <div class="kc-name">בשרי</div>
+      <div class="kc-desc">עוף, בקר, כבש<br>ועוד מנות בשריות</div>
+      <div class="kc-rule">ללא כל מוצר חלבי</div>
+    </div>
+    <div class="kc kc-d" onclick="selKosher(this,'dairy')">
+      <span class="kc-emoji">🧀</span>
+      <div class="kc-name">חלבי</div>
+      <div class="kc-desc">גבינות, ביצים,<br>פסטה ומנות חלביות</div>
+      <div class="kc-rule">ללא כל מוצר בשרי</div>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn-main" id="btn1" disabled onclick="go(2)">המשך לציוד ←</button>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="screen" id="scr-2">
+  <div class="sec-head">
+    <div class="sec-title">🔧 איזה ציוד יש לכם?</div>
+    <div class="sec-sub">סמנו כלים זמינים — אם נכנסת עם חשבון הציוד ייטען אוטומטית</div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="card-ico">🔧</div>
+      <div><div class="card-ttl">כלי בישול</div><div class="card-sub">בחרו מה יש בבית</div></div>
+    </div>
+    <div class="k-split">
+      <div class="k-half meat"><div class="k-half-ttl">🥩 כלי בשרי</div><div class="chips" id="eq-meat"></div></div>
+      <div class="k-half dairy"><div class="k-half-ttl">🧀 כלי חלבי</div><div class="chips" id="eq-dairy"></div></div>
+    </div>
+    <div style="margin-top:10px;">
+      <div class="k-half-ttl" style="color:var(--sage);margin-bottom:8px;">🌿 כלים כלליים</div>
+      <div class="chips" id="eq-gen"></div>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn-ghost" onclick="go(1)">← חזור</button>
+    <button class="btn-main" onclick="go(3)">המשך לקטגוריה ←</button>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="screen" id="scr-3">
+  <div class="sec-head">
+    <div class="sec-title" id="cat-title">מה בא לכם?</div>
+    <div class="sec-sub">בחרו קטגוריה</div>
+  </div>
+  <div class="cat-grid" id="cat-grid"></div>
+  <div class="actions">
+    <button class="btn-ghost" onclick="go(2)">← חזור</button>
+    <button class="btn-main" id="btn3" disabled onclick="go(4)">המשך ←</button>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="screen" id="scr-4">
+  <div class="sec-head">
+    <div class="sec-title" id="dish-title">מה בדיוק תרצו להכין?</div>
+    <div class="sec-sub">בחרו מנה ספציפית — או "הפתיעו אותי"</div>
+  </div>
+  <div class="dish-grid" id="dish-grid"></div>
+  <div class="actions">
+    <button class="btn-ghost" onclick="go(3)">← חזור</button>
+    <button class="btn-main" onclick="go(5)">המשך לחומרים ←</button>
+  </div>
+</div>
+
+<!-- STEP 5 -->
+<div class="screen" id="scr-5">
+  <div class="sec-head">
+    <div class="sec-title" id="ing-title">🛒 מה יש לכם בבית?</div>
+    <div class="sec-sub">סמנו את כל מה שזמין עכשיו</div>
+  </div>
+  <div id="ing-content"></div>
+  <div class="card" style="margin-top:11px;">
+    <div class="card-head"><div class="card-ico">🍽️</div>
+      <div><div class="card-ttl">כמה מנות?</div></div>
+    </div>
+    <div class="srv-row">
+      <button class="srv-btn" onclick="chgSrv(-1)">−</button>
+      <div class="srv-num" id="srv">4</div>
+      <button class="srv-btn" onclick="chgSrv(1)">+</button>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn-ghost" onclick="go(4)">← חזור</button>
+    <button class="btn-main" onclick="go(6)">✨ צרי לי מתכון!</button>
+  </div>
+</div>
+
+<!-- STEP 6 -->
+<div class="screen" id="scr-6">
+  <div id="recipe-out"></div>
+  <div class="actions" id="recipe-acts" style="display:none;">
+    <button class="btn-ghost" onclick="go(1)">← התחל מחדש</button>
+    <button class="btn-main" onclick="go(6)">🔄 מתכון אחר</button>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- ── FIREBASE ── -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, OAuthProvider, signInWithPopup, signInAnonymously, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs, addDoc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyABfmxXuZlzHIXuGx0cHKxAdctQ_ep-_sA",
+  authDomain: "mayeshrecipes.firebaseapp.com",
+  projectId: "mayeshrecipes",
+  storageBucket: "mayeshrecipes.firebasestorage.app",
+  messagingSenderId: "261954124",
+  appId: "1:261954124:web:decb95f2d5b2b2e72cb2e9"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// Expose to window so non-module scripts can call
+window._auth = auth;
+window._db   = db;
+window._GoogleProvider    = new GoogleAuthProvider();
+window._MicrosoftProvider = new OAuthProvider('microsoft.com');
+
+window.signInGoogle = async () => {
+  try {
+    await signInWithPopup(auth, window._GoogleProvider);
+    closeAuthModal();
+  } catch(e) { showAuthError(e.message); }
+};
+window.signInMicrosoft = async () => {
+  try {
+    await signInWithPopup(auth, window._MicrosoftProvider);
+    closeAuthModal();
+  } catch(e) { showAuthError(e.message); }
+};
+window.signInGuest = async () => {
+  try {
+    await signInAnonymously(auth);
+    closeAuthModal();
+  } catch(e) { showAuthError(e.message); }
+};
+window.doSignOut = async () => {
+  await signOut(auth);
+  closeProfilePanel();
+};
+
+// Auth state
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const isAnon = user.isAnonymous;
+    const name   = user.displayName || (isAnon ? 'אורחת' : user.email?.split('@')[0] || 'משתמשת');
+    const email  = user.email || (isAnon ? 'כניסה כאורחת' : '');
+    const photo  = user.photoURL;
+
+    // Update auth bar
+    document.getElementById('auth-bar-right').innerHTML = `
+      <span class="auth-name">${name}</span>
+      <div class="auth-avatar" onclick="toggleProfilePanel()">
+        ${photo ? `<img src="${photo}" alt="">` : name[0]?.toUpperCase() || '👤'}
+      </div>`;
+
+    // Update profile panel
+    document.getElementById('pp-name').textContent  = name;
+    document.getElementById('pp-email').textContent = email;
+    const av = document.getElementById('pp-avatar');
+    av.innerHTML = photo ? `<img src="${photo}" alt="">` : (name[0]?.toUpperCase() || '👤');
+
+    window._currentUser = user;
+
+    if (!isAnon) {
+      await loadUserData(user.uid);
+    }
+  } else {
+    window._currentUser = null;
+    document.getElementById('auth-bar-right').innerHTML =
+      `<button class="btn-signin" onclick="openAuthModal()">כניסה / הרשמה</button>`;
+  }
+});
+
+// Load user data (equipment + recent recipes)
+async function loadUserData(uid) {
+  // Equipment
+  const eqDoc = await getDoc(doc(db, 'users', uid));
+  if (eqDoc.exists()) {
+    const data = eqDoc.data();
+    if (data.equipment) {
+      window._savedEquipment = data.equipment;
+      // Apply to step 2 chips if already rendered
+      applyEquipmentToChips(data.equipment);
+    }
+  }
+
+  // Recent recipes
+  const q = query(collection(db,'users',uid,'recipes'), orderBy('createdAt','desc'), limit(5));
+  const snap = await getDocs(q);
+  const list = document.getElementById('pp-recent');
+  if (snap.empty) {
+    list.innerHTML = '<div class="pp-empty">עוד לא הכנת מתכונים</div>';
+  } else {
+    list.innerHTML = '';
+    snap.forEach(d => {
+      const r = d.data();
+      const date = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('he-IL') : '';
+      const el = document.createElement('div');
+      el.className = 'pp-recipe-item';
+      el.innerHTML = `<div class="pp-recipe-name">${r.title || 'מתכון'}</div><div class="pp-recipe-meta">${r.category||''} • ${r.kosher==='meat'?'🥩 בשרי':'🧀 חלבי'} • ${date}</div>`;
+      list.appendChild(el);
+    });
+  }
+
+  // Populate equipment chips in profile panel
+  buildProfileEquipChips();
+}
+
+function applyEquipmentToChips(equipList) {
+  // Mark saved equipment as selected in step-2 chips
+  document.querySelectorAll('[data-eq-type]').forEach(chip => {
+    const label = chip.querySelector('.chip-label')?.textContent || chip.textContent.trim().replace(/^./,'').trim();
+    if (equipList.includes(label)) {
+      const t = chip.dataset.eqType;
+      chip.classList.add(t==='meat'?'on-m':t==='dairy'?'on-d':'on');
+      if (!window.S.equipment.includes(label)) window.S.equipment.push(label);
+    }
+  });
+}
+
+window.saveEquipment = async () => {
+  const uid = window._currentUser?.uid;
+  if (!uid || window._currentUser?.isAnonymous) return;
+  // Gather from profile chips
+  const selected = [...document.querySelectorAll('.pp-equip-chip.on')].map(c=>c.dataset.val);
+  await setDoc(doc(db,'users',uid), { equipment: selected }, { merge: true });
+  // Also update S.equipment
+  window.S.equipment = selected;
+  applyEquipmentToChips(selected);
+  const ok = document.getElementById('pp-save-ok');
+  ok.style.display = 'block';
+  setTimeout(()=>{ ok.style.display='none'; }, 2000);
+};
+
+window.saveRecipeToFirestore = async (recipeData) => {
+  const uid = window._currentUser?.uid;
+  if (!uid || window._currentUser?.isAnonymous) return;
+  try {
+    await addDoc(collection(db,'users',uid,'recipes'), {
+      ...recipeData,
+      createdAt: serverTimestamp()
+    });
+    showToast('✓ המתכון נשמר!');
+    // Refresh recent list
+    await loadUserData(uid);
+  } catch(e) { console.error(e); }
+};
+
+function buildProfileEquipChips() {
+  const ALL_EQ = [
+    {l:'תנור (בשרי)',t:'m'},{l:'מחבת (בשרי)',t:'m'},{l:'סיר (בשרי)',t:'m'},{l:'גריל',t:'m'},{l:'סיר לחץ (בשרי)',t:'m'},
+    {l:'תנור (חלבי)',t:'d'},{l:'מחבת (חלבי)',t:'d'},{l:'סיר (חלבי)',t:'d'},{l:'מיקסר',t:'d'},{l:'בלנדר',t:'d'},
+    {l:'וואק',t:'g'},{l:'אייר פריייר',t:'g'},{l:'מיקרוגל',t:'g'}
+  ];
+  const saved = window._savedEquipment || [];
+  const container = document.getElementById('pp-equip-chips');
+  container.innerHTML = ALL_EQ.map(e =>
+    `<div class="pp-equip-chip${saved.includes(e.l)?' on':''}" data-val="${e.l}" onclick="this.classList.toggle('on')">${e.l}</div>`
+  ).join('');
+}
+
+window._loadUserData = loadUserData;
+</script>
+
+<!-- ── APP LOGIC ── -->
+<script>
+const EQ={
+  meat: [{l:'תנור',e:'🔥'},{l:'מחבת',e:'🍳'},{l:'סיר',e:'🫕'},{l:'גריל',e:'🔥'},{l:'סיר לחץ',e:'⚡'},{l:'סלואו קוקר',e:'🍲'}],
+  dairy:[{l:'תנור',e:'🔥'},{l:'מחבת',e:'🍳'},{l:'סיר',e:'🫕'},{l:'מיקסר',e:'⚡'},{l:'בלנדר',e:'🫙'}],
+  gen:  [{l:'וואק',e:'🍳'},{l:'בלנדר',e:'🫙'},{l:'אייר פריייר',e:'💨'},{l:'מיקרוגל',e:'📡'},{l:'מאדה',e:'♨️'}]
+};
+const SAUCES_ALL=[
+  {l:'רסק עגבניות',e:'🍅'},{l:'שמן זית',e:'🫒'},{l:'סויה',e:'🫙'},
+  {l:'טריאקי',e:'🫙'},{l:'דבש',e:'🍯'},{l:'טחינה',e:'🫙'},
+  {l:'חריסה',e:'🌶️'},{l:'חרדל',e:'🫙'},{l:'BBQ',e:'🫙'},
+  {l:'פסטו',e:'🌿'},{l:'שמנת לבישול',e:'🫙'},{l:'צ\'ילי מתוק',e:'🌶️'},
+  {l:'חלב קוקוס',e:'🥥'},{l:'שמן שומשום',e:'🫙'},{l:'בלסמי',e:'🫙'},
+  {l:'ג\'ינג\'ר',e:'🫚'},{l:'מייפל',e:'🍁'},{l:'ריבה',e:'🍓'},
+  {l:'ווסטרשייר',e:'🫙'},{l:'טבסקו',e:'🌶️'},{l:'שמנת חמוצה',e:'🫙'},
+  {l:'לימון סחוט',e:'🍋'},{l:'תמריד',e:'🫙'},{l:'מיסו',e:'🫙'},
+  {l:'שמן קוקוס',e:'🥥'},{l:'עלי נענע',e:'🌿'}
+];
+const CATS_MEAT=[
+  {id:'roast', name:'תנורי',     e:'🍗',desc:'כרעיים, כנפיים, תבשיל',
+   img:'https://images.unsplash.com/photo-1598103442097-8b74394b95c8?w=400&q=75',
+   dishes:[{l:'כרעיים בתנור',e:'🍗'},{l:'כנפיים',e:'🍗'},{l:'חזה ממולא',e:'🐔'},{l:'שלם',e:'🐔'},{l:'ירכיים',e:'🍗'}]},
+  {id:'pan',   name:'מוקפץ',     e:'🥩',desc:'מחבת, סטייק, קציצות',
+   img:'https://images.unsplash.com/photo-1607116667981-ff148a4c6ea9?w=400&q=75',
+   dishes:[{l:'סטייק',e:'🥩'},{l:'קציצות',e:'🫙'},{l:'שניצל',e:'🍗'},{l:'חתיכות מוקפצות',e:'🥩'},{l:'מרגז',e:'🌭'}]},
+  {id:'stew',  name:'תבשיל',     e:'🍲',desc:'מרק, צ\'ולנט, תבשיל',
+   img:'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&q=75',
+   dishes:[{l:'מרק עוף',e:'🍗'},{l:'תבשיל ירקות',e:'🥕'},{l:'חמין',e:'🍲'},{l:'עוף בירקות',e:'🐔'}]},
+  {id:'grill', name:'גריל',      e:'🔥',desc:'שיפודים, נקניקיות, בשר',
+   img:'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=75',
+   dishes:[{l:'שיפודים',e:'🍢'},{l:'אסאדו',e:'🥩'},{l:'נקניקיות',e:'🌭'},{l:'המבורגר',e:'🍔'}]},
+  {id:'asian_m',name:'אסייתי',   e:'🍜',desc:'וואק, נודלס, טריאקי',
+   img:'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=75',
+   dishes:[{l:'נודלס עוף',e:'🍜'},{l:'אורז מוקפץ',e:'🍚'},{l:'קארי עוף',e:'🫕'},{l:'טריאקי עוף',e:'🫙'}]},
+];
+const CATS_DAIRY=[
+  {id:'pasta', name:'פסטה',       e:'🍝',desc:'ספגטי, פנה, ריגאטוני',
+   img:'https://images.unsplash.com/photo-1551183053-bf91798d13f4?w=400&q=75',
+   dishes:[{l:'ספגטי',e:'🍝'},{l:'פנה',e:'🍝'},{l:'ריגאטוני',e:'🍝'},{l:'לזניה',e:'🥘'},{l:'ניוקי',e:'🫙'}]},
+  {id:'pie',   name:'פשטידה/קיש', e:'🥧',desc:'קיש, פשטידה, מאפה',
+   img:'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&q=75',
+   dishes:[{l:'פשטידה',e:'🥧'},{l:'קיש',e:'🥧'},{l:'בורקס',e:'🥐'},{l:'סופלה',e:'🫙'},{l:'פריטטה',e:'🍳'}]},
+  {id:'eggs',  name:'ביצים',      e:'🍳',desc:'שקשוקה, חביתה, אמלט',
+   img:'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=75',
+   dishes:[{l:'שקשוקה',e:'🍳'},{l:'חביתה',e:'🍳'},{l:'אמלט',e:'🍳'},{l:'ביצים מקושקשות',e:'🥚'}]},
+  {id:'asian_d',name:'אסייתי',    e:'🍜',desc:'נודלס, קארי, ריזוטו',
+   img:'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=75',
+   dishes:[{l:'נודלס מוקפץ',e:'🍜'},{l:'ריזוטו',e:'🍚'},{l:'קארי ירקות',e:'🫕'},{l:'פאד תאי',e:'🍜'}]},
+  {id:'salad', name:'סלטים',      e:'🥗',desc:'טרי, קל, ים-תיכוני',
+   img:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=75',
+   dishes:[{l:'סלט ים תיכוני',e:'🥗'},{l:'סלט פסטה',e:'🍝'},{l:'טאבולה',e:'🌿'},{l:'סלט קינואה',e:'🥙'}]},
+  {id:'bake',  name:'אפייה',      e:'🥐',desc:'עוגות, לחם, מאפינס',
+   img:'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=75',
+   dishes:[{l:'עוגת שוקולד',e:'🍫'},{l:'עוגיות',e:'🍪'},{l:'בננה בראד',e:'🍌'},{l:'לחם',e:'🍞'},{l:'מאפינס',e:'🧁'}]},
+];
+const INGR={
+  roast:   {prot:[{l:'כרעיים',e:'🍗'},{l:'כנפיים',e:'🍗'},{l:'חזה עוף',e:'🐔'},{l:'שלם',e:'🐔'},{l:'משולש',e:'🥩'}]},
+  pan:     {prot:[{l:'חזה עוף',e:'🐔'},{l:'עוף טחון',e:'🫙'},{l:'אנטריקוט',e:'🥩'},{l:'בשר בקר טחון',e:'🫙'},{l:'שניצל',e:'🍗'}]},
+  stew:    {prot:[{l:'כרעיים',e:'🍗'},{l:'עוף שלם חתוך',e:'🐔'},{l:'עצמות',e:'🦴'},{l:'עדשים',e:'🫘'},{l:'חומוס',e:'🫘'}]},
+  grill:   {prot:[{l:'שיפודי עוף',e:'🍢'},{l:'אנטריקוט',e:'🥩'},{l:'נקניקיות',e:'🌭'},{l:'כנפיים',e:'🍗'},{l:'המבורגר',e:'🍔'}]},
+  asian_m: {prot:[{l:'חזה עוף',e:'🐔'},{l:'עוף טחון',e:'🫙'},{l:'נודלס',e:'🍜'},{l:'אורז',e:'🍚'}]},
+  pasta:   {prot:[{l:'ספגטי',e:'🍝'},{l:'פנה',e:'🍝'},{l:'ריגאטוני',e:'🍝'},{l:'טונה',e:'🐟'},{l:'ביצים',e:'🥚'},{l:'גבינה צהובה',e:'🧀'}]},
+  pie:     {prot:[{l:'ביצים',e:'🥚'},{l:'גבינה צהובה',e:'🧀'},{l:'גבינה לבנה',e:'🫙'},{l:'ריקוטה',e:'🫙'},{l:'גבינה בולגרית',e:'🧀'}]},
+  eggs:    {prot:[{l:'ביצים',e:'🥚'},{l:'גבינה צהובה',e:'🧀'},{l:'גבינה לבנה',e:'🫙'},{l:'חלב',e:'🥛'},{l:'חמאה',e:'🧈'}]},
+  asian_d: {prot:[{l:'נודלס',e:'🍜'},{l:'אורז',e:'🍚'},{l:'טופו',e:'🫙'},{l:'ביצים',e:'🥚'}]},
+  salad:   {prot:[{l:'טונה',e:'🐟'},{l:'סלמון',e:'🐟'},{l:'גבינה בולגרית',e:'🧀'},{l:'חומוס',e:'🫘'},{l:'ביצים',e:'🥚'}]},
+  bake:    {prot:[{l:'קמח',e:'🫙'},{l:'סוכר',e:'🫙'},{l:'ביצים',e:'🥚'},{l:'חמאה',e:'🧈'},{l:'שוקולד',e:'🍫'},{l:'בננה',e:'🍌'},{l:'שמרים',e:'🫙'}]},
+};
+const VEGS=[
+  {l:'בצל',e:'🧅'},{l:'שום',e:'🧄'},{l:'עגבנייה',e:'🍅'},{l:'תפוח אדמה',e:'🥔'},
+  {l:'גזר',e:'🥕'},{l:'פלפל',e:'🫑'},{l:'קישוא',e:'🥒'},{l:'חציל',e:'🍆'},
+  {l:'ברוקולי',e:'🥦'},{l:'תרד',e:'🌿'},{l:'פטריות',e:'🍄'},{l:'אבוקדו',e:'🥑'},
+  {l:'עגבניות שרי',e:'🍅'},{l:'כרוב',e:'🥬'},{l:'לימון',e:'🍋'},{l:'בטטה',e:'🍠'}
+];
+const SPICES=[
+  {l:'מלח ופלפל',e:'🧂'},{l:'כמון',e:'🫙'},{l:'פפריקה',e:'🫙'},{l:'כורכום',e:'🫙'},
+  {l:'קינמון',e:'🫙'},{l:'אורגנו',e:'🌿'},{l:'בזיליקום',e:'🌿'},{l:'צ\'ילי',e:'🌶️'},
+  {l:'זעתר',e:'🌿'},{l:'בהרט',e:'🫙'},{l:'רוזמרין',e:'🌿'},{l:'תימין',e:'🌿'}
+];
+
+window.S={kosher:null,equipment:[],catId:null,catName:'',catEmoji:'',dishType:'',proteins:[],sauces:[],vegs:[],spices:[],servings:4};
+
+// Build equipment chips
+function buildEqChips(arr,id,type){
+  document.getElementById(id).innerHTML=arr.map(e=>
+    `<div class="chip" data-eq-type="${type}" onclick="togEq(this,'${e.l}','${type}')"><span class="ce">${e.e}</span><span class="chip-label">${e.l}</span></div>`
+  ).join('');
+  // Apply saved equipment if loaded
+  if(window._savedEquipment){
+    document.querySelectorAll(`[data-eq-type="${type}"]`).forEach(chip=>{
+      const lbl=chip.querySelector('.chip-label')?.textContent||'';
+      if(window._savedEquipment.includes(lbl)){
+        chip.classList.add(type==='meat'?'on-m':type==='dairy'?'on-d':'on');
+        if(!window.S.equipment.includes(lbl)) window.S.equipment.push(lbl);
+      }
+    });
+  }
+}
+buildEqChips(EQ.meat,'eq-meat','meat');
+buildEqChips(EQ.dairy,'eq-dairy','dairy');
+buildEqChips(EQ.gen,'eq-gen','gen');
+
+function togEq(el,val,type){
+  const i=S.equipment.indexOf(val);
+  if(i>-1){S.equipment.splice(i,1);el.classList.remove('on','on-d','on-m');}
+  else{S.equipment.push(val);el.classList.add(type==='meat'?'on-m':type==='dairy'?'on-d':'on');}
+}
+
+function selKosher(el,type){
+  document.querySelectorAll('.kc').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  S.kosher=type;
+  document.getElementById('btn1').disabled=false;
+  document.getElementById('cat-title').textContent=type==='meat'?'🥩 איזו ארוחה בשרית?':'🧀 איזו ארוחה חלבית?';
+}
+
+function buildCats(){
+  const cats=S.kosher==='meat'?CATS_MEAT:CATS_DAIRY;
+  document.getElementById('cat-grid').innerHTML=cats.map(c=>`
+    <div class="cat-card" onclick="selCat(this,'${c.id}','${c.name}','${c.e}')">
+      <div class="cat-img-box" id="cib-${c.id}"><span>${c.e}</span></div>
+      <div class="cat-body"><div class="cat-name">${c.name}</div><div class="cat-desc">${c.desc}</div></div>
+    </div>`).join('');
+  cats.forEach(c=>{
+    const img=new Image();
+    img.onload=()=>{
+      const b=document.getElementById('cib-'+c.id);
+      if(b){b.style.backgroundImage=`url(${c.img})`;b.style.backgroundSize='cover';b.style.backgroundPosition='center';b.innerHTML='';}
+    };img.src=c.img;
+  });
+}
+
+function selCat(el,id,name,emoji){
+  document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');S.catId=id;S.catName=name;S.catEmoji=emoji;
+  document.getElementById('btn3').disabled=false;
+}
+
+function buildDishes(){
+  const cats=S.kosher==='meat'?CATS_MEAT:CATS_DAIRY;
+  const cat=cats.find(c=>c.id===S.catId);
+  document.getElementById('dish-title').textContent=cat.e+' '+cat.name+' — מה בדיוק?';
+  S.dishType='';
+  document.getElementById('dish-grid').innerHTML=
+    `<div class="dish-card on" onclick="selDish(this,'')"><span class="dish-icon">✨</span><div class="dish-name">הפתיעי אותי</div></div>`+
+    cat.dishes.map(d=>`<div class="dish-card" onclick="selDish(this,'${d.l}')"><span class="dish-icon">${d.e}</span><div class="dish-name">${d.l}</div></div>`).join('');
+}
+function selDish(el,val){document.querySelectorAll('.dish-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');S.dishType=val;}
+
+function buildIng(){
+  document.getElementById('ing-title').textContent=S.catEmoji+' מה יש לכם?';
+  S.proteins=[];S.sauces=[];S.vegs=[];S.spices=[];
+  const data=INGR[S.catId];
+  const pCls=S.kosher==='meat'?'on-m':'on-d';
+  const pLbl=S.kosher==='meat'?'🥩 חלבון בשרי':'🧀 חלבון / בסיס חלבי';
+  const sauces=SAUCES_ALL.filter(s=>{
+    if(S.kosher==='meat')return!['שמנת לבישול','שמנת חמוצה'].includes(s.l);
+    if(S.kosher==='dairy')return!['BBQ','ווסטרשייר'].includes(s.l);
+    return true;
+  });
+  document.getElementById('ing-content').innerHTML=`
+  <div class="card"><div class="card-head"><div class="card-ico">${S.catEmoji}</div><div><div class="card-ttl">${pLbl}</div></div></div>
+  <div class="chips">${data.prot.map(p=>`<div class="chip" onclick="tog(this,S.proteins,'${p.l}','${pCls}')"><span class="ce">${p.e}</span>${p.l}</div>`).join('')}</div></div>
+  <div class="card"><div class="card-head"><div class="card-ico">🫙</div><div><div class="card-ttl">רטבים ובסיסים</div><div class="card-sub">טריאקי, סויה, חריסה ועוד</div></div></div>
+  <div class="chips">${sauces.map(s=>`<div class="chip" onclick="tog(this,S.sauces,'${s.l}','on')"><span class="ce">${s.e}</span>${s.l}</div>`).join('')}</div></div>
+  <div class="card"><div class="card-head"><div class="card-ico">🥦</div><div><div class="card-ttl">ירקות</div></div></div>
+  <div class="chips">${VEGS.map(v=>`<div class="chip" onclick="tog(this,S.vegs,'${v.l}','on')"><span class="ce">${v.e}</span>${v.l}</div>`).join('')}</div></div>
+  <div class="card"><div class="card-head"><div class="card-ico">🧂</div><div><div class="card-ttl">תבלינים</div></div></div>
+  <div class="chips">${SPICES.map(s=>`<div class="chip" onclick="tog(this,S.spices,'${s.l}','on')"><span class="ce">${s.e}</span>${s.l}</div>`).join('')}</div></div>`;
+}
+function tog(el,arr,val,cls){const i=arr.indexOf(val);if(i>-1){arr.splice(i,1);el.classList.remove('on','on-m','on-d');}else{arr.push(val);el.classList.add(cls);}}
+function chgSrv(d){S.servings=Math.max(1,Math.min(20,S.servings+d));document.getElementById('srv').textContent=S.servings;}
+
+function go(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('scr-'+n).classList.add('active');
+  for(let i=1;i<=6;i++){const p=document.getElementById('ps'+i);p.classList.remove('active','done');if(i<n)p.classList.add('done');else if(i===n)p.classList.add('active');}
+  document.getElementById('pfill').style.width=((n-1)/5*100)+'%';
+  if(n===3)buildCats();if(n===4)buildDishes();if(n===5)buildIng();if(n===6)fetchRecipe();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+window.go=go;
+
+async function fetchRecipe(){
+  const out=document.getElementById('recipe-out');
+  document.getElementById('recipe-acts').style.display='none';
+  out.innerHTML=`<div class="loading"><div class="spin"></div><div class="load-txt">מכינה לך מתכון...</div><div class="load-sub">מנתחת מה יש לך בבית ✨</div><div class="dots"><span></span><span></span><span></span></div></div>`;
+  try{
+    const res=await fetch('/api/recipe',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({category:S.catName,kosherType:S.kosher,dishType:S.dishType,proteins:S.proteins,sauces:S.sauces,vegetables:S.vegs,spices:S.spices,equipment:S.equipment,servings:S.servings})});
+    if(!res.ok)throw new Error('שגיאת שרת '+res.status);
+    const data=await res.json();if(data.error)throw new Error(data.error);
+    renderRecipe(data.recipe);
+  }catch(e){
+    out.innerHTML=`<div class="err-box">😅 אופס! ${e.message}</div>`;
+  }
+  document.getElementById('recipe-acts').style.display='flex';
+}
+
+function renderRecipe(txt){
+  const g=k=>{const m=txt.match(new RegExp(k+':\\s*(.+)'));return m?m[1].trim():'';};
+  const title=g('TITLE')||'המתכון שלך',tPrep=g('TIME_PREP'),tCook=g('TIME_COOK'),diff=g('DIFFICULTY'),tip=g('TIP');
+  const ingM=txt.match(/INGREDIENTS:\n([\s\S]*?)(?=\nSTEPS:|$)/);
+  const ingLines=(ingM?ingM[1].trim():'').split('\n').filter(l=>l.trim()).map(l=>l.replace(/^•\s*/,'').trim());
+  const stpM=txt.match(/STEPS:\n([\s\S]*?)(?=\nTIP:|$)/);
+  const stpLines=(stpM?stpM[1].trim():'').split('\n').filter(l=>l.trim()).map(l=>l.replace(/^\d+\.\s*/,'').trim());
+  const kCls=S.kosher==='meat'?'rb-m':'rb-d';
+  const kLbl=S.kosher==='meat'?'🥩 בשרי':'🧀 חלבי';
+  document.getElementById('recipe-out').innerHTML=`
+  <div class="recipe-card">
+    <div class="recipe-top">
+      <div class="rbadges"><span class="rb ${kCls}">${kLbl}</span><span class="rb rb-cat">${S.catEmoji} ${S.catName}${S.dishType?' — '+S.dishType:''}</span></div>
+      <div class="recipe-title">${title}</div>
+      <div class="recipe-meta">
+        ${tPrep?`<span class="rmeta">⏱️ הכנה: ${tPrep}</span>`:''}
+        ${tCook?`<span class="rmeta">🔥 בישול: ${tCook}</span>`:''}
+        ${diff?`<span class="rmeta">⭐ ${diff}</span>`:''}
+        <span class="rmeta">🍽️ ${S.servings} מנות</span>
+      </div>
+    </div>
+    <div class="recipe-body">
+      <div class="recipe-text">
+        <h3>🛒 מה צריך</h3>
+        <ul>${ingLines.map(l=>`<li>${l}</li>`).join('')}</ul>
+        <h3>👩‍🍳 איך מכינים</h3>
+        <ol>${stpLines.map(l=>`<li>${l}</li>`).join('')}</ol>
+        ${tip?`<div class="tip-box"><div class="tip-ico">💡</div><div class="tip-txt"><strong>טיפ:</strong> ${tip}</div></div>`:''}
+      </div>
+    </div>
+  </div>`;
+  // Auto-save to Firestore
+  if(window.saveRecipeToFirestore){
+    window.saveRecipeToFirestore({title,category:S.catName,kosher:S.kosher,dishType:S.dishType,servings:S.servings});
+  }
+}
+
+// ── UI HELPERS ──
+window.openAuthModal = ()=>{ document.getElementById('auth-modal').classList.add('show'); document.getElementById('auth-error').style.display='none'; };
+window.closeAuthModal= ()=>{ document.getElementById('auth-modal').classList.remove('show'); };
+window.closeOnOverlay= (e)=>{ if(e.target===document.getElementById('auth-modal')) closeAuthModal(); };
+window.showAuthError = (msg)=>{ const el=document.getElementById('auth-error'); el.textContent=msg; el.style.display='block'; };
+
+let profileOpen=false;
+window.toggleProfilePanel=()=>{
+  profileOpen=!profileOpen;
+  document.getElementById('profile-panel').classList.toggle('show',profileOpen);
+};
+window.closeProfilePanel=()=>{ profileOpen=false; document.getElementById('profile-panel').classList.remove('show'); };
+document.addEventListener('click',e=>{
+  if(profileOpen && !e.target.closest('#profile-panel') && !e.target.closest('.auth-avatar')){
+    closeProfilePanel();
+  }
+});
+
+function showToast(msg){
+  const t=document.getElementById('save-toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+window.showToast=showToast;
+</script>
+</body>
+</html>
