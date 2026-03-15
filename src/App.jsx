@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from './hooks/useAuth';
 import { useGender } from './hooks/useGender';
 import { useUserData } from './hooks/useUserData';
+import { usePantryStaples } from './hooks/usePantryStaples';
 import AuthBar from './components/AuthBar';
 import AuthModal from './components/AuthModal';
 import GenderSelect from './components/GenderSelect';
@@ -28,6 +29,7 @@ export default function App() {
   const { user, loading: authLoading } = useAuth();
   const { gender, setGender, genderLoaded, useGenderText } = useGender(user);
   const { savedEquipment, savedEquipmentType } = useUserData(user);
+  const { pantryStaples, setPantryStaples } = usePantryStaples(user);
 
   const [showAuth, setShowAuth] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
@@ -293,6 +295,8 @@ export default function App() {
         open={showProfile}
         onClose={() => setShowProfile(false)}
         useGenderText={useGenderText}
+        pantryStaples={pantryStaples}
+        onPantryChange={setPantryStaples}
       />
 
       {apiError && (
@@ -350,6 +354,7 @@ export default function App() {
                   kosherType={kosherType}
                   onGenerate={handleGenerate}
                   useGenderText={useGenderText}
+                  pantryStaples={pantryStaples}
                 />
               )}
               {step === 6 && (

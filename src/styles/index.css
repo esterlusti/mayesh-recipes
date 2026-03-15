@@ -520,6 +520,39 @@ body::before {
 .ing-tab-panel { min-height: 120px; }
 .ing-tab-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 14px; }
 .ing-tab-chips .chip { padding: 9px 18px; font-size: 14px; }
+
+/* Tab badge — item count */
+.tab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--accent); color: white;
+  font-size: 10px; font-weight: 900; line-height: 1;
+  width: 16px; height: 16px; border-radius: 50%;
+  margin-right: 4px; margin-bottom: 1px; vertical-align: middle;
+}
+.ing-tab.active .tab-badge { background: rgba(255,255,255,0.3); }
+
+/* Tab summary bar */
+.tab-summary {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 14px; margin-top: -10px;
+  font-size: 11px; color: var(--text-30);
+  font-weight: 600; letter-spacing: 0.04em;
+}
+.tab-summary-item.active { color: var(--accent); }
+
+/* Quantity control */
+.chip-wrapper { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.qty-control {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-full); padding: 2px 8px;
+}
+.qty-btn {
+  background: none; border: none; color: var(--accent);
+  font-size: 14px; font-weight: 900; cursor: pointer;
+  padding: 0 2px; line-height: 1;
+}
+.qty-value { font-size: 11px; font-weight: 700; color: var(--text); min-width: 40px; text-align: center; }
 .ing-extra {
   margin-top: 12px; padding-top: 12px;
   border-top: 1px solid var(--border);
@@ -1031,7 +1064,19 @@ body::before {
   cursor: pointer; color: var(--text-60); font-weight: 700;
 }
 .profile-section { margin-bottom: 20px; }
-.profile-section h3 { font-size: 13px; margin-bottom: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.profile-section h3 { font-size: 13px; margin-bottom: 6px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.profile-section-sub { font-size: 11px; color: var(--text-30); margin-bottom: 10px; }
+.pantry-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
+.pantry-chips .chip { font-size: 12px; padding: 6px 14px; }
+.pantry-actions { display: flex; gap: 8px; }
+.btn-reset-pantry {
+  background: var(--surface); color: var(--text-60);
+  border: 1px solid var(--border);
+  padding: 8px 14px; border-radius: var(--r-sm);
+  font-size: 12px; font-family: inherit; cursor: pointer;
+  transition: all 0.2s; font-weight: 600;
+}
+.btn-reset-pantry:hover { border-color: var(--accent); color: var(--accent); }
 .profile-empty { color: var(--text-30); font-size: 13px; }
 .profile-recipes { display: flex; flex-direction: column; gap: 6px; }
 .profile-recipe-card {
