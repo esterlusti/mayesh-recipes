@@ -216,16 +216,35 @@ export default function App() {
     setRecipeError(null);
     setRecipe(null);
 
-    try {
+    const fetchWithOption = async (payload) => {
       const res = await fetch('/api/recipe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...lastRequestData, selectedOption: option })
+        body: JSON.stringify(payload)
       });
-
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'שגיאה בשרת');
-      setRecipe(result.recipe);
+      return result.recipe;
+    };
+
+    try {
+      let recipeText = await fetchWithOption({ ...lastRequestData, selectedOption: option });
+
+      // Guard against loop: if API returned DUAL again, retry once with stronger signal
+      if (recipeText.trim().startsWith('OPTION: DUAL')) {
+        recipeText = await fetchWithOption({
+          ...lastRequestData,
+          selectedOption: option,
+          forceSingle: true
+        });
+      }
+
+      // If still DUAL after retry, show a generic error
+      if (recipeText.trim().startsWith('OPTION: DUAL')) {
+        throw new Error('לא הצלחנו לטעון מתכון, אנא נסו שוב');
+      }
+
+      setRecipe(recipeText);
     } catch (e) {
       setRecipeError(e.message || 'שגיאה לא צפויה');
     }
