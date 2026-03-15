@@ -50,12 +50,12 @@ export default function Step1Kosher({ onSelect, useGenderText }) {
       <p className="step-sub">בחרו את סוג המנה שתרצו להכין</p>
 
       <div className="kosher-grid">
-        {KOSHER_OPTIONS.map(opt => (
+        {KOSHER_OPTIONS.map((opt, index) => (
           <div
             key={opt.id}
             className={`kosher-card ${selected === opt.id ? 'selected' : ''}`}
             onClick={() => handleSelect(opt.id)}
-            style={{ '--card-color': opt.color, '--card-bg': opt.bg }}
+            style={{ '--i': index, '--card-color': opt.color, '--card-bg': opt.bg }}
           >
             <div className="kosher-circle" style={{ background: opt.color }}>
               <span className="kosher-emoji">{opt.emoji}</span>

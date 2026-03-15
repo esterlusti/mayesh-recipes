@@ -50,11 +50,12 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
       <div className="card ing-card">
         <h3 className="card-title">🥩 חלבונים / בסיס</h3>
         <div className="chip-grid">
-          {proteinList.map(p => (
+          {proteinList.map((p, index) => (
             <div
               key={p}
               className={`chip ${proteins.includes(p) ? 'on' : ''}`}
               onClick={() => toggleItem(proteins, setProteins, p)}
+              style={{ '--i': index }}
             >{p}</div>
           ))}
         </div>
@@ -73,11 +74,12 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
       <div className="card ing-card">
         <h3 className="card-title">🫙 רטבים ובסיסים</h3>
         <div className="chip-grid">
-          {filteredSauces.map(s => (
+          {filteredSauces.map((s, index) => (
             <div
               key={s.label}
               className={`chip ${sauces.includes(s.label) ? 'on' : ''}`}
               onClick={() => toggleItem(sauces, setSauces, s.label)}
+              style={{ '--i': index }}
             >{s.emoji} {s.label}</div>
           ))}
         </div>
@@ -96,11 +98,12 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
       <div className="card ing-card">
         <h3 className="card-title">🥬 ירקות ותוספות</h3>
         <div className="chip-grid">
-          {VEGETABLES.map(v => (
+          {VEGETABLES.map((v, index) => (
             <div
               key={v}
               className={`chip ${vegetables.includes(v) ? 'on' : ''}`}
               onClick={() => toggleItem(vegetables, setVegetables, v)}
+              style={{ '--i': index }}
             >{v}</div>
           ))}
         </div>
@@ -119,11 +122,12 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
       <div className="card ing-card">
         <h3 className="card-title">🧂 תבלינים</h3>
         <div className="chip-grid">
-          {SPICES.map(s => (
+          {SPICES.map((s, index) => (
             <div
               key={s}
               className={`chip ${spices.includes(s) ? 'on' : ''}`}
               onClick={() => toggleItem(spices, setSpices, s)}
+              style={{ '--i': index }}
             >{s}</div>
           ))}
         </div>

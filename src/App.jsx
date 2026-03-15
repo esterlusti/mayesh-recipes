@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from './hooks/useAuth';
 import { useGender } from './hooks/useGender';
 import { useUserData } from './hooks/useUserData';
@@ -15,6 +16,12 @@ import Step4DishType from './steps/Step4DishType';
 import Step5Ingredients from './steps/Step5Ingredients';
 import Step6Recipe from './steps/Step6Recipe';
 import { EQUIPMENT } from './data/equipment';
+
+const stepVariants = {
+  enter: { opacity: 0, x: -30 },
+  center: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: 30 },
+};
 
 export default function App() {
   const { user, loading: authLoading } = useAuth();
@@ -299,52 +306,63 @@ export default function App() {
         <ProgressBar current={step} />
 
         <div className="steps-container">
-          {step === 1 && <Step1Kosher onSelect={handleKosherSelect} useGenderText={useGenderText} />}
-          {step === 2 && (
-            <Step2Equipment
-              kosherType={kosherType}
-              pareveEquipType={pareveEquipType}
-              equipment={equipment}
-              setEquipment={setEquipment}
-              onNext={() => setStep(3)}
-              useGenderText={useGenderText}
-            />
-          )}
-          {step === 3 && (
-            <Step3Category
-              kosherType={kosherType}
-              onSelect={handleCategorySelect}
-            />
-          )}
-          {step === 4 && (
-            <Step4DishType
-              category={category}
-              onSelect={handleDishSelect}
-            />
-          )}
-          {step === 5 && (
-            <Step5Ingredients
-              kosherType={kosherType}
-              onGenerate={handleGenerate}
-              useGenderText={useGenderText}
-            />
-          )}
-          {step === 6 && (
-            <Step6Recipe
-              recipe={recipe}
-              loading={recipeLoading}
-              error={recipeError}
-              user={user}
-              kosherType={kosherType}
-              category={category?.name}
-              servings={recipeServings}
-              difficulty={recipeDifficulty}
-              onRestart={handleRestart}
-              onSelectOption={handleSelectOption}
-              onAnotherRecipe={handleAnotherRecipe}
-              useGenderText={useGenderText}
-            />
-          )}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={step}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {step === 1 && <Step1Kosher onSelect={handleKosherSelect} useGenderText={useGenderText} />}
+              {step === 2 && (
+                <Step2Equipment
+                  kosherType={kosherType}
+                  pareveEquipType={pareveEquipType}
+                  equipment={equipment}
+                  setEquipment={setEquipment}
+                  onNext={() => setStep(3)}
+                  useGenderText={useGenderText}
+                />
+              )}
+              {step === 3 && (
+                <Step3Category
+                  kosherType={kosherType}
+                  onSelect={handleCategorySelect}
+                />
+              )}
+              {step === 4 && (
+                <Step4DishType
+                  category={category}
+                  onSelect={handleDishSelect}
+                />
+              )}
+              {step === 5 && (
+                <Step5Ingredients
+                  kosherType={kosherType}
+                  onGenerate={handleGenerate}
+                  useGenderText={useGenderText}
+                />
+              )}
+              {step === 6 && (
+                <Step6Recipe
+                  recipe={recipe}
+                  loading={recipeLoading}
+                  error={recipeError}
+                  user={user}
+                  kosherType={kosherType}
+                  category={category?.name}
+                  servings={recipeServings}
+                  difficulty={recipeDifficulty}
+                  onRestart={handleRestart}
+                  onSelectOption={handleSelectOption}
+                  onAnotherRecipe={handleAnotherRecipe}
+                  useGenderText={useGenderText}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {step > 1 && step < 6 && (
