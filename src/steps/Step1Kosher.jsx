@@ -1,42 +1,18 @@
 import React, { useState } from 'react';
 
 const KOSHER_OPTIONS = [
-  {
-    id: 'meat',
-    name: 'בשרי',
-    emoji: '🥩',
-    color: 'var(--meat)',
-    bg: 'var(--meat-lt)',
-    desc: 'בשר, עוף, הודו'
-  },
-  {
-    id: 'dairy',
-    name: 'חלבי',
-    emoji: '🧀',
-    color: 'var(--milk)',
-    bg: 'var(--milk-lt)',
-    desc: 'גבינות, חלב, שמנת'
-  },
-  {
-    id: 'pareve',
-    name: 'פרווה',
-    emoji: '🌿',
-    color: 'var(--pareve)',
-    bg: 'var(--pareve-lt)',
-    desc: 'דגים, ירקות, קטניות'
-  }
+  { id: 'meat',   name: 'בשרי', emoji: '🥩', color: 'var(--meat)',   bg: 'var(--meat-lt)',   desc: 'בשר, עוף, הודו' },
+  { id: 'dairy',  name: 'חלבי', emoji: '🧀', color: 'var(--milk)',   bg: 'var(--milk-lt)',   desc: 'גבינות, חלב, שמנת' },
+  { id: 'pareve', name: 'פרווה',emoji: '🌿', color: 'var(--pareve)', bg: 'var(--pareve-lt)', desc: 'דגים, ירקות, קטניות' },
 ];
 
-export default function Step1Kosher({ onSelect, useGenderText }) {
+export default function Step1Kosher({ onSelect }) {
   const [selected, setSelected] = useState(null);
-  const selctionText = useGenderText ? useGenderText('בחר', 'בחרי') : 'בחר';
   const [pareveEquip, setPareveEquip] = useState(null);
 
   const handleSelect = (id) => {
     setSelected(id);
-    if (id !== 'pareve') {
-      onSelect(id, null);
-    }
+    if (id !== 'pareve') onSelect(id, null);
   };
 
   const handlePareveEquip = (type) => {
@@ -46,8 +22,8 @@ export default function Step1Kosher({ onSelect, useGenderText }) {
 
   return (
     <div className="step-card">
-      <h2 className="playfair step-title">{selctionText}</h2>
-      <p className="step-sub">בחרו את סוג המנה שתרצו להכין</p>
+      <h2 className="playfair step-title">סוג כשרות</h2>
+      <p className="step-sub">בחרו את סוג הכשרות של המנה</p>
 
       <div className="kosher-grid">
         {KOSHER_OPTIONS.map((opt, index) => (
@@ -55,14 +31,13 @@ export default function Step1Kosher({ onSelect, useGenderText }) {
             key={opt.id}
             className={`kosher-card ${selected === opt.id ? 'selected' : ''}`}
             onClick={() => handleSelect(opt.id)}
-            style={{ '--i': index, '--card-color': opt.color, '--card-bg': opt.bg }}
+            style={{ '--i': index }}
           >
             <div className="kosher-circle" style={{ background: opt.color }}>
               <span className="kosher-emoji">{opt.emoji}</span>
             </div>
             <h3 className="playfair kosher-name">{opt.name}</h3>
             <p className="kosher-desc">{opt.desc}</p>
-            <div className="kosher-rule">{opt.rule}</div>
           </div>
         ))}
       </div>
@@ -75,13 +50,13 @@ export default function Step1Kosher({ onSelect, useGenderText }) {
               className={`pareve-btn ${pareveEquip === 'meat' ? 'active' : ''}`}
               onClick={() => handlePareveEquip('meat')}
             >
-              🥩 כלים בשריים
+              כלים בשריים
             </button>
             <button
               className={`pareve-btn ${pareveEquip === 'dairy' ? 'active' : ''}`}
               onClick={() => handlePareveEquip('dairy')}
             >
-              🧀 כלים חלביים
+              כלים חלביים
             </button>
           </div>
         </div>

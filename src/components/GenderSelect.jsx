@@ -4,8 +4,8 @@ export default function GenderSelect({ onSelect }) {
   return (
     <div className="modal-overlay">
       <div className="gender-card">
-        <h2 className="playfair gender-title">רגע לפני שמתחילים...</h2>
-        <p className="gender-sub">מה התפקיד שלך במטבח?</p>
+        <h2 className="playfair gender-title">רגע אחד</h2>
+        <p className="gender-sub">איך לפנות אליך?</p>
         <div className="gender-options">
           <div className="gender-option" onClick={() => onSelect('male')}>
             <span className="gender-emoji">👨‍🍳</span>

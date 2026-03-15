@@ -16,14 +16,12 @@ export default function Step2Equipment({ kosherType, pareveEquipType, equipment,
 
   return (
     <div className="step-card">
-      <h2 className="playfair step-title">🍳 מה יש לכם במטבח?</h2>
-      <p className="step-sub">
-        {effectiveType === 'meat' ? 'ציוד בשרי + כללי' : 'ציוד חלבי + כללי'}
-      </p>
+      <h2 className="playfair step-title">ציוד המטבח</h2>
+      <p className="step-sub">סמנו את הציוד הזמין</p>
 
       <div className="equip-section">
         <h3 className="equip-section-title">
-          {effectiveType === 'meat' ? '🥩 כלים בשריים' : '🧀 כלים חלביים'}
+          {effectiveType === 'meat' ? 'כלים בשריים' : 'כלים חלביים'}
         </h3>
         <div className="equip-chips">
           {typeEquipment.map(eq => (
@@ -39,7 +37,7 @@ export default function Step2Equipment({ kosherType, pareveEquipType, equipment,
       </div>
 
       <div className="equip-section">
-        <h3 className="equip-section-title">🔧 ציוד כללי</h3>
+        <h3 className="equip-section-title">ציוד כללי</h3>
         <div className="equip-chips">
           {generalEquipment.map(eq => (
             <div

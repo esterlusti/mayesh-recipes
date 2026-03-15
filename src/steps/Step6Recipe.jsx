@@ -23,7 +23,7 @@ export default function Step6Recipe({ recipe, loading, error, user, kosherType, 
       <div className="step-card error-card">
         <h3 className="playfair">😕 אופס!</h3>
         <p>{error}</p>
-        <button className="btn btn-restart" onClick={onRestart}>נסו שוב</button>
+        <button className="btn btn-restart" onClick={onRestart}>{useGenderText('נסה', 'נסי')} שוב</button>
       </div>
     );
   }

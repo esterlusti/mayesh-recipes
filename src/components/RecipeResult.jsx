@@ -75,7 +75,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
             <div className="dual-card-badge"><Utensils size={14} /> ממה שיש</div>
             <h3 className="playfair dual-card-title">{dual.optionATitle}</h3>
             <p className="dual-card-desc">{dual.optionADesc}</p>
-            <button className="btn btn-next dual-btn">בחרו באפשרות זו</button>
+            <button className="btn btn-next dual-btn">{useGenderText('בחר', 'בחרי')} באפשרות זו</button>
           </div>
 
           <div className="dual-card option-b" onClick={() => onSelectOption && onSelectOption('B')}>
@@ -90,12 +90,12 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
                 ))}
               </ul>
             </div>
-            <button className="btn btn-next dual-btn">בחרו באפשרות זו</button>
+            <button className="btn btn-next dual-btn">{useGenderText('בחר', 'בחרי')} באפשרות זו</button>
           </div>
         </div>
 
         <button className="btn btn-restart" onClick={onRestart} style={{ marginTop: 20 }}>
-          <RotateCcw size={16} /> {restartText}
+          <RotateCcw size={15} /> {restartText}
         </button>
       </div>
     );
@@ -157,9 +157,13 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
 
     const actions = el.querySelector('.recipe-actions');
     const ratingSection = el.querySelector('.recipe-rating');
+    const interactiveToggle = el.querySelector('.btn-interactive');
     const checkboxes = el.querySelectorAll('.step-checkbox, .ing-checkbox');
+    const progressBar = el.querySelector('.steps-progress');
     if (actions) actions.style.display = 'none';
     if (ratingSection) ratingSection.style.display = 'none';
+    if (interactiveToggle) interactiveToggle.style.display = 'none';
+    if (progressBar) progressBar.style.display = 'none';
     checkboxes.forEach(cb => cb.style.display = 'none');
 
     await html2pdf().set({
@@ -174,6 +178,8 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
     if (hadInteractive) el.classList.add('interactive-mode');
     if (actions) actions.style.display = '';
     if (ratingSection) ratingSection.style.display = '';
+    if (interactiveToggle) interactiveToggle.style.display = '';
+    if (progressBar) progressBar.style.display = '';
     checkboxes.forEach(cb => cb.style.display = '');
   };
 
@@ -261,7 +267,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
         </ol>
         {interactiveMode && allStepsDone && (
           <div className="all-done-banner">
-            סיימתם! בתיאבון!
+            {useGenderText('סיימת!', 'סיימת!')} בתיאבון!
           </div>
         )}
       </div>

@@ -16,6 +16,7 @@ import Step4DishType from './steps/Step4DishType';
 import Step5Ingredients from './steps/Step5Ingredients';
 import Step6Recipe from './steps/Step6Recipe';
 import { EQUIPMENT } from './data/equipment';
+import { getAuthRedirectResult } from './firebase';
 
 const stepVariants = {
   enter: { opacity: 0, x: -30 },
@@ -32,6 +33,10 @@ export default function App() {
   const [showProfile, setShowProfile] = useState(false);
   const [step, setStep] = useState(1);
   const [apiError, setApiError] = useState(null);
+
+  useEffect(() => {
+    getAuthRedirectResult().catch(e => console.error('Auth redirect error:', e));
+  }, []);
 
   useEffect(() => {
     fetch('/api/health')
@@ -80,18 +85,9 @@ export default function App() {
           <div className="blob b3" />
         </div>
         <div className="hero-welcome">
-          <div className="welcome-floating-emojis">
-            <span className="float-emoji f1">🥘</span>
-            <span className="float-emoji f2">🧅</span>
-            <span className="float-emoji f3">🌿</span>
-            <span className="float-emoji f4">🍋</span>
-            <span className="float-emoji f5">🫒</span>
-            <span className="float-emoji f6">🍅</span>
-          </div>
-
           <h1 className="welcome-main-title">מה יש</h1>
           <h2 className="welcome-second-title">לך בבית?</h2>
-          <p className="welcome-joke">{`{חוץ מאסוך שמן}`} 🫙</p>
+          <p className="welcome-joke">{`{חוץ מאסוך שמן}`}</p>
           <p className="welcome-tagline">מתכונים בהתאמה אישית</p>
 
           <div className="welcome-features">
@@ -110,7 +106,7 @@ export default function App() {
           </div>
 
           <button className="btn btn-start" onClick={() => setShowAuth(true)}>
-            בואו נתחיל לבשל! 🍳
+            בואו נתחיל לבשל →
           </button>
 
           <p className="welcome-footer">הרשמה חינמית • ללא כרטיס אשראי</p>
@@ -281,6 +277,17 @@ export default function App() {
         useGenderText={useGenderText}
       />
 
+      {user?.isAnonymous && (
+        <div className="guest-banner">
+          <span className="guest-banner-text">
+            <strong>גולש/ת כאורח</strong> — התחברו כדי לשמור מתכונים ולסנכרן בין מכשירים
+          </span>
+          <button className="guest-banner-btn" onClick={() => setShowAuth(true)}>
+            התחברות / הרשמה
+          </button>
+        </div>
+      )}
+
       <ProfilePanel
         user={user}
         open={showProfile}
@@ -297,10 +304,10 @@ export default function App() {
       <main className="main-content">
         {/* Hero */}
         <section className="hero">
-          <div className="hero-deco">🍳 בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
+          <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
           <h1 className="playfair hero-title">מה יש לך<br /><em>בבית?</em></h1>
           <p className="hero-sub">ספרו לנו מה יש לכם במקרר ובמזווה —<br />נמציא לכם מתכון שאפשר להכין עכשיו</p>
-          <p className="hero-joke">*חוץ מאסוך שמן 🫙</p>
+          <p className="hero-joke">*חוץ מאסוך שמן</p>
         </section>
 
         <ProgressBar current={step} />
@@ -373,6 +380,7 @@ export default function App() {
       </main>
 
       <ContactFooter user={user} />
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} useGenderText={useGenderText} />}
     </>
   );
 }
