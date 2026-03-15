@@ -168,7 +168,7 @@ When the user selects an option, provide the full recipe in the SINGLE format ab
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages,
         max_tokens: 2000,
         temperature: 0.75
