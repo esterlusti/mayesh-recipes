@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, OAuthProvider,
-         signInWithPopup, signInAnonymously, signOut } from 'firebase/auth';
+         signInWithPopup, signInWithRedirect, getRedirectResult,
+         signInAnonymously, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc,
          collection, query, orderBy, limit,
          getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -20,8 +21,9 @@ export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
 export const microsoftProvider = new OAuthProvider('microsoft.com');
 
-export const signInGoogle    = () => signInWithPopup(auth, googleProvider);
-export const signInMicrosoft = () => signInWithPopup(auth, microsoftProvider);
+export const signInGoogle    = () => signInWithRedirect(auth, googleProvider);
+export const signInMicrosoft = () => signInWithRedirect(auth, microsoftProvider);
+export const getAuthRedirectResult = () => getRedirectResult(auth);
 export const signInGuest     = () => signInAnonymously(auth);
 export const doSignOut       = () => signOut(auth);
 
