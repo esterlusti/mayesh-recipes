@@ -840,6 +840,52 @@ body::before {
 .btn-share { background: var(--surface); color: var(--text); }
 .btn-share:hover { background: var(--surface-2); transform: translateY(-1px); }
 
+/* ── SHARE MODAL ── */
+.share-modal { position: relative; }
+.share-modal-close {
+  position: absolute; top: 14px; left: 14px;
+  background: none; border: none; cursor: pointer;
+  color: var(--text-60); transition: color 0.15s;
+  padding: 4px;
+}
+.share-modal-close:hover { color: var(--text); }
+.share-options {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  margin-bottom: 18px;
+}
+.share-option {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 16px 8px; border: 1px solid var(--border-lt);
+  background: var(--surface); border-radius: var(--r);
+  cursor: pointer; transition: all 0.2s;
+  font-family: inherit; color: var(--text);
+}
+.share-option:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,0.15);
+  background: var(--surface-2);
+}
+.share-option-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+}
+.share-option.whatsapp .share-option-icon { background: #25D366; }
+.share-option.gmail .share-option-icon { background: #EA4335; }
+.share-option.email .share-option-icon { background: #666; }
+.share-option.telegram .share-option-icon { background: #0088cc; }
+.share-option-label { font-size: 12px; font-weight: 700; }
+.btn-copy-share {
+  width: 100%; padding: 11px;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); font-family: inherit; font-size: 14px;
+  font-weight: 700; cursor: pointer; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: all 0.2s;
+}
+.btn-copy-share:hover { background: var(--surface-2); }
+.btn-copy-share.copied { background: var(--teal-lt); color: var(--teal); border-color: var(--teal); }
+
 /* ── DUAL OPTIONS ── */
 .dual-options { text-align: center; }
 .dual-intro { color: var(--text-60); font-size: 14px; margin-top: 8px; line-height: 1.6; }
@@ -1079,6 +1125,7 @@ body::before {
   .dual-cards { grid-template-columns: 1fr; }
   .ing-settings-row { flex-direction: column; gap: 16px; }
   .ing-tab { font-size: 12px; padding: 9px 0; }
+  .share-options { grid-template-columns: repeat(2, 1fr); }
 
   /* Reduce blur on mobile for performance */
   .step-card, .recipe-result, .contact-card, .welcome-feature {
