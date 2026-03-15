@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, OAuthProvider,
          signInWithPopup, signInWithRedirect, getRedirectResult,
+         linkWithPopup,
          signInAnonymously, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc,
          collection, query, orderBy, limit,
@@ -21,8 +22,26 @@ export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
 export const microsoftProvider = new OAuthProvider('microsoft.com');
 
-export const signInGoogle    = () => signInWithRedirect(auth, googleProvider);
-export const signInMicrosoft = () => signInWithRedirect(auth, microsoftProvider);
+// If user is anonymous, try to link the account to keep their data.
+// If linking fails (e.g. account already exists), fall back to regular sign-in.
+const signInOrLink = async (provider) => {
+  const currentUser = auth.currentUser;
+  if (currentUser && currentUser.isAnonymous) {
+    try {
+      return await linkWithPopup(currentUser, provider);
+    } catch (e) {
+      // auth/credential-already-in-use — account exists, sign in normally
+      if (e.code === 'auth/credential-already-in-use' || e.code === 'auth/email-already-in-use') {
+        return await signInWithPopup(auth, provider);
+      }
+      throw e;
+    }
+  }
+  return await signInWithPopup(auth, provider);
+};
+
+export const signInGoogle    = () => signInOrLink(googleProvider);
+export const signInMicrosoft = () => signInOrLink(microsoftProvider);
 export const getAuthRedirectResult = () => getRedirectResult(auth);
 export const signInGuest     = () => signInAnonymously(auth);
 export const doSignOut       = () => signOut(auth);
