@@ -11,7 +11,7 @@ exports.handler = async (event) => {
     spices, extrasProteins, extrasSauces,
     extrasVegetables, extrasSpices,
     equipment, servings, recipeIdea,
-    difficulty, maxMinutes, selectedOption
+    difficulty, maxMinutes, selectedOption, forceSingle
   } = body;
 
   const sanitize = (str) => str ? str.replace(/[<>{}]/g, '').slice(0, 100) : '';
@@ -150,6 +150,16 @@ SELECTED: NONE
 
 When the user selects an option, provide the full recipe in the SINGLE format above.`;
 
+  const systemInstruction = forceSingle
+    ? 'CRITICAL: You MUST respond ONLY in OPTION: SINGLE format. Under no circumstances use OPTION: DUAL. Provide a single complete recipe immediately.'
+    : selectedOption
+    ? 'You MUST respond using OPTION: SINGLE format only. NEVER use OPTION: DUAL. The user has already made their choice. Provide one complete recipe, nothing else.'
+    : null;
+
+  const messages = systemInstruction
+    ? [{ role: 'system', content: systemInstruction }, { role: 'user', content: prompt }]
+    : [{ role: 'user', content: prompt }];
+
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -159,7 +169,7 @@ When the user selects an option, provide the full recipe in the SINGLE format ab
       },
       body: JSON.stringify({
         model: 'gpt-4o',
-        messages: [{ role: 'user', content: prompt }],
+        messages,
         max_tokens: 2000,
         temperature: 0.75
       })
