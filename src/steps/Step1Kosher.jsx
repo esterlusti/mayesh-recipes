@@ -22,8 +22,8 @@ export default function Step1Kosher({ onSelect }) {
 
   return (
     <div className="step-card">
-      <h2 className="playfair step-title">סוג כשרות</h2>
-      <p className="step-sub">בחרו את סוג הכשרות של המנה</p>
+      <h2 className="playfair step-title">קטגוריה</h2>
+      <p className="step-sub">בחרו את הקטגוריה של המנה</p>
 
       <div className="kosher-grid">
         {KOSHER_OPTIONS.map((opt, index) => (
