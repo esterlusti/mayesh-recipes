@@ -15,6 +15,7 @@ import Step4DishType from './steps/Step4DishType';
 import Step5Ingredients from './steps/Step5Ingredients';
 import Step6Recipe from './steps/Step6Recipe';
 import { EQUIPMENT } from './data/equipment';
+import { getAuthRedirectResult } from './firebase';
 
 export default function App() {
   const { user, loading: authLoading } = useAuth();
@@ -25,6 +26,10 @@ export default function App() {
   const [showProfile, setShowProfile] = useState(false);
   const [step, setStep] = useState(1);
   const [apiError, setApiError] = useState(null);
+
+  useEffect(() => {
+    getAuthRedirectResult().catch(e => console.error('Auth redirect error:', e));
+  }, []);
 
   useEffect(() => {
     fetch('/api/health')

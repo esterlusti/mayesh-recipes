@@ -445,7 +445,8 @@ body {
   border-bottom-color: var(--accent);
 }
 .ing-tab-panel { min-height: 120px; }
-.ing-tab-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+.ing-tab-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 14px; }
+.ing-tab-chips .chip { padding: 9px 18px; font-size: 14px; }
 .ing-extra {
   margin-top: 12px; padding-top: 12px;
   border-top: 1px solid var(--border-lt);

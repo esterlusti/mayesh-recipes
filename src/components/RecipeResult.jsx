@@ -150,11 +150,19 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
     const el = recipeRef.current;
     if (!el) return;
 
+    // Temporarily remove interactive mode so PDF shows clean recipe
+    const hadInteractive = el.classList.contains('interactive-mode');
+    if (hadInteractive) el.classList.remove('interactive-mode');
+
     const actions = el.querySelector('.recipe-actions');
     const ratingSection = el.querySelector('.recipe-rating');
+    const interactiveToggle = el.querySelector('.btn-interactive');
     const checkboxes = el.querySelectorAll('.step-checkbox, .ing-checkbox');
+    const progressBar = el.querySelector('.steps-progress');
     if (actions) actions.style.display = 'none';
     if (ratingSection) ratingSection.style.display = 'none';
+    if (interactiveToggle) interactiveToggle.style.display = 'none';
+    if (progressBar) progressBar.style.display = 'none';
     checkboxes.forEach(cb => cb.style.display = 'none');
 
     await html2pdf().set({
@@ -165,8 +173,11 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     }).from(el).save();
 
+    if (hadInteractive) el.classList.add('interactive-mode');
     if (actions) actions.style.display = '';
     if (ratingSection) ratingSection.style.display = '';
+    if (interactiveToggle) interactiveToggle.style.display = '';
+    if (progressBar) progressBar.style.display = '';
     checkboxes.forEach(cb => cb.style.display = '');
   };
 
