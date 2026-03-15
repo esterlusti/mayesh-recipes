@@ -3,10 +3,11 @@
 export const PANTRY_DEFAULTS = [
   // Vegetables
   'onion', 'garlic', 'tomato', 'potato', 'carrot', 'lemon', 'canned-tomatoes',
-  // Spices
+  // Spices & baking
   'salt-pepper', 'cumin', 'sweet-paprika', 'turmeric', 'cinnamon', 'oregano', 'zaatar',
-  // Sauces
-  'olive-oil', 'tomato-paste',
-  // Dairy proteins (pantry for dairy users — eggs/milk)
+  'garlic-powder', 'sugar', 'flour', 'vanilla', 'baking-powder',
+  // Sauces & liquids
+  'olive-oil', 'canola-oil', 'tomato-paste', 'tomato-sauce', 'vinegar', 'honey', 'garlic-paste',
+  // Dairy proteins
   'eggs', 'milk',
 ];
