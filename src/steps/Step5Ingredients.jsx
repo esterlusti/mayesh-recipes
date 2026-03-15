@@ -205,6 +205,16 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
             onChange={e => current.setExtra(e.target.value)}
           />
         </div>
+
+        {/* Next tab button */}
+        {activeTab < TABS.length - 1 && (
+          <button
+            className="btn-next-tab"
+            onClick={() => setActiveTab(i => i + 1)}
+          >
+            המשך ל{TABS[activeTab + 1].label} ←
+          </button>
+        )}
       </div>
 
       {/* Recipe idea */}
