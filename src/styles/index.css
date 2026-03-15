@@ -1095,6 +1095,21 @@ body::before {
 }
 .pdf-mode .ing-dot { background: #e85520 !important; }
 
+/* Hide all interactive elements in PDF */
+.pdf-mode .recipe-actions,
+.pdf-mode .recipe-rating,
+.pdf-mode .btn-interactive,
+.pdf-mode .steps-progress,
+.pdf-mode .all-done-banner,
+.pdf-mode .ing-checkbox,
+.pdf-mode .step-checkbox { display: none !important; }
+
+/* Reset checked/done visual state in PDF */
+.pdf-mode .checked,
+.pdf-mode .step-done { opacity: 1 !important; }
+.pdf-mode .line-through,
+.pdf-mode .step-text-done { text-decoration: none !important; color: inherit !important; -webkit-text-fill-color: #111111 !important; }
+
 /* ── BACKDROP FILTER FALLBACK ── */
 @supports not (backdrop-filter: blur(1px)) {
   .auth-bar { background: rgba(15,14,19,0.92); }
