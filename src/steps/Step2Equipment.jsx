@@ -1,5 +1,6 @@
 import React from 'react';
 import { EQUIPMENT } from '../data/equipment';
+import Icon from '../components/icons';
 
 export default function Step2Equipment({ kosherType, pareveEquipType, equipment, setEquipment, onNext, useGenderText }) {
   const effectiveType = kosherType === 'pareve' ? pareveEquipType : kosherType;
@@ -30,7 +31,8 @@ export default function Step2Equipment({ kosherType, pareveEquipType, equipment,
               className={`chip ${equipment.includes(eq.id) ? 'on' : ''}`}
               onClick={() => toggle(eq.id)}
             >
-              {eq.emoji} {eq.label}
+              <Icon name={eq.iconKey} size={16} className="chip-icon" />
+              {eq.label}
             </div>
           ))}
         </div>
@@ -45,7 +47,8 @@ export default function Step2Equipment({ kosherType, pareveEquipType, equipment,
               className={`chip ${equipment.includes(eq.id) ? 'on' : ''}`}
               onClick={() => toggle(eq.id)}
             >
-              {eq.emoji} {eq.label}
+              <Icon name={eq.iconKey} size={16} className="chip-icon" />
+              {eq.label}
             </div>
           ))}
         </div>
