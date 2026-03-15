@@ -75,7 +75,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
             <div className="dual-card-badge"><Utensils size={14} /> ממה שיש</div>
             <h3 className="playfair dual-card-title">{dual.optionATitle}</h3>
             <p className="dual-card-desc">{dual.optionADesc}</p>
-            <button className="btn btn-next dual-btn">בחרו באפשרות זו</button>
+            <button className="btn btn-next dual-btn">{useGenderText('בחר', 'בחרי')} באפשרות זו</button>
           </div>
 
           <div className="dual-card option-b" onClick={() => onSelectOption && onSelectOption('B')}>
@@ -90,12 +90,12 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
                 ))}
               </ul>
             </div>
-            <button className="btn btn-next dual-btn">בחרו באפשרות זו</button>
+            <button className="btn btn-next dual-btn">{useGenderText('בחר', 'בחרי')} באפשרות זו</button>
           </div>
         </div>
 
         <button className="btn btn-restart" onClick={onRestart} style={{ marginTop: 20 }}>
-          <RotateCcw size={16} /> {restartText}
+          <RotateCcw size={15} /> {restartText}
         </button>
       </div>
     );
@@ -254,7 +254,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
         </ol>
         {interactiveMode && allStepsDone && (
           <div className="all-done-banner">
-            סיימתם! בתיאבון!
+            {useGenderText('סיימת!', 'סיימת!')} בתיאבון!
           </div>
         )}
       </div>

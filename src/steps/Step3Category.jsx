@@ -8,7 +8,7 @@ export default function Step3Category({ kosherType, onSelect }) {
 
   return (
     <div className="step-card">
-      <h2 className="playfair step-title">📂 מה בא לכם?</h2>
+      <h2 className="playfair step-title">סוג המנה</h2>
       <p className="step-sub">בחרו קטגוריה</p>
 
       <div className="category-grid">

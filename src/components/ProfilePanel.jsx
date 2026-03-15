@@ -80,7 +80,7 @@ export default function ProfilePanel({ user, open, onClose, useGenderText }) {
         {user && !user.isAnonymous && (
           <>
             <div className="profile-section">
-              <h3 className="playfair">📖 מתכונים אחרונים</h3>
+              <h3 className="playfair">מתכונים אחרונים</h3>
               {recipes.length === 0 ? (
                 <p className="profile-empty">אין מתכונים שמורים עדיין</p>
               ) : (
@@ -104,11 +104,11 @@ export default function ProfilePanel({ user, open, onClose, useGenderText }) {
                 <button
                   className={`equip-type-btn ${profileEquipType === 'meat' ? 'active' : ''}`}
                   onClick={() => setProfileEquipType('meat')}
-                >🥩 בשרי</button>
+                >בשרי</button>
                 <button
                   className={`equip-type-btn ${profileEquipType === 'dairy' ? 'active' : ''}`}
                   onClick={() => setProfileEquipType('dairy')}
-                >🧀 חלבי</button>
+                >חלבי</button>
               </div>
               <div className="equip-chips">
                 {equipList.map(eq => (
@@ -130,7 +130,7 @@ export default function ProfilePanel({ user, open, onClose, useGenderText }) {
 
         {user && !user.isAnonymous && (
           <button className="btn btn-signout" onClick={handleSignOut}>
-            🚪 התנתקות
+            התנתקות
           </button>
         )}
       </div>
