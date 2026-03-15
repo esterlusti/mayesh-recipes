@@ -6,7 +6,7 @@ export default function Step4DishType({ category, onSelect }) {
   return (
     <div className="step-card">
       <h2 className="playfair step-title">{category.emoji} {category.name}</h2>
-      <p className="step-sub">בחרו סוג מנה ספציפי</p>
+      <p className="step-sub">איזה מנה?</p>
 
       <div className="dish-grid">
         {category.dishes.map(dish => (
