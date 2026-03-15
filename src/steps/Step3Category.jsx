@@ -12,12 +12,12 @@ export default function Step3Category({ kosherType, onSelect }) {
       <p className="step-sub">בחרו קטגוריה</p>
 
       <div className="category-grid">
-        {categories.map(cat => (
+        {categories.map((cat, index) => (
           <div
             key={cat.id}
             className="category-card"
             onClick={() => onSelect(cat)}
-            style={{ backgroundImage: `url(${cat.img})` }}
+            style={{ backgroundImage: `url(${cat.img})`, '--i': index }}
           >
             <div className="category-dot" style={{ background: dotColor }} />
             <div className="category-overlay">

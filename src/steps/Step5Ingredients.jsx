@@ -107,11 +107,12 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
       {/* Tab content */}
       <div className="ing-tab-panel">
         <div className="ing-tab-chips">
-          {current.items.map(item => (
+          {current.items.map((item, index) => (
             <div
               key={item}
               className={`chip ${current.selected.includes(item) ? 'on' : ''}`}
               onClick={() => current.toggle(item)}
+              style={{ '--i': index }}
             >
               {item}
             </div>

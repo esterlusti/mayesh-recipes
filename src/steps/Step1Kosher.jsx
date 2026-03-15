@@ -26,11 +26,12 @@ export default function Step1Kosher({ onSelect }) {
       <p className="step-sub">בחרו את סוג הכשרות של המנה</p>
 
       <div className="kosher-grid">
-        {KOSHER_OPTIONS.map(opt => (
+        {KOSHER_OPTIONS.map((opt, index) => (
           <div
             key={opt.id}
             className={`kosher-card ${selected === opt.id ? 'selected' : ''}`}
             onClick={() => handleSelect(opt.id)}
+            style={{ '--i': index }}
           >
             <div className="kosher-circle" style={{ background: opt.color }}>
               <span className="kosher-emoji">{opt.emoji}</span>

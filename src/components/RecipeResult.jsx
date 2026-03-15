@@ -150,9 +150,10 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
     const el = recipeRef.current;
     if (!el) return;
 
-    // Temporarily remove interactive mode so PDF shows clean recipe
+    // Temporarily switch to light mode for PDF and remove interactive mode
     const hadInteractive = el.classList.contains('interactive-mode');
     if (hadInteractive) el.classList.remove('interactive-mode');
+    el.classList.add('pdf-mode');
 
     const actions = el.querySelector('.recipe-actions');
     const ratingSection = el.querySelector('.recipe-rating');
@@ -173,6 +174,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     }).from(el).save();
 
+    el.classList.remove('pdf-mode');
     if (hadInteractive) el.classList.add('interactive-mode');
     if (actions) actions.style.display = '';
     if (ratingSection) ratingSection.style.display = '';
