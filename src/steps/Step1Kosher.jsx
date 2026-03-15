@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import Icon from '../components/icons';
 
 const KOSHER_OPTIONS = [
-  { id: 'meat',   name: 'בשרי', emoji: '🥩', color: 'var(--meat)',   bg: 'var(--meat-lt)',   desc: 'בשר, עוף, הודו' },
-  { id: 'dairy',  name: 'חלבי', emoji: '🧀', color: 'var(--milk)',   bg: 'var(--milk-lt)',   desc: 'גבינות, חלב, שמנת' },
-  { id: 'pareve', name: 'פרווה',emoji: '🌿', color: 'var(--pareve)', bg: 'var(--pareve-lt)', desc: 'דגים, ירקות, קטניות' },
+  { id: 'meat',   name: 'בשרי', iconKey: 'meat',   color: 'var(--meat)',   bg: 'var(--meat-lt)',   desc: 'בשר, עוף, הודו' },
+  { id: 'dairy',  name: 'חלבי', iconKey: 'dairy',  color: 'var(--milk)',   bg: 'var(--milk-lt)',   desc: 'גבינות, חלב, שמנת' },
+  { id: 'pareve', name: 'פרווה',iconKey: 'pareve', color: 'var(--pareve)', bg: 'var(--pareve-lt)', desc: 'דגים, ירקות, קטניות' },
 ];
 
 export default function Step1Kosher({ onSelect }) {
@@ -34,7 +35,7 @@ export default function Step1Kosher({ onSelect }) {
             style={{ '--i': index }}
           >
             <div className="kosher-circle" style={{ background: opt.color }}>
-              <span className="kosher-emoji">{opt.emoji}</span>
+              <Icon name={opt.iconKey} size={28} className="kosher-icon" />
             </div>
             <h3 className="playfair kosher-name">{opt.name}</h3>
             <p className="kosher-desc">{opt.desc}</p>
