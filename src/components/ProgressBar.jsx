@@ -5,23 +5,16 @@ const STEP_LABELS = ['סוג מנה', 'ציוד', 'קטגוריה', 'מנה', '�
 export default function ProgressBar({ current, total = 6 }) {
   return (
     <div className="progress-bar-wrap">
-      <div className="progress-steps">
+      <div className="progress-segments">
         {STEP_LABELS.map((label, i) => (
           <div
             key={i}
-            className={`progress-step ${i + 1 <= current ? 'done' : ''} ${i + 1 === current ? 'active' : ''}`}
-          >
-            <div className="progress-dot">{i + 1}</div>
-            <span className="progress-label">{label}</span>
-          </div>
+            className={`progress-seg ${i + 1 < current ? 'done' : ''} ${i + 1 === current ? 'active' : ''}`}
+            title={label}
+          />
         ))}
       </div>
-      <div className="progress-track">
-        <div
-          className="progress-fill"
-          style={{ width: `${((current - 1) / (total - 1)) * 100}%` }}
-        />
-      </div>
+      <div className="progress-step-label">{STEP_LABELS[current - 1]}</div>
     </div>
   );
 }

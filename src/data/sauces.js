@@ -29,4 +29,12 @@ export const SAUCES = [
   { id: 'oyster-sauce',    label: 'רוטב צדף',        emoji: '🫙', kosher: 'pareve'},
   { id: 'fresh-mint',      label: 'עלי נענע טרי',    emoji: '🌿', kosher: 'all'   },
   { id: 'white-wine',      label: 'יין לבן לבישול',  emoji: '🍷', kosher: 'all'   },
+  { id: 'canola-oil',      label: 'שמן קנולה/רגיל',  emoji: '🫙', kosher: 'all',  pantry: true  },
+  { id: 'vinegar',         label: 'חומץ',             emoji: '🫙', kosher: 'all',  pantry: true  },
+  { id: 'chicken-broth',   label: 'ציר עוף',          emoji: '🫙', kosher: 'meat'  },
+  { id: 'veggie-broth',    label: 'ציר ירקות',        emoji: '🫙', kosher: 'all'   },
+  { id: 'garlic-paste',    label: 'רסק שום',          emoji: '🫙', kosher: 'all',  pantry: true  },
+  { id: 'tomato-sauce',    label: 'רוטב עגבניות',     emoji: '🍅', kosher: 'all',  pantry: true  },
+  { id: 'red-wine',        label: 'יין אדום לבישול',  emoji: '🍷', kosher: 'all'   },
+  { id: 'pomegranate-mol', label: 'דבש רימונים',      emoji: '🫙', kosher: 'all'   },
 ];

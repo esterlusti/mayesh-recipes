@@ -1,9 +1,9 @@
 /* ══════════════════════════════════════════════════
-   CLEAN LIGHT — Modern Card Theme
+   BOLD EDITORIAL — Light, High-Contrast Theme
    ══════════════════════════════════════════════════ */
 
 :root {
-  --bg:          #F7F5F3;
+  --bg:          #F5F2EE;
   --surface:     #FFFFFF;
   --surface-2:   #F5F5F5;
   --surface-3:   #EBEBEB;
@@ -62,22 +62,26 @@ body {
 /* ── AUTH BAR ── */
 .auth-bar {
   position: fixed; top: 0; right: 0; left: 0; z-index: 100;
-  background: #FFFFFF;
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 1px 8px var(--shadow);
-  padding: 0 24px; height: 50px;
+  background: #1A1A1A;
+  border-bottom: none;
+  padding: 0 20px; height: 52px;
   display: flex; align-items: center; justify-content: space-between;
 }
-.auth-greeting { font-size: 13px; font-weight: 500; color: var(--text-60); }
+.auth-greeting { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6); }
 .avatar-btn {
-  background: none; border: 1.5px solid var(--border); cursor: pointer;
-  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--accent); border: none; cursor: pointer;
+  width: 32px; height: 32px; border-radius: 50%;
   overflow: hidden; display: flex; align-items: center; justify-content: center;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: opacity 0.2s;
 }
-.avatar-btn:hover { border-color: var(--accent); box-shadow: 0 0 12px rgba(255,107,61,0.3); }
+.avatar-btn:hover { opacity: 0.85; }
 .avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.avatar-placeholder { font-size: 16px; }
+.avatar-placeholder { font-size: 15px; }
+.auth-logo {
+  font-family: 'Rubik', sans-serif; font-weight: 900;
+  font-size: 18px; color: #FFFFFF; letter-spacing: -0.5px;
+}
+.auth-bar-left { display: flex; align-items: center; gap: 10px; }
 
 /* ── AUTH MODAL ── */
 .modal-overlay {
@@ -170,7 +174,7 @@ body {
 
 /* ── HERO ── */
 .hero {
-  text-align: center; padding: 70px 20px 12px;
+  text-align: center; padding: 90px 20px 12px;
   position: relative; z-index: 1;
 }
 .hero-welcome {
@@ -206,9 +210,7 @@ body {
 .welcome-second-title {
   font-size: 44px; font-weight: 900; line-height: 1.1;
   margin-bottom: 16px; font-family: 'Rubik', sans-serif; letter-spacing: -1px;
-  background: linear-gradient(135deg, var(--accent), #ff9a3d);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--accent);
   animation: fadeInUp 0.6s ease-out 0.2s both;
 }
 .welcome-joke {
@@ -266,55 +268,27 @@ body {
   to { opacity: 1; transform: scale(1); }
 }
 
-/* ── PROGRESS BAR ── */
+/* ── PROGRESS BAR — horizontal segments ── */
 .progress-bar-wrap {
-  max-width: 700px; margin: 0 auto 20px; padding: 0 20px;
+  background: #1A1A1A;
+  padding: 0 0 10px;
   position: relative; z-index: 1;
+  margin-bottom: 0;
 }
-.progress-steps {
-  display: flex; justify-content: space-between; margin-bottom: 8px;
+.progress-segments {
+  display: flex; gap: 3px; padding: 0 20px;
 }
-.progress-step {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  font-size: 10px; color: var(--text-30); font-weight: 700; letter-spacing: 0.04em;
-  text-transform: uppercase;
+.progress-seg {
+  flex: 1; height: 3px; border-radius: 2px;
+  background: rgba(255,255,255,0.2);
+  transition: background 0.3s;
 }
-.progress-step.done { color: var(--text-60); }
-.progress-step.active { color: var(--accent); }
-.progress-dot {
-  width: 28px; height: 28px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 900;
-  color: var(--text-30);
-  transition: all 0.3s;
-  border-radius: 50%;
-}
-.progress-step.done .progress-dot {
-  background: var(--surface-3); color: var(--text);
-  border-color: rgba(0,0,0,0.15);
-}
-.progress-step.active .progress-dot {
-  background: var(--accent); color: white;
-  border-color: var(--accent);
-  transform: scale(1.1);
-  box-shadow: 0 0 16px rgba(255,107,61,0.4);
-  animation: glowPulse 2s ease-in-out infinite;
-}
-@keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 12px rgba(255,107,61,0.3); }
-  50% { box-shadow: 0 0 20px rgba(255,107,61,0.5); }
-}
-.progress-label { white-space: nowrap; }
-.progress-track {
-  height: 2px; background: var(--border);
-  overflow: hidden; border-radius: 2px;
-}
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent), #ff9a3d);
-  transition: width 0.4s ease;
+.progress-seg.done { background: rgba(255,255,255,0.7); }
+.progress-seg.active { background: var(--accent); }
+.progress-step-label {
+  text-align: center; font-size: 10px; font-weight: 700;
+  color: rgba(255,255,255,0.5); letter-spacing: 0.1em;
+  text-transform: uppercase; margin-top: 5px;
 }
 
 /* ── STEPS CONTAINER ── */
@@ -324,17 +298,22 @@ body {
 }
 .step-card {
   background: #FFFFFF;
-  border: 1px solid var(--border);
-  padding: 28px 24px; margin-bottom: 20px;
-  border-radius: var(--r);
-  box-shadow: 0 2px 16px var(--shadow);
+  border: none;
+  padding: 28px 24px; margin-bottom: 12px;
+  border-radius: 0;
+  box-shadow: none;
+  border-bottom: 1px solid var(--border);
 }
+.step-card:last-child { border-bottom: none; }
 .step-title {
-  font-size: 30px; margin-bottom: 4px; font-weight: 900;
-  font-family: 'Rubik', sans-serif; line-height: 1; letter-spacing: -0.02em;
+  font-size: 34px; margin-bottom: 6px; font-weight: 900;
+  font-family: 'Rubik', sans-serif; line-height: 1; letter-spacing: -0.03em;
 }
 .step-title span.accent { color: var(--accent); }
-.step-sub { color: var(--text-60); font-size: 13px; margin-bottom: 20px; font-weight: 500; }
+.step-sub {
+  color: var(--text-60); font-size: 13px; margin-bottom: 20px; font-weight: 500;
+  border-right: 3px solid var(--accent); padding-right: 10px;
+}
 
 /* ── KOSHER CARDS ── */
 .kosher-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -349,9 +328,9 @@ body {
   animation-delay: calc(var(--i, 0) * 0.06s);
 }
 .kosher-card:hover {
-  border-color: rgba(0,0,0,0.15);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  border-color: var(--text);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
   background: var(--surface-2);
 }
 .kosher-card.selected {
@@ -471,26 +450,29 @@ body {
 /* ── INGREDIENTS (TABS) ── */
 .ingredients-step .step-card { padding-bottom: 20px; }
 .ing-tabs {
-  display: flex; gap: 4px;
-  background: var(--surface);
-  border-radius: var(--r-sm);
-  padding: 3px;
+  display: flex; gap: 6px;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
   margin-bottom: 18px; margin-top: 4px;
-  border: 1px solid var(--border);
+  border: none;
 }
 .ing-tab {
   flex: 1; text-align: center;
-  padding: 9px 0; font-size: 13px; font-weight: 700;
+  padding: 10px 0; font-size: 13px; font-weight: 700;
   color: var(--text-60);
-  border-radius: 6px; cursor: pointer;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
   transition: all 0.2s;
   letter-spacing: 0.01em;
 }
-.ing-tab:hover { color: var(--text); background: var(--surface); }
+.ing-tab:hover { border-color: var(--text); color: var(--text); }
 .ing-tab.active {
   color: white;
   background: var(--accent);
-  box-shadow: 0 2px 8px rgba(255,107,61,0.3);
+  border-color: var(--accent);
 }
 .ing-tab-panel { min-height: 120px; }
 .ing-tab-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 14px; }
@@ -652,16 +634,17 @@ body {
 }
 .btn:hover { background: var(--surface-2); }
 .btn-next, .btn-generate, .btn-start {
-  background: linear-gradient(135deg, var(--accent), #ff9a3d);
+  background: var(--accent);
   color: white; width: 100%; margin-top: 16px;
-  font-size: 15px; padding: 13px;
+  font-size: 16px; padding: 15px;
+  font-weight: 900; letter-spacing: -0.01em;
   font-weight: 900; border: none;
   border-radius: var(--r);
   box-shadow: 0 4px 20px rgba(255,107,61,0.3);
 }
 .btn-next:hover, .btn-generate:hover, .btn-start:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(255,107,61,0.4);
+  background: var(--accent-dk);
+  transform: translateY(-1px);
 }
 .btn-next:active, .btn-generate:active, .btn-start:active {
   transform: translateY(1px);
