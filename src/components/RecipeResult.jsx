@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { saveRecipe, saveRating } from '../firebase';
-import { FileDown, Share2, BookmarkPlus, Check, RotateCcw, RefreshCw, ChefHat, ListChecks, Lightbulb, ShoppingCart, Utensils, Star, CookingPot } from 'lucide-react';
+import { FileDown, Share2, BookmarkPlus, Check, RotateCcw, RefreshCw, ChefHat, ListChecks, Lightbulb, ShoppingCart, Utensils, Star, CookingPot, Mail, MessageCircle, Copy, X, Link } from 'lucide-react';
 
 export default function RecipeResult({ recipe, user, kosherType, category, servings, difficulty, onRestart, onSelectOption, onAnotherRecipe, useGenderText }) {
   const [saved, setSaved] = useState(false);
@@ -11,6 +11,8 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
   const [ratingHover, setRatingHover] = useState(0);
   const [ratedDone, setRatedDone] = useState(false);
   const [interactiveMode, setInteractiveMode] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copied, setCopied] = useState(false);
   const recipeRef = useRef(null);
 
   const restartText = useGenderText('התחל מחדש', 'התחילי מחדש');
@@ -150,21 +152,24 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
     const el = recipeRef.current;
     if (!el) return;
 
-    // Temporarily switch to light mode for PDF and remove interactive mode
+    // Temporarily remove interactive mode and switch to light PDF mode
     const hadInteractive = el.classList.contains('interactive-mode');
     if (hadInteractive) el.classList.remove('interactive-mode');
     el.classList.add('pdf-mode');
 
-    const actions = el.querySelector('.recipe-actions');
-    const ratingSection = el.querySelector('.recipe-rating');
-    const interactiveToggle = el.querySelector('.btn-interactive');
+    // Hide UI-only elements
+    const hideSelectors = ['.recipe-actions', '.recipe-rating', '.btn-interactive', '.steps-progress', '.all-done-banner'];
+    const hiddenEls = hideSelectors.map(s => el.querySelector(s)).filter(Boolean);
+    hiddenEls.forEach(e => e.style.display = 'none');
+
     const checkboxes = el.querySelectorAll('.step-checkbox, .ing-checkbox');
-    const progressBar = el.querySelector('.steps-progress');
-    if (actions) actions.style.display = 'none';
-    if (ratingSection) ratingSection.style.display = 'none';
-    if (interactiveToggle) interactiveToggle.style.display = 'none';
-    if (progressBar) progressBar.style.display = 'none';
     checkboxes.forEach(cb => cb.style.display = 'none');
+
+    // Remove strikethrough/checked/done visual state from items
+    const checkedItems = el.querySelectorAll('.checked, .step-done');
+    checkedItems.forEach(item => { item.style.opacity = '1'; });
+    const strikeEls = el.querySelectorAll('.line-through, .step-text-done');
+    strikeEls.forEach(item => { item.style.textDecoration = 'none'; item.style.color = 'inherit'; });
 
     await html2pdf().set({
       margin: [10, 10, 10, 10],
@@ -174,26 +179,39 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     }).from(el).save();
 
+    // Restore everything
     el.classList.remove('pdf-mode');
     if (hadInteractive) el.classList.add('interactive-mode');
-    if (actions) actions.style.display = '';
-    if (ratingSection) ratingSection.style.display = '';
-    if (interactiveToggle) interactiveToggle.style.display = '';
-    if (progressBar) progressBar.style.display = '';
+    hiddenEls.forEach(e => e.style.display = '');
     checkboxes.forEach(cb => cb.style.display = '');
+    checkedItems.forEach(item => { item.style.opacity = ''; });
+    strikeEls.forEach(item => { item.style.textDecoration = ''; item.style.color = ''; });
   };
 
-  const handleShare = async () => {
-    const shareText = `${parsed.title}\n\n🧾 מרכיבים:\n${parsed.ingredients.map(i => `• ${i}`).join('\n')}\n\n👩‍🍳 שלבי הכנה:\n${parsed.steps.map((s, i) => `${i + 1}. ${s}`).join('\n')}${parsed.tip ? `\n\n💡 טיפ: ${parsed.tip}` : ''}\n\nנוצר באפליקציית "מה יש בבית?"`;
+  const getShareText = () => {
+    return `${parsed.title}\n\n🧾 מרכיבים:\n${parsed.ingredients.map(i => `• ${i}`).join('\n')}\n\n👩‍🍳 שלבי הכנה:\n${parsed.steps.map((s, i) => `${i + 1}. ${s}`).join('\n')}${parsed.tip ? `\n\n💡 טיפ: ${parsed.tip}` : ''}\n\nנוצר באפליקציית "מה יש בבית?"`;
+  };
 
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: parsed.title, text: shareText });
-      } catch (e) { /* user cancelled */ }
-    } else {
-      await navigator.clipboard.writeText(shareText);
-      alert('המתכון הועתק ללוח!');
-    }
+  const handleCopyToClipboard = async () => {
+    await navigator.clipboard.writeText(getShareText());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleShareWhatsApp = () => {
+    window.open(`https://wa.me/?text=${encodeURIComponent(getShareText())}`, '_blank');
+  };
+
+  const handleShareGmail = () => {
+    window.open(`https://mail.google.com/mail/?view=cm&su=${encodeURIComponent(parsed.title)}&body=${encodeURIComponent(getShareText())}`, '_blank');
+  };
+
+  const handleShareEmail = () => {
+    window.location.href = `mailto:?subject=${encodeURIComponent(parsed.title)}&body=${encodeURIComponent(getShareText())}`;
+  };
+
+  const handleShareTelegram = () => {
+    window.open(`https://t.me/share/url?text=${encodeURIComponent(getShareText())}`, '_blank');
   };
 
   const kosherLabel = kosherType === 'meat' ? 'בשרי' : kosherType === 'dairy' ? 'חלבי' : 'פרווה';
@@ -308,7 +326,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
         <button className="btn btn-pdf" onClick={handleDownloadPDF}>
           <FileDown size={15} /> הורדה כ-PDF
         </button>
-        <button className="btn btn-share" onClick={handleShare}>
+        <button className="btn btn-share" onClick={() => setShowShareModal(true)}>
           <Share2 size={15} /> שיתוף
         </button>
         {user && !user.isAnonymous && (
@@ -324,6 +342,53 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
           <RotateCcw size={15} /> {restartText}
         </button>
       </div>
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
+          <div className="modal-card share-modal" onClick={e => e.stopPropagation()}>
+            <button className="share-modal-close" onClick={() => setShowShareModal(false)}>
+              <X size={18} />
+            </button>
+            <h2 className="modal-title playfair">שיתוף המתכון</h2>
+            <p className="modal-sub">שתפו את &quot;{parsed.title}&quot;</p>
+
+            <div className="share-options">
+              <button className="share-option whatsapp" onClick={handleShareWhatsApp}>
+                <span className="share-option-icon">
+                  <MessageCircle size={22} />
+                </span>
+                <span className="share-option-label">וואטסאפ</span>
+              </button>
+
+              <button className="share-option gmail" onClick={handleShareGmail}>
+                <span className="share-option-icon">
+                  <Mail size={22} />
+                </span>
+                <span className="share-option-label">Gmail</span>
+              </button>
+
+              <button className="share-option email" onClick={handleShareEmail}>
+                <span className="share-option-icon">
+                  <Mail size={22} />
+                </span>
+                <span className="share-option-label">אימייל</span>
+              </button>
+
+              <button className="share-option telegram" onClick={handleShareTelegram}>
+                <span className="share-option-icon">
+                  <Link size={22} />
+                </span>
+                <span className="share-option-label">טלגרם</span>
+              </button>
+            </div>
+
+            <button className={`btn btn-copy-share ${copied ? 'copied' : ''}`} onClick={handleCopyToClipboard}>
+              {copied ? <><Check size={15} /> הועתק!</> : <><Copy size={15} /> העתקת המתכון</>}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
