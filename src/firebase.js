@@ -1,11 +1,14 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, OAuthProvider,
+import { getAuth, GoogleAuthProvider,
          signInWithPopup, signInWithRedirect, getRedirectResult,
-         linkWithPopup,
-         signInAnonymously, signOut } from 'firebase/auth';
+         linkWithPopup, linkWithRedirect, linkWithCredential,
+         signInAnonymously, signOut,
+         createUserWithEmailAndPassword, signInWithEmailAndPassword,
+         updateProfile, EmailAuthProvider } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc,
-         collection, query, orderBy, limit,
-         getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
+         collection, collectionGroup, query, orderBy, limit,
+         getDocs, addDoc, deleteDoc, serverTimestamp,
+         onSnapshot } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyABfmxXuZlzHIXuGx0cHKxAdctQ_ep-_sA",
@@ -20,31 +23,64 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
-export const microsoftProvider = new OAuthProvider('microsoft.com');
 
 // If user is anonymous, try to link the account to keep their data.
 // If linking fails (e.g. account already exists), fall back to regular sign-in.
+// If popup is blocked by browser, fall back to redirect flow.
 const signInOrLink = async (provider) => {
   const currentUser = auth.currentUser;
   if (currentUser && currentUser.isAnonymous) {
     try {
       return await linkWithPopup(currentUser, provider);
     } catch (e) {
-      // auth/credential-already-in-use — account exists, sign in normally
       if (e.code === 'auth/credential-already-in-use' || e.code === 'auth/email-already-in-use') {
-        return await signInWithPopup(auth, provider);
+        try {
+          return await signInWithPopup(auth, provider);
+        } catch (e2) {
+          if (e2.code === 'auth/popup-blocked') return await signInWithRedirect(auth, provider);
+          throw e2;
+        }
+      }
+      if (e.code === 'auth/popup-blocked') return await linkWithRedirect(currentUser, provider);
+      throw e;
+    }
+  }
+  try {
+    return await signInWithPopup(auth, provider);
+  } catch (e) {
+    if (e.code === 'auth/popup-blocked') return await signInWithRedirect(auth, provider);
+    throw e;
+  }
+};
+
+export const signInGoogle = () => signInOrLink(googleProvider);
+export const getAuthRedirectResult = () => getRedirectResult(auth);
+export const signInGuest     = () => signInAnonymously(auth);
+export const doSignOut       = () => signOut(auth);
+
+// Email/password auth with anonymous account linking
+export const signUpWithEmail = async (email, password, displayName) => {
+  const currentUser = auth.currentUser;
+  if (currentUser && currentUser.isAnonymous) {
+    try {
+      const credential = EmailAuthProvider.credential(email, password);
+      const result = await linkWithCredential(currentUser, credential);
+      await updateProfile(result.user, { displayName });
+      return result;
+    } catch (e) {
+      if (e.code === 'auth/email-already-in-use') {
+        return await signInWithEmailAndPassword(auth, email, password);
       }
       throw e;
     }
   }
-  return await signInWithPopup(auth, provider);
+  const result = await createUserWithEmailAndPassword(auth, email, password);
+  await updateProfile(result.user, { displayName });
+  return result;
 };
 
-export const signInGoogle    = () => signInOrLink(googleProvider);
-export const signInMicrosoft = () => signInOrLink(microsoftProvider);
-export const getAuthRedirectResult = () => getRedirectResult(auth);
-export const signInGuest     = () => signInAnonymously(auth);
-export const doSignOut       = () => signOut(auth);
+export const signInWithEmail = (email, password) =>
+  signInWithEmailAndPassword(auth, email, password);
 
 export const getUserDoc  = (uid) => getDoc(doc(db, 'users', uid));
 export const saveUserDoc = (uid, data) => setDoc(doc(db, 'users', uid), data, { merge: true });
@@ -73,3 +109,59 @@ export const getRecentRecipes = async (uid) => {
   const snap = await getDocs(q);
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 };
+
+// ── Admin helpers ──
+
+export const logRecipeQuery = (uid, displayName, payload) =>
+  addDoc(collection(db, 'queryLogs'), {
+    uid, displayName, requestPayload: payload, createdAt: serverTimestamp()
+  });
+
+export const getAllRecentRecipes = async (limitCount = 50) => {
+  const q = query(
+    collectionGroup(db, 'recipes'),
+    orderBy('createdAt', 'desc'),
+    limit(limitCount)
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => ({
+    id: d.id,
+    uid: d.ref.parent.parent?.id || '',
+    ...d.data()
+  }));
+};
+
+export const getRecentQueryLogs = async (limitCount = 50) => {
+  const q = query(
+    collection(db, 'queryLogs'),
+    orderBy('createdAt', 'desc'),
+    limit(limitCount)
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+};
+
+export const deleteRecipeDoc = (uid, recipeId) =>
+  deleteDoc(doc(db, 'users', uid, 'recipes', recipeId));
+
+export const getAllUsers = async (limitCount = 100) => {
+  const q = query(collection(db, 'users'), limit(limitCount));
+  const snap = await getDocs(q);
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+};
+
+// ── AI Settings ──
+
+export const getAISettings = () => getDoc(doc(db, 'settings', 'ai'));
+
+export const updateAIModel = (model, uid) =>
+  setDoc(doc(db, 'settings', 'ai'), {
+    activeModel: model,
+    updatedAt: serverTimestamp(),
+    updatedBy: uid
+  }, { merge: true });
+
+export const onAISettingsChange = (callback) =>
+  onSnapshot(doc(db, 'settings', 'ai'), (snap) => {
+    callback(snap.exists() ? snap.data() : { activeModel: 'openai' });
+  });
