@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { CookingPot } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from './hooks/useAuth';
 import { useGender } from './hooks/useGender';
@@ -315,7 +316,7 @@ export default function App() {
           <span className="guest-banner-text">
             <strong>גולש/ת כאורח</strong> — התחברו כדי לשמור מתכונים
           </span>
-          <button className="guest-banner-btn guest-banner-google" onClick={() => signInGoogle().catch(console.error)}>
+          <button className="guest-banner-btn guest-banner-google" onClick={() => signInGoogle().catch(e => { console.error(e); toast.error('כניסה עם Google נכשלה — נסי שוב'); })}>
             <span className="guest-google-icon">G</span> Google
           </button>
           <button className="guest-banner-btn" onClick={() => setShowAuth(true)}>
@@ -340,13 +341,15 @@ export default function App() {
       )}
 
       <main className="main-content">
-        {/* Hero */}
-        <section className="hero">
-          <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
-          <h1 className="playfair hero-title">מה יש לך<br /><em>בבית?</em></h1>
-          <p className="hero-sub">ספרו לנו מה יש לכם במקרר ובמזווה —<br />נמציא לכם מתכון שאפשר להכין עכשיו</p>
-          <p className="hero-joke">*חוץ מאסוך שמן</p>
-        </section>
+        {/* Hero — only on step 1 (before kosher selection) */}
+        {step === 1 && (
+          <section className="hero">
+            <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
+            <h1 className="hero-title">מה יש לך<br /><em>בבית?</em></h1>
+            <p className="hero-sub">ספרו לנו מה יש לכם במקרר ובמזווה —<br />נמציא לכם מתכון שאפשר להכין עכשיו</p>
+            <p className="hero-joke">*חוץ מאסוך שמן</p>
+          </section>
+        )}
 
         <ProgressBar current={step} />
 
@@ -419,7 +422,7 @@ export default function App() {
       </main>
 
       <ContactFooter user={user} />
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} useGenderText={useGenderText} />}
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} useGenderText={useGenderText} isAnonymous={!!user?.isAnonymous} />}
     </>
   );
 }
