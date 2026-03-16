@@ -1,7 +1,7 @@
 import React from 'react';
-import { ChefHat } from 'lucide-react';
+import { ChefHat, Shield } from 'lucide-react';
 
-export default function AuthBar({ user, onAvatarClick, useGenderText }) {
+export default function AuthBar({ user, onAvatarClick, onAdminClick, useGenderText, isAdmin }) {
 
   const displayName = user
     ? user.isAnonymous
@@ -17,6 +17,11 @@ export default function AuthBar({ user, onAvatarClick, useGenderText }) {
       <div className="auth-bar-left">
         {displayName && (
           <span className="auth-greeting">{displayName}</span>
+        )}
+        {isAdmin && (
+          <button className="admin-btn-icon" onClick={onAdminClick} title="פאנל ניהול">
+            <Shield size={15} />
+          </button>
         )}
         <button className="avatar-btn" onClick={onAvatarClick}>
           {user?.photoURL

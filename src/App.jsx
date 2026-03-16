@@ -6,11 +6,14 @@ import { useAuth } from './hooks/useAuth';
 import { useGender } from './hooks/useGender';
 import { useUserData } from './hooks/useUserData';
 import { usePantryStaples } from './hooks/usePantryStaples';
+import { useAdmin } from './hooks/useAdmin';
+import { useAISettings } from './hooks/useAISettings';
 import AuthBar from './components/AuthBar';
 import AuthModal from './components/AuthModal';
 import OnboardingTour from './components/OnboardingTour';
 import GenderSelect from './components/GenderSelect';
 import ProfilePanel from './components/ProfilePanel';
+import AdminPanel from './components/AdminPanel';
 import ProgressBar from './components/ProgressBar';
 import ContactFooter from './components/ContactFooter';
 import Step1Kosher from './steps/Step1Kosher';
@@ -21,7 +24,7 @@ import Step5Ingredients from './steps/Step5Ingredients';
 import Step6Recipe from './steps/Step6Recipe';
 import { Toaster } from 'react-hot-toast';
 import { EQUIPMENT } from './data/equipment';
-import { getAuthRedirectResult, signInGoogle } from './firebase';
+import { getAuthRedirectResult, signInGoogle, logRecipeQuery } from './firebase';
 
 const stepVariants = {
   enter: { opacity: 0, x: -30 },
@@ -34,9 +37,12 @@ export default function App() {
   const { gender, setGender, genderLoaded, useGenderText } = useGender(user);
   const { savedEquipment, savedEquipmentType } = useUserData(user);
   const { pantryStaples, setPantryStaples } = usePantryStaples(user);
+  const { isAdmin } = useAdmin(user);
+  const { activeModel } = useAISettings();
 
   const [showAuth, setShowAuth] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const [step, setStep] = useState(1);
   const [apiError, setApiError] = useState(null);
@@ -209,7 +215,8 @@ export default function App() {
       recipeIdea: data.recipeIdea,
       difficulty: data.difficulty,
       recipeStyle: data.recipeStyle,
-      maxMinutes: data.maxMinutes
+      maxMinutes: data.maxMinutes,
+      model: activeModel
     };
     setLastRequestData(requestPayload);
 
@@ -223,6 +230,7 @@ export default function App() {
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'שגיאה בשרת');
       setRecipe(result.recipe);
+      logRecipeQuery(user.uid, user.displayName || 'אורח', { ...requestPayload }).catch(console.error);
     } catch (e) {
       setRecipeError(e.message || 'שגיאה לא צפויה');
     }
@@ -321,7 +329,9 @@ export default function App() {
       <AuthBar
         user={user}
         onAvatarClick={() => setShowProfile(true)}
+        onAdminClick={() => setShowAdmin(true)}
         useGenderText={useGenderText}
+        isAdmin={isAdmin}
       />
 
       {user?.isAnonymous && (
@@ -346,6 +356,14 @@ export default function App() {
         pantryStaples={pantryStaples}
         onPantryChange={setPantryStaples}
       />
+
+      {isAdmin && (
+        <AdminPanel
+          open={showAdmin}
+          onClose={() => setShowAdmin(false)}
+          user={user}
+        />
+      )}
 
       {apiError && (
         <div className="api-error-banner">

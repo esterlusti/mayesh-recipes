@@ -1,8 +1,11 @@
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return { statusCode: 500, body: JSON.stringify({ error: 'API key missing' }) };
+  const openaiKey = process.env.OPENAI_API_KEY;
+  const geminiKey = process.env.GEMINI_API_KEY;
+
+  if (useGemini && !geminiKey) return { statusCode: 500, body: JSON.stringify({ error: 'Gemini API key missing' }) };
+  if (!useGemini && !openaiKey) return { statusCode: 500, body: JSON.stringify({ error: 'OpenAI API key missing' }) };
 
   const body = JSON.parse(event.body);
   const {
@@ -10,8 +13,11 @@ exports.handler = async (event) => {
     dishType, proteins, carbs, sauces, vegetables,
     spices, customProteins, customCarbs, customVegetables, customSauces, customSpices,
     equipment, servings, recipeIdea,
-    difficulty, recipeStyle, maxMinutes, selectedOption, forceSingle
+    difficulty, recipeStyle, maxMinutes, selectedOption, forceSingle,
+    model
   } = body;
+
+  const useGemini = model === 'gemini';
 
   const sanitize = (str) => str ? str.replace(/[<>{}]/g, '').slice(0, 100) : '';
   const sanitizeArr = (arr) => (arr || []).map(s => sanitize(s)).filter(Boolean);
@@ -169,27 +175,59 @@ When the user selects an option, provide the full recipe in the SINGLE format ab
     : [{ role: 'user', content: prompt }];
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages,
-        max_tokens: 2000,
-        temperature: 0.75
-      })
-    });
+    let text = '';
 
-    if (!response.ok) {
-      const err = await response.text();
-      return { statusCode: response.status, body: JSON.stringify({ error: err }) };
+    if (useGemini) {
+      // Gemini API call
+      const geminiBody = {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.75, maxOutputTokens: 2000 }
+      };
+      if (systemInstruction) {
+        geminiBody.systemInstruction = { parts: [{ text: systemInstruction }] };
+      }
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(geminiBody)
+        }
+      );
+
+      if (!response.ok) {
+        const err = await response.text();
+        return { statusCode: response.status, body: JSON.stringify({ error: err }) };
+      }
+
+      const data = await response.json();
+      text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    } else {
+      // OpenAI API call
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${openaiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages,
+          max_tokens: 2000,
+          temperature: 0.75
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.text();
+        return { statusCode: response.status, body: JSON.stringify({ error: err }) };
+      }
+
+      const data = await response.json();
+      text = data.choices?.[0]?.message?.content || '';
     }
 
-    const data = await response.json();
-    const text = data.choices?.[0]?.message?.content || '';
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
