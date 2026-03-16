@@ -39,7 +39,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
 
   const parseRecipe = (text) => {
     const lines = text.split('\n');
-    let title = '', timePrep = '', timeCook = '', diff = '', tip = '';
+    let title = '', timePrep = '', timeCook = '', diff = '', tip = '', serving = '';
     const ingredients = [];
     const steps = [];
     let section = '';
@@ -50,6 +50,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
       if (trimmed.startsWith('TIME_PREP:')) { timePrep = trimmed.replace('TIME_PREP:', '').trim(); continue; }
       if (trimmed.startsWith('TIME_COOK:')) { timeCook = trimmed.replace('TIME_COOK:', '').trim(); continue; }
       if (trimmed.startsWith('DIFFICULTY:')) { diff = trimmed.replace('DIFFICULTY:', '').trim(); continue; }
+      if (trimmed.startsWith('SERVING:')) { serving = trimmed.replace('SERVING:', '').trim(); continue; }
       if (trimmed.startsWith('TIP:')) { tip = trimmed.replace('TIP:', '').trim(); continue; }
       if (trimmed === 'INGREDIENTS:') { section = 'ing'; continue; }
       if (trimmed === 'STEPS:') { section = 'steps'; continue; }
@@ -60,7 +61,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
         steps.push(trimmed.replace(/^\d+[.)]\s*/, ''));
       }
     }
-    return { title, timePrep, timeCook, difficulty: diff, ingredients, steps, tip };
+    return { title, timePrep, timeCook, difficulty: diff, ingredients, steps, serving, tip };
   };
 
   // Dual option view
@@ -194,6 +195,11 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
           </table>
         </div>
 
+        ${parsed.serving ? `
+          <div style="background:#f0f7ff;border:1px solid #c0d9f0;border-right:4px solid #5b9bd5;padding:12px 14px;margin-bottom:12px;">
+            <strong style="font-size:13px;">🍽️ הצעת הגשה: </strong><span style="font-size:13px;">${parsed.serving}</span>
+          </div>` : ''}
+
         ${parsed.tip ? `
           <div style="background:#fffbf0;border:1px solid #e8d9a0;border-right:4px solid #f5b731;padding:12px 14px;margin-bottom:20px;">
             <strong style="font-size:13px;">💡 טיפ: </strong><span style="font-size:13px;">${parsed.tip}</span>
@@ -221,7 +227,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
   };
 
   const getShareText = () => {
-    return `${parsed.title}\n\n🧾 מרכיבים:\n${parsed.ingredients.map(i => `• ${i}`).join('\n')}\n\n👩‍🍳 שלבי הכנה:\n${parsed.steps.map((s, i) => `${i + 1}. ${s}`).join('\n')}${parsed.tip ? `\n\n💡 טיפ: ${parsed.tip}` : ''}\n\nנוצר באפליקציית "מה יש בבית?"`;
+    return `${parsed.title}\n\n🧾 מרכיבים:\n${parsed.ingredients.map(i => `• ${i}`).join('\n')}\n\n👩‍🍳 שלבי הכנה:\n${parsed.steps.map((s, i) => `${i + 1}. ${s}`).join('\n')}${parsed.serving ? `\n\n🍽️ הצעת הגשה: ${parsed.serving}` : ''}${parsed.tip ? `\n\n💡 טיפ: ${parsed.tip}` : ''}\n\nנוצר באפליקציית "מה יש בבית?"`;
   };
 
   const handleCopyToClipboard = async () => {
@@ -322,6 +328,13 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
           </div>
         )}
       </div>
+
+      {parsed.serving && (
+        <div className="recipe-tip recipe-serving">
+          <span className="tip-icon">🍽️</span>
+          <span><strong>הצעת הגשה:</strong> {parsed.serving}</span>
+        </div>
+      )}
 
       {parsed.tip && (
         <div className="recipe-tip">
