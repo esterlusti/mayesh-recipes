@@ -2,7 +2,7 @@
   publish = "dist"
   command = "npm run build"
   functions = "netlify/functions"
-  ignore = "git diff --quiet $CACHED_COMMIT HEAD -- public/ src/ netlify/ package.json netlify.toml"
+  ignore = "git diff --quiet $CACHED_COMMIT HEAD -- public/ src/ netlify/ package.json netlify.toml && exit 1 || exit 0"
 
 [[redirects]]
   from = "/api/*"
