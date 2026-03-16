@@ -1,4 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { CookingPot } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from './hooks/useAuth';
 import { useGender } from './hooks/useGender';
@@ -6,6 +8,7 @@ import { useUserData } from './hooks/useUserData';
 import { usePantryStaples } from './hooks/usePantryStaples';
 import AuthBar from './components/AuthBar';
 import AuthModal from './components/AuthModal';
+import OnboardingTour from './components/OnboardingTour';
 import GenderSelect from './components/GenderSelect';
 import ProfilePanel from './components/ProfilePanel';
 import ProgressBar from './components/ProgressBar';
@@ -16,8 +19,9 @@ import Step3Category from './steps/Step3Category';
 import Step4DishType from './steps/Step4DishType';
 import Step5Ingredients from './steps/Step5Ingredients';
 import Step6Recipe from './steps/Step6Recipe';
+import { Toaster } from 'react-hot-toast';
 import { EQUIPMENT } from './data/equipment';
-import { getAuthRedirectResult } from './firebase';
+import { getAuthRedirectResult, signInGoogle } from './firebase';
 
 const stepVariants = {
   enter: { opacity: 0, x: -30 },
@@ -33,12 +37,24 @@ export default function App() {
 
   const [showAuth, setShowAuth] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showTour, setShowTour] = useState(false);
   const [step, setStep] = useState(1);
   const [apiError, setApiError] = useState(null);
 
   useEffect(() => {
     getAuthRedirectResult().catch(e => console.error('Auth redirect error:', e));
   }, []);
+
+  // Show tour on first visit or for anonymous users (once per session)
+  useEffect(() => {
+    if (!user) return;
+    const key = user.isAnonymous ? 'tour_guest_shown' : `tour_shown_${user.uid}`;
+    if (!sessionStorage.getItem(key)) {
+      const t = setTimeout(() => setShowTour(true), 800);
+      sessionStorage.setItem(key, '1');
+      return () => clearTimeout(t);
+    }
+  }, [user?.uid, user?.isAnonymous]);
 
   useEffect(() => {
     fetch('/api/health')
@@ -68,7 +84,7 @@ export default function App() {
   if (authLoading) {
     return (
       <div className="app-loading">
-        <div className="loading-pot">🍳</div>
+        <div className="loading-pot"><CookingPot size={52} strokeWidth={1.5} /></div>
       </div>
     );
   }
@@ -179,17 +195,20 @@ export default function App() {
       equipmentType: pareveEquipType,
       dishType,
       proteins: data.proteins,
+      carbs: data.carbs,
       sauces: data.sauces,
       vegetables: data.vegetables,
       spices: data.spices,
-      extrasProteins: data.extrasProteins,
-      extrasSauces: data.extrasSauces,
-      extrasVegetables: data.extrasVegetables,
-      extrasSpices: data.extrasSpices,
+      customProteins: data.customProteins,
+      customCarbs: data.customCarbs,
+      customVegetables: data.customVegetables,
+      customSauces: data.customSauces,
+      customSpices: data.customSpices,
       equipment: getEquipmentLabels(),
       servings: data.servings,
       recipeIdea: data.recipeIdea,
       difficulty: data.difficulty,
+      recipeStyle: data.recipeStyle,
       maxMinutes: data.maxMinutes
     };
     setLastRequestData(requestPayload);
@@ -286,6 +305,13 @@ export default function App() {
 
   return (
     <>
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: { background: '#1A1A1A', color: '#fff', border: '1px solid #333', borderRadius: '8px', fontSize: '14px', fontFamily: "'Heebo', sans-serif" },
+          success: { iconTheme: { primary: '#e85d04', secondary: '#fff' } },
+        }}
+      />
       <div className="blobs">
         <div className="blob b1" />
         <div className="blob b2" />
@@ -301,10 +327,13 @@ export default function App() {
       {user?.isAnonymous && (
         <div className="guest-banner">
           <span className="guest-banner-text">
-            <strong>גולש/ת כאורח</strong> — התחברו כדי לשמור מתכונים ולסנכרן בין מכשירים
+            <strong>גולש/ת כאורח</strong> — התחברו כדי לשמור מתכונים
           </span>
+          <button className="guest-banner-btn guest-banner-google" onClick={() => signInGoogle().catch(e => { console.error(e); toast.error('כניסה עם Google נכשלה — נסי שוב'); })}>
+            <span className="guest-google-icon">G</span> Google
+          </button>
           <button className="guest-banner-btn" onClick={() => setShowAuth(true)}>
-            התחברות / הרשמה
+            כניסה
           </button>
         </div>
       )}
@@ -325,13 +354,15 @@ export default function App() {
       )}
 
       <main className="main-content">
-        {/* Hero */}
-        <section className="hero">
-          <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
-          <h1 className="playfair hero-title">מה יש לך<br /><em>בבית?</em></h1>
-          <p className="hero-sub">ספרו לנו מה יש לכם במקרר ובמזווה —<br />נמציא לכם מתכון שאפשר להכין עכשיו</p>
-          <p className="hero-joke">*חוץ מאסוך שמן</p>
-        </section>
+        {/* Hero — only on step 1 (before kosher selection) */}
+        {step === 1 && (
+          <section className="hero">
+            <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
+            <h1 className="hero-title">מה יש לך<br /><em>בבית?</em></h1>
+            <p className="hero-sub">מתכון בהתאמה אישית לפי הרכיבים הקיימים בבית</p>
+            <p className="hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
+          </section>
+        )}
 
         <ProgressBar current={step} />
 
@@ -354,6 +385,7 @@ export default function App() {
                   setEquipment={setEquipment}
                   onNext={() => setStep(3)}
                   useGenderText={useGenderText}
+                  preloadedFromProfile={!user?.isAnonymous && savedEquipment.length > 0 && savedEquipmentType === (kosherType === 'pareve' ? pareveEquipType : kosherType)}
                 />
               )}
               {step === 3 && (
@@ -404,7 +436,8 @@ export default function App() {
       </main>
 
       <ContactFooter user={user} />
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} useGenderText={useGenderText} />}
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} useGenderText={useGenderText} isAnonymous={!!user?.isAnonymous} />}
+      {showTour && <OnboardingTour onClose={() => setShowTour(false)} useGenderText={useGenderText} />}
     </>
   );
 }

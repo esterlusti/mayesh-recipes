@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { doSignOut, getRecentRecipes, saveUserDoc } from '../firebase';
+import { ChefHat } from 'lucide-react';
+import { doSignOut, getRecentRecipes, saveUserDoc, signInGoogle } from '../firebase';
+import toast from 'react-hot-toast';
 import { EQUIPMENT } from '../data/equipment';
 import { VEGETABLES, SPICES } from '../data/ingredients';
 import { SAUCES } from '../data/sauces';
@@ -79,6 +81,11 @@ export default function ProfilePanel({ user, open, onClose, useGenderText, pantr
     ...EQUIPMENT.general
   ];
 
+  const handleGoogleSignIn = async () => {
+    try { await signInGoogle(); onClose(); }
+    catch (e) { console.error(e); toast.error('כניסה עם Google נכשלה'); }
+  };
+
   const handleSignOut = async () => {
     await doSignOut();
     onClose();
@@ -93,9 +100,7 @@ export default function ProfilePanel({ user, open, onClose, useGenderText, pantr
           <div className="profile-avatar">
             {user?.photoURL
               ? <img src={user.photoURL} alt="" className="profile-avatar-img" />
-              : <span className="profile-avatar-placeholder">
-                  {useGenderText('👨‍🍳', '👩‍🍳')}
-                </span>
+              : <span className="profile-avatar-placeholder"><ChefHat size={24} strokeWidth={2} /></span>
             }
           </div>
           <div className="profile-info">
@@ -184,6 +189,16 @@ export default function ProfilePanel({ user, open, onClose, useGenderText, pantr
             </button>
           </div>
         </div>
+
+        {user?.isAnonymous && (
+          <div className="profile-section profile-guest-login">
+            <p className="profile-empty">התחבר/י כדי לשמור מתכונים וציוד</p>
+            <button className="auth-btn google-btn" onClick={handleGoogleSignIn}>
+              <span className="auth-btn-icon">G</span>
+              התחברות עם Google
+            </button>
+          </div>
+        )}
 
         {user && !user.isAnonymous && (
           <button className="btn btn-signout" onClick={handleSignOut}>

@@ -14,7 +14,10 @@ export default function ProgressBar({ current, total = 6 }) {
           />
         ))}
       </div>
-      <div className="progress-step-label">{STEP_LABELS[current - 1]}</div>
+      <div className="progress-step-label">
+        <span className="progress-step-num">{current} / {total}</span>
+        <span className="progress-step-name">{STEP_LABELS[current - 1]}</span>
+      </div>
     </div>
   );
 }

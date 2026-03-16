@@ -90,6 +90,22 @@ export const VEGETABLES = [
   { id: 'green-beans',    label: 'שעועית ירוקה' },
 ];
 
+export const CARBS = [
+  { id: 'rice',           label: 'אורז',                  pantry: true },
+  { id: 'pasta',          label: 'פסטה',                  pantry: true },
+  { id: 'couscous',       label: 'קוסקוס',                pantry: true },
+  { id: 'bulgur',         label: 'בורגול' },
+  { id: 'ptitim',         label: 'פתיתים' },
+  { id: 'bread',          label: 'לחם',                   pantry: true },
+  { id: 'breadcrumbs',    label: 'פירורי לחם',            pantry: true },
+  { id: 'pita',           label: 'פיתות' },
+  { id: 'tortilla',       label: 'טורטיות' },
+  { id: 'egg-noodles',    label: 'אטריות ביצים' },
+  { id: 'lasagna-sheets', label: 'יריעות לזניה' },
+  { id: 'polenta',        label: 'פולנטה' },
+  { id: 'oats',           label: 'שיבולת שועל',          pantry: true },
+];
+
 export const SPICES = [
   { id: 'salt-pepper',    label: 'מלח ופלפל שחור',      pantry: true },
   { id: 'cumin',          label: 'כמון',                  pantry: true },

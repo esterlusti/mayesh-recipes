@@ -1,14 +1,15 @@
 import React from 'react';
+import { CookingPot } from 'lucide-react';
 import RecipeResult from '../components/RecipeResult';
 
 export default function Step6Recipe({ recipe, loading, error, user, kosherType, category, servings, difficulty, onRestart, onSelectOption, onAnotherRecipe, useGenderText }) {
-  const loadingText = useGenderText('מכין לך מתכון...', 'מכינה לך מתכון...');
+  const loadingText = useGenderText('המתכון בדרך אליך ✦', 'המתכון בדרך אלייך ✦');
 
   if (loading) {
     return (
       <div className="step-card loading-card">
         <div className="loading-animation">
-          <div className="loading-pot">🍳</div>
+          <div className="loading-pot"><CookingPot size={52} strokeWidth={1.5} /></div>
           <h3 className="playfair loading-text">{loadingText}</h3>
           <div className="loading-dots">
             <span>.</span><span>.</span><span>.</span>

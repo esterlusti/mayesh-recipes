@@ -1,7 +1,7 @@
 import React from 'react';
+import { ChefHat } from 'lucide-react';
 
 export default function AuthBar({ user, onAvatarClick, useGenderText }) {
-  const emoji = useGenderText('👨‍🍳', '👩‍🍳');
 
   const displayName = user
     ? user.isAnonymous
@@ -21,7 +21,7 @@ export default function AuthBar({ user, onAvatarClick, useGenderText }) {
         <button className="avatar-btn" onClick={onAvatarClick}>
           {user?.photoURL
             ? <img src={user.photoURL} alt="avatar" className="avatar-img" />
-            : <span className="avatar-placeholder">{emoji}</span>
+            : <span className="avatar-placeholder"><ChefHat size={17} strokeWidth={2} /></span>
           }
         </button>
       </div>

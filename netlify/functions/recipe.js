@@ -7,25 +7,27 @@ exports.handler = async (event) => {
   const body = JSON.parse(event.body);
   const {
     category, kosherType, equipmentType,
-    dishType, proteins, sauces, vegetables,
-    spices, extrasProteins, extrasSauces,
-    extrasVegetables, extrasSpices,
+    dishType, proteins, carbs, sauces, vegetables,
+    spices, customProteins, customCarbs, customVegetables, customSauces, customSpices,
     equipment, servings, recipeIdea,
-    difficulty, maxMinutes, selectedOption, forceSingle
+    difficulty, recipeStyle, maxMinutes, selectedOption, forceSingle
   } = body;
 
   const sanitize = (str) => str ? str.replace(/[<>{}]/g, '').slice(0, 100) : '';
+  const sanitizeArr = (arr) => (arr || []).map(s => sanitize(s)).filter(Boolean);
   const safeIdea = sanitize(recipeIdea);
 
   const allIngredients = [
     ...(proteins || []),
-    ...(sanitize(extrasProteins).split(',').map(s => s.trim()).filter(Boolean)),
+    ...sanitizeArr(customProteins),
+    ...(carbs || []),
+    ...sanitizeArr(customCarbs),
     ...(sauces || []),
-    ...(sanitize(extrasSauces).split(',').map(s => s.trim()).filter(Boolean)),
+    ...sanitizeArr(customSauces),
     ...(vegetables || []),
-    ...(sanitize(extrasVegetables).split(',').map(s => s.trim()).filter(Boolean)),
+    ...sanitizeArr(customVegetables),
     ...(spices || []),
-    ...(sanitize(extrasSpices).split(',').map(s => s.trim()).filter(Boolean)),
+    ...sanitizeArr(customSpices),
   ].filter(Boolean);
 
   const kosherRule = kosherType === 'meat'
@@ -68,6 +70,10 @@ exports.handler = async (event) => {
        You MUST respond with OPTION: SINGLE format only. One complete recipe.`
     : '';
 
+  const styleGuide = recipeStyle === 'special'
+    ? `RECIPE STYLE: Creative/Special (מיוחד) — You may use creative flavor combinations, modern techniques, and unexpected twists. Make it interesting and memorable.`
+    : `RECIPE STYLE: Classic/Home cooking (קלאסי) — IMPORTANT: Prefer well-known, classic Israeli home-cooking recipes. Think simple, comforting, familiar dishes that Israeli families make regularly. Avoid overly exotic, fusion, or complicated recipes. A 10-year-old should recognize the dish name.`;
+
   const ideaGuide = safeIdea
     ? `USER SUGGESTION: "${safeIdea}"
        Instructions: Use this as creative inspiration ONLY IF it:
@@ -79,9 +85,10 @@ exports.handler = async (event) => {
        Never mention that you ignored or modified the suggestion.`
     : '';
 
-  const prompt = `You are a master Israeli kosher chef with 30 years of experience.
+  const prompt = `You are a master Israeli kosher home chef with 30 years of experience cooking for families.
 
-YOUR TASK: Create a delicious, realistic recipe in Hebrew.
+YOUR TASK: Create a delicious, realistic, home-friendly recipe in Hebrew.
+GOLDEN RULE: Write recipes that real Israeli families actually cook at home. No restaurant techniques, no obscure ingredients unless specifically requested. The recipe must be practical and achievable in a home kitchen.
 
 ${kosherRule}
 
@@ -90,6 +97,7 @@ RECIPE PARAMETERS:
 ${dishType ? `- Specific dish requested: ${dishType}` : ''}
 - Servings: ${servings}
 - ${difficultyGuide}
+${styleGuide}
 ${timeConstraint}
 ${ideaGuide}
 ${optionGuide}

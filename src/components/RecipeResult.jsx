@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { saveRecipe, saveRating } from '../firebase';
 import { FileDown, Share2, BookmarkPlus, Check, RotateCcw, RefreshCw, ChefHat, ListChecks, Lightbulb, ShoppingCart, Utensils, Star, CookingPot, Mail, MessageCircle, Copy, X, Link } from 'lucide-react';
 
@@ -121,7 +122,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
     setSaving(true);
     try {
       await saveRecipe(user.uid, {
-        title: parsed.title,
+        title: parsed.title || 'מתכון ללא שם',
         category,
         kosher: kosherType,
         servings,
@@ -129,8 +130,10 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
         fullText: recipe
       });
       setSaved(true);
+      toast.success('המתכון נשמר!');
     } catch (e) {
-      console.error('Failed to save:', e);
+      console.error('Failed to save recipe:', e.code, e.message, e);
+      toast.error('שמירה נכשלה — בדקי הרשאות Firestore');
     }
     setSaving(false);
   };
@@ -149,43 +152,72 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
 
   const handleDownloadPDF = async () => {
     const html2pdf = (await import('html2pdf.js')).default;
-    const el = recipeRef.current;
-    if (!el) return;
+    const kosherLbl = kosherType === 'meat' ? 'בשרי' : kosherType === 'dairy' ? 'חלבי' : 'פרווה';
 
-    // Temporarily remove interactive mode and switch to light PDF mode
-    const hadInteractive = el.classList.contains('interactive-mode');
-    if (hadInteractive) el.classList.remove('interactive-mode');
-    el.classList.add('pdf-mode');
+    const badge = (text, color = '#555') =>
+      `<span style="display:inline-block;background:#f5f5f5;border:1px solid #ddd;color:${color};padding:3px 10px;font-size:12px;font-weight:700;border-radius:3px;margin:2px 3px;">${text}</span>`;
 
-    // Hide UI-only elements
-    const hideSelectors = ['.recipe-actions', '.recipe-rating', '.btn-interactive', '.steps-progress', '.all-done-banner'];
-    const hiddenEls = hideSelectors.map(s => el.querySelector(s)).filter(Boolean);
-    hiddenEls.forEach(e => e.style.display = 'none');
+    const htmlContent = `
+      <div dir="rtl" style="font-family:'Arial',sans-serif;color:#111;padding:28px 32px;direction:rtl;line-height:1.6;">
 
-    const checkboxes = el.querySelectorAll('.step-checkbox, .ing-checkbox');
-    checkboxes.forEach(cb => cb.style.display = 'none');
+        <div style="text-align:center;border-bottom:3px solid #111;padding-bottom:18px;margin-bottom:24px;">
+          <div style="font-size:11px;color:#aaa;letter-spacing:1px;margin-bottom:8px;">מה יש בבית?</div>
+          <h1 style="font-size:26px;font-weight:900;margin:0 0 12px;">${parsed.title || 'מתכון'}</h1>
+          <div>
+            ${badge(kosherLbl, '#e85d04')}
+            ${parsed.timePrep ? badge('הכנה: ' + parsed.timePrep) : ''}
+            ${parsed.timeCook ? badge('בישול: ' + parsed.timeCook) : ''}
+            ${parsed.difficulty ? badge(parsed.difficulty) : ''}
+          </div>
+        </div>
 
-    // Remove strikethrough/checked/done visual state from items
-    const checkedItems = el.querySelectorAll('.checked, .step-done');
-    checkedItems.forEach(item => { item.style.opacity = '1'; });
-    const strikeEls = el.querySelectorAll('.line-through, .step-text-done');
-    strikeEls.forEach(item => { item.style.textDecoration = 'none'; item.style.color = 'inherit'; });
+        <div style="margin-bottom:24px;">
+          <h2 style="font-size:15px;font-weight:900;border-bottom:2px solid #111;padding-bottom:6px;margin-bottom:14px;">מרכיבים</h2>
+          <table style="width:100%;border-collapse:collapse;">
+            ${parsed.ingredients.map((ing, i) => `
+              <tr style="border-bottom:1px solid #eee;">
+                <td style="padding:6px 0;font-size:14px;vertical-align:middle;">
+                  <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#e85d04;margin-left:10px;vertical-align:middle;"></span>${ing}
+                </td>
+              </tr>`).join('')}
+          </table>
+        </div>
+
+        <div style="margin-bottom:24px;">
+          <h2 style="font-size:15px;font-weight:900;border-bottom:2px solid #111;padding-bottom:6px;margin-bottom:14px;">שלבי הכנה</h2>
+          <table style="width:100%;border-collapse:collapse;">
+            ${parsed.steps.map((step, i) => `
+              <tr style="border-bottom:1px solid #eee;">
+                <td style="padding:8px 0;vertical-align:top;font-weight:900;font-size:16px;color:#e85d04;width:28px;text-align:right;">${i + 1}</td>
+                <td style="padding:8px 0 8px 8px;font-size:14px;line-height:1.75;">${step}</td>
+              </tr>`).join('')}
+          </table>
+        </div>
+
+        ${parsed.tip ? `
+          <div style="background:#fffbf0;border:1px solid #e8d9a0;border-right:4px solid #f5b731;padding:12px 14px;margin-bottom:20px;">
+            <strong style="font-size:13px;">💡 טיפ: </strong><span style="font-size:13px;">${parsed.tip}</span>
+          </div>` : ''}
+
+        <div style="text-align:center;color:#bbb;font-size:10px;margin-top:24px;padding-top:12px;border-top:1px solid #eee;">
+          נוצר באפליקציית "מה יש בבית?"
+        </div>
+      </div>`;
+
+    const container = document.createElement('div');
+    container.innerHTML = htmlContent;
+    container.style.cssText = 'position:absolute;left:-9999px;top:0;width:794px;';
+    document.body.appendChild(container);
 
     await html2pdf().set({
-      margin: [10, 10, 10, 10],
+      margin: [0, 0, 0, 0],
       filename: `${parsed.title || 'מתכון'}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+      html2canvas: { scale: 2, useCORS: true, scrollY: 0, backgroundColor: '#ffffff' },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }).from(el).save();
+    }).from(container).save();
 
-    // Restore everything
-    el.classList.remove('pdf-mode');
-    if (hadInteractive) el.classList.add('interactive-mode');
-    hiddenEls.forEach(e => e.style.display = '');
-    checkboxes.forEach(cb => cb.style.display = '');
-    checkedItems.forEach(item => { item.style.opacity = ''; });
-    strikeEls.forEach(item => { item.style.textDecoration = ''; item.style.color = ''; });
+    document.body.removeChild(container);
   };
 
   const getShareText = () => {
@@ -195,6 +227,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
   const handleCopyToClipboard = async () => {
     await navigator.clipboard.writeText(getShareText());
     setCopied(true);
+    toast.success('הועתק ללוח!');
     setTimeout(() => setCopied(false), 2000);
   };
 
