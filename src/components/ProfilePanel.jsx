@@ -81,9 +81,20 @@ export default function ProfilePanel({ user, open, onClose, useGenderText, pantr
     ...EQUIPMENT.general
   ];
 
+  const [googleLoading, setGoogleLoading] = useState(false);
+
   const handleGoogleSignIn = async () => {
+    if (googleLoading) return;
+    setGoogleLoading(true);
     try { await signInGoogle(); onClose(); }
-    catch (e) { console.error(e); toast.error('כניסה עם Google נכשלה'); }
+    catch (e) {
+      console.error(e);
+      if (e.code !== 'auth/cancelled-popup-request' && e.code !== 'auth/popup-closed-by-user') {
+        toast.error('כניסה עם Google נכשלה — נסו שוב');
+      }
+    } finally {
+      setGoogleLoading(false);
+    }
   };
 
   const handleSignOut = async () => {
@@ -193,9 +204,9 @@ export default function ProfilePanel({ user, open, onClose, useGenderText, pantr
         {user?.isAnonymous && (
           <div className="profile-section profile-guest-login">
             <p className="profile-empty">התחבר/י כדי לשמור מתכונים וציוד</p>
-            <button className="auth-btn google-btn" onClick={handleGoogleSignIn}>
+            <button className="auth-btn google-btn" onClick={handleGoogleSignIn} disabled={googleLoading}>
               <span className="auth-btn-icon">G</span>
-              התחברות עם Google
+              {googleLoading ? 'מתחבר...' : 'התחברות עם Google'}
             </button>
           </div>
         )}

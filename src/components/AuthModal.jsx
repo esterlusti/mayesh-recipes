@@ -28,10 +28,16 @@ export default function AuthModal({ onClose, useGenderText, isAnonymous }) {
     : 'התחברו כדי לשמור מתכונים וציוד';
 
   const handleGoogle = async () => {
+    if (loading) return;
+    setLoading(true);
     try { await signInGoogle(); onClose(); }
     catch (e) {
       console.error(e);
-      toast.error('כניסה עם Google נכשלה');
+      if (e.code !== 'auth/cancelled-popup-request' && e.code !== 'auth/popup-closed-by-user') {
+        toast.error('כניסה עם Google נכשלה — נסו שוב');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,9 +104,9 @@ export default function AuthModal({ onClose, useGenderText, isAnonymous }) {
 
         {view === 'main' && (
           <>
-            <button className="auth-btn google-btn" onClick={handleGoogle}>
+            <button className="auth-btn google-btn" onClick={handleGoogle} disabled={loading}>
               <span className="auth-btn-icon">G</span>
-              התחברות עם Google
+              {loading ? 'מתחבר...' : 'התחברות עם Google'}
             </button>
 
             <button className="auth-btn email-btn" onClick={() => setView('login')}>
