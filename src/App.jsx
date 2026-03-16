@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { CookingPot } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from './hooks/useAuth';
 import { useGender } from './hooks/useGender';
@@ -16,8 +17,9 @@ import Step3Category from './steps/Step3Category';
 import Step4DishType from './steps/Step4DishType';
 import Step5Ingredients from './steps/Step5Ingredients';
 import Step6Recipe from './steps/Step6Recipe';
+import { Toaster } from 'react-hot-toast';
 import { EQUIPMENT } from './data/equipment';
-import { getAuthRedirectResult } from './firebase';
+import { getAuthRedirectResult, signInGoogle } from './firebase';
 
 const stepVariants = {
   enter: { opacity: 0, x: -30 },
@@ -68,7 +70,7 @@ export default function App() {
   if (authLoading) {
     return (
       <div className="app-loading">
-        <div className="loading-pot">🍳</div>
+        <div className="loading-pot"><CookingPot size={52} strokeWidth={1.5} /></div>
       </div>
     );
   }
@@ -179,17 +181,20 @@ export default function App() {
       equipmentType: pareveEquipType,
       dishType,
       proteins: data.proteins,
+      carbs: data.carbs,
       sauces: data.sauces,
       vegetables: data.vegetables,
       spices: data.spices,
-      extrasProteins: data.extrasProteins,
-      extrasSauces: data.extrasSauces,
-      extrasVegetables: data.extrasVegetables,
-      extrasSpices: data.extrasSpices,
+      customProteins: data.customProteins,
+      customCarbs: data.customCarbs,
+      customVegetables: data.customVegetables,
+      customSauces: data.customSauces,
+      customSpices: data.customSpices,
       equipment: getEquipmentLabels(),
       servings: data.servings,
       recipeIdea: data.recipeIdea,
       difficulty: data.difficulty,
+      recipeStyle: data.recipeStyle,
       maxMinutes: data.maxMinutes
     };
     setLastRequestData(requestPayload);
@@ -286,6 +291,13 @@ export default function App() {
 
   return (
     <>
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: { background: '#1A1A1A', color: '#fff', border: '1px solid #333', borderRadius: '8px', fontSize: '14px', fontFamily: "'Heebo', sans-serif" },
+          success: { iconTheme: { primary: '#e85d04', secondary: '#fff' } },
+        }}
+      />
       <div className="blobs">
         <div className="blob b1" />
         <div className="blob b2" />
@@ -301,10 +313,13 @@ export default function App() {
       {user?.isAnonymous && (
         <div className="guest-banner">
           <span className="guest-banner-text">
-            <strong>גולש/ת כאורח</strong> — התחברו כדי לשמור מתכונים ולסנכרן בין מכשירים
+            <strong>גולש/ת כאורח</strong> — התחברו כדי לשמור מתכונים
           </span>
+          <button className="guest-banner-btn guest-banner-google" onClick={() => signInGoogle().catch(console.error)}>
+            <span className="guest-google-icon">G</span> Google
+          </button>
           <button className="guest-banner-btn" onClick={() => setShowAuth(true)}>
-            התחברות / הרשמה
+            כניסה
           </button>
         </div>
       )}

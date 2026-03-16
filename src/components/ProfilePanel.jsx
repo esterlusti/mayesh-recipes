@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { ChefHat } from 'lucide-react';
 import { doSignOut, getRecentRecipes, saveUserDoc } from '../firebase';
 import { EQUIPMENT } from '../data/equipment';
 import { VEGETABLES, SPICES } from '../data/ingredients';
@@ -93,9 +94,7 @@ export default function ProfilePanel({ user, open, onClose, useGenderText, pantr
           <div className="profile-avatar">
             {user?.photoURL
               ? <img src={user.photoURL} alt="" className="profile-avatar-img" />
-              : <span className="profile-avatar-placeholder">
-                  {useGenderText('👨‍🍳', '👩‍🍳')}
-                </span>
+              : <span className="profile-avatar-placeholder"><ChefHat size={24} strokeWidth={2} /></span>
             }
           </div>
           <div className="profile-info">

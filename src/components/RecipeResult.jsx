@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { saveRecipe, saveRating } from '../firebase';
 import { FileDown, Share2, BookmarkPlus, Check, RotateCcw, RefreshCw, ChefHat, ListChecks, Lightbulb, ShoppingCart, Utensils, Star, CookingPot, Mail, MessageCircle, Copy, X, Link } from 'lucide-react';
 
@@ -121,7 +122,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
     setSaving(true);
     try {
       await saveRecipe(user.uid, {
-        title: parsed.title,
+        title: parsed.title || 'מתכון ללא שם',
         category,
         kosher: kosherType,
         servings,
@@ -129,8 +130,10 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
         fullText: recipe
       });
       setSaved(true);
+      toast.success('המתכון נשמר!');
     } catch (e) {
-      console.error('Failed to save:', e);
+      console.error('Failed to save recipe:', e.code, e.message, e);
+      toast.error('שמירה נכשלה — בדקי הרשאות Firestore');
     }
     setSaving(false);
   };
@@ -195,6 +198,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
   const handleCopyToClipboard = async () => {
     await navigator.clipboard.writeText(getShareText());
     setCopied(true);
+    toast.success('הועתק ללוח!');
     setTimeout(() => setCopied(false), 2000);
   };
 

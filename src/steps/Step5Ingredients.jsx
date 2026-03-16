@@ -1,36 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { PROTEINS, VEGETABLES, SPICES } from '../data/ingredients';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Plus } from 'lucide-react';
+import { PROTEINS, VEGETABLES, SPICES, CARBS } from '../data/ingredients';
 import { SAUCES } from '../data/sauces';
 
 const TABS = [
   { key: 'proteins',   label: 'חלבון'   },
+  { key: 'carbs',      label: 'פחמימות' },
   { key: 'vegetables', label: 'ירקות'   },
   { key: 'sauces',     label: 'רטבים'   },
   { key: 'spices',     label: 'תבלינים' },
 ];
 
-// Build a map from ingredient id → ingredient object for quick lookup
-function buildIdMap(lists) {
-  const map = {};
-  lists.flat().forEach(item => { if (item.id) map[item.id] = item; });
-  return map;
-}
-
 export default function Step5Ingredients({ kosherType, onGenerate, useGenderText, pantryStaples = [] }) {
   const [proteins, setProteins]     = useState([]);
+  const [carbs, setCarbs]           = useState([]);
   const [sauces, setSauces]         = useState([]);
   const [vegetables, setVegetables] = useState([]);
   const [spices, setSpices]         = useState([]);
 
-  const [extrasProteins, setExtrasProteins]     = useState('');
-  const [extrasSauces, setExtrasSauces]         = useState('');
-  const [extrasVegetables, setExtrasVegetables] = useState('');
-  const [extrasSpices, setExtrasSpices]         = useState('');
+  // Custom chips per tab
+  const [customProteins, setCustomProteins]     = useState([]);
+  const [customCarbs, setCustomCarbs]           = useState([]);
+  const [customVegetables, setCustomVegetables] = useState([]);
+  const [customSauces, setCustomSauces]         = useState([]);
+  const [customSpices, setCustomSpices]         = useState([]);
+
+  // Input state per tab
+  const [addingTab, setAddingTab] = useState(null);
+  const [inputVal, setInputVal]   = useState('');
+  const inputRef = useRef();
 
   const [servings, setServings]     = useState(4);
   const [recipeIdea, setRecipeIdea] = useState('');
   const [difficulty, setDifficulty] = useState('medium');
   const [maxMinutes, setMaxMinutes] = useState('');
+  const [recipeStyle, setRecipeStyle] = useState('classic'); // 'classic' | 'special'
   const [activeTab, setActiveTab]   = useState(0);
 
   const generateText = useGenderText('צור לי מתכון ✦', 'צרי לי מתכון ✦');
@@ -48,19 +52,21 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
   // Pre-select pantry staples on mount
   useEffect(() => {
     if (!pantryStaples.length) return;
-
     const preSelect = (list) =>
       list.filter(item => pantryStaples.includes(item.id))
           .map(item => ({ id: item.id, label: item.label, qty: item.defaultQty ?? null }));
-
     setProteins(preSelect(proteinList));
+    setCarbs(preSelect(CARBS));
     setVegetables(preSelect(VEGETABLES));
     setSauces(preSelect(filteredSauces));
     setSpices(preSelect(SPICES));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pantryStaples.join(','), kosherType]);
 
-  // Toggle an ingredient on/off (generic)
+  useEffect(() => {
+    if (addingTab !== null && inputRef.current) inputRef.current.focus();
+  }, [addingTab]);
+
   const toggle = (list, setList, item) => {
     setList(prev => {
       const exists = prev.find(i => i.id === item.id);
@@ -69,7 +75,6 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
     });
   };
 
-  // Change quantity for a selected ingredient
   const changeQty = (list, setList, id, delta, item) => {
     setList(prev => prev.map(i => {
       if (i.id !== id) return i;
@@ -81,36 +86,42 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
   const isSelected = (list, id) => list.some(i => i.id === id);
   const getQty = (list, id) => list.find(i => i.id === id)?.qty ?? null;
 
-  const handleGenerate = () => {
-    const formatItem = (i) => i.qty != null
-      ? `${i.label}${i.qty > 1 ? ` (${i.qty})` : ''}`
-      : i.label;
+  const addCustomChip = (key) => {
+    const val = inputVal.trim();
+    if (!val) { setAddingTab(null); return; }
+    const setMap = { proteins: setCustomProteins, carbs: setCustomCarbs, vegetables: setCustomVegetables, sauces: setCustomSauces, spices: setCustomSpices };
+    setMap[key](prev => [...prev, val]);
+    setInputVal('');
+    setAddingTab(null);
+  };
 
+  const removeCustomChip = (key, idx) => {
+    const setMap = { proteins: setCustomProteins, carbs: setCustomCarbs, vegetables: setCustomVegetables, sauces: setCustomSauces, spices: setCustomSpices };
+    setMap[key](prev => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleGenerate = () => {
+    const formatItem = (i) => i.qty != null ? `${i.label}${i.qty > 1 ? ` (${i.qty})` : ''}` : i.label;
     onGenerate({
-      proteins:          proteins.map(formatItem),
-      sauces:            sauces.map(i => i.label),
-      vegetables:        vegetables.map(formatItem),
-      spices:            spices.map(i => i.label),
-      extrasProteins,    extrasSauces,
-      extrasVegetables,  extrasSpices,
-      servings, recipeIdea, difficulty,
+      proteins:   proteins.map(formatItem),
+      carbs:      carbs.map(i => i.label),
+      sauces:     sauces.map(i => i.label),
+      vegetables: vegetables.map(formatItem),
+      spices:     spices.map(i => i.label),
+      customProteins, customCarbs, customVegetables, customSauces, customSpices,
+      servings, recipeIdea, difficulty, recipeStyle,
       maxMinutes: maxMinutes ? parseInt(maxMinutes) : null
     });
   };
 
-  // Helper: renders a chip + optional quantity control
   const renderChip = (item, list, setList) => {
     const on = isSelected(list, item.id);
     const qty = getQty(list, item.id);
     const hasQty = on && item.qtyType;
     const step = item.qtyStep ?? 1;
-
     return (
-      <div key={item.id} className="chip-wrapper" style={{ '--i': 0 }}>
-        <div
-          className={`chip ${on ? 'on' : ''}`}
-          onClick={() => toggle(list, setList, item)}
-        >
+      <div key={item.id} className="chip-wrapper">
+        <div className={`chip ${on ? 'on' : ''}`} onClick={() => toggle(list, setList, item)}>
           {item.label}
         </div>
         {hasQty && (
@@ -125,38 +136,20 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
   };
 
   const tabContent = {
-    proteins: {
-      items: proteinList,
-      list: proteins, setList: setProteins,
-      extra: extrasProteins, setExtra: setExtrasProteins,
-      placeholder: 'למשל: שעועית לבנה, גבינה בולגרית...',
-    },
-    vegetables: {
-      items: VEGETABLES,
-      list: vegetables, setList: setVegetables,
-      extra: extrasVegetables, setExtra: setExtrasVegetables,
-      placeholder: 'למשל: ארטישוק, כרישה...',
-    },
-    sauces: {
-      items: filteredSauces,
-      list: sauces, setList: setSauces,
-      extra: extrasSauces, setExtra: setExtrasSauces,
-      placeholder: 'למשל: רוטב טריאקי...',
-    },
-    spices: {
-      items: SPICES,
-      list: spices, setList: setSpices,
-      extra: extrasSpices, setExtra: setExtrasSpices,
-      placeholder: 'למשל: סומאק, שמיר...',
-    },
+    proteins:   { items: proteinList,    list: proteins,   setList: setProteins,   custom: customProteins,   customKey: 'proteins'   },
+    carbs:      { items: CARBS,          list: carbs,      setList: setCarbs,      custom: customCarbs,      customKey: 'carbs'      },
+    vegetables: { items: VEGETABLES,     list: vegetables, setList: setVegetables, custom: customVegetables, customKey: 'vegetables' },
+    sauces:     { items: filteredSauces, list: sauces,     setList: setSauces,     custom: customSauces,     customKey: 'sauces'     },
+    spices:     { items: SPICES,         list: spices,     setList: setSpices,     custom: customSpices,     customKey: 'spices'     },
   };
 
   const currentTab = TABS[activeTab];
   const current = tabContent[currentTab.key];
 
   const tabCount = (key) => {
-    const map = { proteins, vegetables, sauces, spices };
-    return map[key]?.length ?? 0;
+    const listMap = { proteins, carbs, vegetables, sauces, spices };
+    const customMap = { proteins: customProteins, carbs: customCarbs, vegetables: customVegetables, sauces: customSauces, spices: customSpices };
+    return (listMap[key]?.length ?? 0) + (customMap[key]?.length ?? 0);
   };
 
   return (
@@ -167,54 +160,54 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
       {/* Tabs */}
       <div className="ing-tabs">
         {TABS.map((tab, i) => (
-          <div
-            key={tab.key}
-            className={`ing-tab ${activeTab === i ? 'active' : ''}`}
-            onClick={() => setActiveTab(i)}
-          >
+          <div key={tab.key} className={`ing-tab ${activeTab === i ? 'active' : ''}`} onClick={() => setActiveTab(i)}>
             {tab.label}
-            {tabCount(tab.key) > 0 && (
-              <span className="tab-badge">{tabCount(tab.key)}</span>
-            )}
+            {tabCount(tab.key) > 0 && <span className="tab-badge">{tabCount(tab.key)}</span>}
           </div>
-        ))}
-      </div>
-
-      {/* Tab summary */}
-      <div className="tab-summary">
-        {TABS.map((tab, i) => (
-          <span key={tab.key} className={tabCount(tab.key) > 0 ? 'tab-summary-item active' : 'tab-summary-item'}>
-            {tab.label}: {tabCount(tab.key)}
-          </span>
         ))}
       </div>
 
       {/* Tab content */}
       <div className="ing-tab-panel">
         <div className="ing-tab-chips">
-          {current.items.map(item =>
-            renderChip(item, current.list, current.setList)
+          {current.items.map(item => renderChip(item, current.list, current.setList))}
+
+          {/* Custom chips */}
+          {current.custom.map((label, idx) => (
+            <div key={`custom-${idx}`} className="chip-wrapper">
+              <div className="chip on chip-custom">
+                {label}
+                <button className="chip-remove" onClick={() => removeCustomChip(current.customKey, idx)}><X size={11} /></button>
+              </div>
+            </div>
+          ))}
+
+          {/* Add custom button / input */}
+          {addingTab === current.customKey ? (
+            <div className="chip-add-input-wrap">
+              <input
+                ref={inputRef}
+                className="chip-add-input"
+                type="text"
+                placeholder="הוסיפי מרכיב..."
+                value={inputVal}
+                onChange={e => setInputVal(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') addCustomChip(current.customKey);
+                  if (e.key === 'Escape') { setAddingTab(null); setInputVal(''); }
+                }}
+                onBlur={() => { if (!inputVal.trim()) { setAddingTab(null); setInputVal(''); } }}
+              />
+              <button className="chip-add-confirm" onClick={() => addCustomChip(current.customKey)} disabled={!inputVal.trim()}>
+                <Plus size={14} />
+              </button>
+            </div>
+          ) : (
+            <div className="chip chip-add-btn" onClick={() => setAddingTab(current.customKey)}>
+              <Plus size={13} /> הוסיפי מרכיב
+            </div>
           )}
         </div>
-        <div className="ing-extra">
-          <span className="ing-extra-label">הוסיפו מה שחסר</span>
-          <input
-            type="text"
-            placeholder={current.placeholder}
-            value={current.extra}
-            onChange={e => current.setExtra(e.target.value)}
-          />
-        </div>
-
-        {/* Next tab button */}
-        {activeTab < TABS.length - 1 && (
-          <button
-            className="btn-next-tab"
-            onClick={() => setActiveTab(i => i + 1)}
-          >
-            המשך ל{TABS[activeTab + 1].label} ←
-          </button>
-        )}
       </div>
 
       {/* Recipe idea */}
@@ -233,6 +226,20 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
       <div className="ing-settings-card">
         <div className="ing-settings-row">
           <div className="ing-setting-group">
+            <span className="ing-setting-label">סגנון</span>
+            <div className="difficulty-row">
+              {[
+                { key: 'classic', label: 'קלאסי' },
+                { key: 'special', label: 'מיוחד' },
+              ].map(d => (
+                <div key={d.key} className={`difficulty-chip ${recipeStyle === d.key ? 'on' : ''}`} onClick={() => setRecipeStyle(d.key)}>
+                  {d.label}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="ing-setting-group">
             <span className="ing-setting-label">קושי</span>
             <div className="difficulty-row">
               {[
@@ -240,11 +247,7 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
                 { key: 'medium', label: 'בינוני'},
                 { key: 'hard',   label: 'מאתגר' },
               ].map(d => (
-                <div
-                  key={d.key}
-                  className={`difficulty-chip ${difficulty === d.key ? 'on' : ''}`}
-                  onClick={() => setDifficulty(d.key)}
-                >
+                <div key={d.key} className={`difficulty-chip ${difficulty === d.key ? 'on' : ''}`} onClick={() => setDifficulty(d.key)}>
                   {d.label}
                 </div>
               ))}
@@ -254,13 +257,7 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
           <div className="ing-setting-group">
             <span className="ing-setting-label">זמן מקסימלי (דקות)</span>
             <div className="time-row">
-              <input
-                type="number"
-                min="10" max="240" step="5"
-                placeholder="—"
-                value={maxMinutes}
-                onChange={e => setMaxMinutes(e.target.value)}
-              />
+              <input type="number" min="10" max="240" step="5" placeholder="—" value={maxMinutes} onChange={e => setMaxMinutes(e.target.value)} />
               <span>דק'</span>
             </div>
           </div>

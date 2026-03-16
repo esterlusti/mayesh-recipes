@@ -17,14 +17,12 @@ export default function Step3Category({ kosherType, onSelect }) {
             key={cat.id}
             className="category-card"
             onClick={() => onSelect(cat)}
-            style={{ backgroundImage: `url(${cat.img})`, '--i': index }}
+            style={{ '--i': index }}
           >
             <div className="category-dot" style={{ background: dotColor }} />
-            <div className="category-overlay">
-              <span className="category-emoji">{cat.emoji}</span>
-              <h3 className="playfair category-name">{cat.name}</h3>
-              <p className="category-desc">{cat.desc}</p>
-            </div>
+            <span className="category-emoji">{cat.emoji}</span>
+            <h3 className="playfair category-name">{cat.name}</h3>
+            <p className="category-desc">{cat.desc}</p>
           </div>
         ))}
       </div>
