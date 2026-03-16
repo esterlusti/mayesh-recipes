@@ -3,7 +3,7 @@ import { CookingPot } from 'lucide-react';
 import RecipeResult from '../components/RecipeResult';
 
 export default function Step6Recipe({ recipe, loading, error, user, kosherType, category, servings, difficulty, onRestart, onSelectOption, onAnotherRecipe, useGenderText }) {
-  const loadingText = useGenderText('מכין לך מתכון...', 'מכינה לך מתכון...');
+  const loadingText = useGenderText('המתכון בדרך אליך ✦', 'המתכון בדרך אלייך ✦');
 
   if (loading) {
     return (

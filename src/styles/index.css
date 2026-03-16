@@ -150,6 +150,52 @@ body {
 .guest-banner-google:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
 .guest-google-icon { font-weight: 900; color: #4285f4; font-size: 13px; }
 
+/* ── ONBOARDING TOUR ── */
+.onboarding-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.65); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  animation: fadeIn 0.25s ease;
+}
+.onboarding-card {
+  background: var(--surface); border: 2px solid var(--border);
+  border-radius: var(--r); padding: 36px 32px 28px;
+  max-width: 360px; width: 100%; text-align: center;
+  position: relative;
+  animation: modalIn 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+.onboarding-close {
+  position: absolute; top: 12px; left: 12px;
+  background: none; border: none; color: var(--text-30); cursor: pointer; padding: 4px;
+}
+.onboarding-close:hover { color: var(--text); }
+.onboarding-icon {
+  display: flex; justify-content: center; margin-bottom: 16px;
+  color: var(--accent);
+}
+.onboarding-title { font-size: 22px; font-weight: 900; margin-bottom: 10px; }
+.onboarding-body { color: var(--text-60); font-size: 15px; line-height: 1.6; margin-bottom: 24px; }
+.onboarding-dots {
+  display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;
+}
+.onboarding-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--border); cursor: pointer; transition: background 0.2s;
+}
+.onboarding-dot.active { background: var(--accent); }
+.onboarding-actions { display: flex; gap: 10px; justify-content: center; }
+.onboarding-btn-skip {
+  padding: 9px 20px; background: none; border: 1px solid var(--border);
+  color: var(--text-60); border-radius: var(--r-full); font-size: 14px; cursor: pointer;
+}
+.onboarding-btn-next {
+  padding: 9px 24px; background: var(--accent); color: white;
+  border: none; border-radius: var(--r-full); font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: opacity 0.2s;
+}
+.onboarding-btn-next:hover { opacity: 0.9; }
+.onboarding-btn-done { padding: 11px 32px; font-size: 15px; }
+
 /* ── GENDER SELECT ── */
 .gender-card {
   background: #FFFFFF;
@@ -200,19 +246,21 @@ body {
   border: 1px solid var(--border);
 }
 .hero-title {
-  font-size: clamp(42px, 8vw, 64px);
-  line-height: 1.15; margin-bottom: 16px;
-  font-weight: 800;
+  font-size: clamp(38px, 7vw, 60px);
+  line-height: 1.2; margin-bottom: 16px;
+  font-weight: 900;
   font-family: 'Rubik', sans-serif;
-  font-style: italic;
-  text-shadow: 3px 4px 0 #000;
-  letter-spacing: -0.01em;
+  font-style: normal;
 }
 .hero-title em {
-  font-style: italic;
-  color: var(--accent);
+  font-style: normal;
   display: inline-block;
-  text-shadow: 3px 4px 0 rgba(0,0,0,0.9);
+  background: #000;
+  color: #fff;
+  padding: 2px 14px 4px;
+  border: 2.5px solid #fff;
+  outline: 2.5px solid #000;
+  margin-right: 4px;
 }
 .hero-sub { color: var(--text-60); font-size: 16px; line-height: 1.7; margin-bottom: 8px; }
 .hero-joke {

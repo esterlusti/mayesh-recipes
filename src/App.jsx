@@ -8,6 +8,7 @@ import { useUserData } from './hooks/useUserData';
 import { usePantryStaples } from './hooks/usePantryStaples';
 import AuthBar from './components/AuthBar';
 import AuthModal from './components/AuthModal';
+import OnboardingTour from './components/OnboardingTour';
 import GenderSelect from './components/GenderSelect';
 import ProfilePanel from './components/ProfilePanel';
 import ProgressBar from './components/ProgressBar';
@@ -36,12 +37,24 @@ export default function App() {
 
   const [showAuth, setShowAuth] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showTour, setShowTour] = useState(false);
   const [step, setStep] = useState(1);
   const [apiError, setApiError] = useState(null);
 
   useEffect(() => {
     getAuthRedirectResult().catch(e => console.error('Auth redirect error:', e));
   }, []);
+
+  // Show tour on first visit or for anonymous users (once per session)
+  useEffect(() => {
+    if (!user) return;
+    const key = user.isAnonymous ? 'tour_guest_shown' : `tour_shown_${user.uid}`;
+    if (!sessionStorage.getItem(key)) {
+      const t = setTimeout(() => setShowTour(true), 800);
+      sessionStorage.setItem(key, '1');
+      return () => clearTimeout(t);
+    }
+  }, [user?.uid, user?.isAnonymous]);
 
   useEffect(() => {
     fetch('/api/health')
@@ -346,7 +359,7 @@ export default function App() {
           <section className="hero">
             <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
             <h1 className="hero-title">מה יש לך<br /><em>בבית?</em></h1>
-            <p className="hero-sub">ספרו לנו מה יש לכם במקרר ובמזווה —<br />נמציא לכם מתכון שאפשר להכין עכשיו</p>
+            <p className="hero-sub">מתכון בהתאמה אישית לפי הרכיבים הקיימים בבית</p>
             <p className="hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
           </section>
         )}
@@ -423,6 +436,7 @@ export default function App() {
 
       <ContactFooter user={user} />
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} useGenderText={useGenderText} isAnonymous={!!user?.isAnonymous} />}
+      {showTour && <OnboardingTour onClose={() => setShowTour(false)} useGenderText={useGenderText} />}
     </>
   );
 }
