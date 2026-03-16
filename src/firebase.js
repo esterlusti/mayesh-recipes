@@ -3,7 +3,7 @@ import { getAuth, GoogleAuthProvider, OAuthProvider,
          signInWithPopup, signInWithRedirect, getRedirectResult,
          linkWithPopup,
          signInAnonymously, signOut } from 'firebase/auth';
-import { getFirestore, doc, getDoc, setDoc,
+import { getFirestore, doc, getDoc, setDoc, deleteDoc,
          collection, query, orderBy, limit,
          getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -53,6 +53,9 @@ export const saveRecipe = (uid, recipeData) =>
   addDoc(collection(db, 'users', uid, 'recipes'), {
     ...recipeData, createdAt: serverTimestamp()
   });
+
+export const deleteRecipe = (uid, recipeId) =>
+  deleteDoc(doc(db, 'users', uid, 'recipes', recipeId));
 
 export const saveRating = (uid, recipeTitle, rating) =>
   addDoc(collection(db, 'ratings'), {
