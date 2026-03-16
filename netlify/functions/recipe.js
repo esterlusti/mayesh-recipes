@@ -17,18 +17,22 @@ exports.handler = async (event) => {
   const sanitizeArr = (arr) => (arr || []).map(s => sanitize(s)).filter(Boolean);
   const safeIdea = sanitize(recipeIdea);
 
-  const allIngredients = [
-    ...(proteins || []),
-    ...sanitizeArr(customProteins),
-    ...(carbs || []),
-    ...sanitizeArr(customCarbs),
-    ...(sauces || []),
-    ...sanitizeArr(customSauces),
-    ...(vegetables || []),
-    ...sanitizeArr(customVegetables),
-    ...(spices || []),
-    ...sanitizeArr(customSpices),
+  const buildSection = (label, items, custom) => {
+    const all = [...(items || []), ...sanitizeArr(custom)].filter(Boolean);
+    return all.length > 0 ? `${label}: ${all.join(', ')}` : null;
+  };
+
+  const ingredientSections = [
+    buildSection('חלבונים', proteins, customProteins),
+    buildSection('פחמימות', carbs, customCarbs),
+    buildSection('ירקות', vegetables, customVegetables),
+    buildSection('רטבים', sauces, customSauces),
+    buildSection('תבלינים', spices, customSpices),
   ].filter(Boolean);
+
+  const ingredientsText = ingredientSections.length > 0
+    ? ingredientSections.join('\n')
+    : '(use basic pantry items)';
 
   const kosherRule = kosherType === 'meat'
     ? `KOSHER — MEAT (בשרי):
@@ -88,7 +92,7 @@ ${ideaGuide}
 ${optionGuide}
 
 AVAILABLE INGREDIENTS (what the user has at home):
-${allIngredients.length > 0 ? allIngredients.join(', ') : '(use basic pantry items)'}
+${ingredientsText}
 
 EQUIPMENT: ${(equipment || []).join(', ') || 'standard kitchen equipment'}
 

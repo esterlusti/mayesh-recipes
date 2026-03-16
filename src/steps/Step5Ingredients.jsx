@@ -170,7 +170,16 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
       {/* Tab content */}
       <div className="ing-tab-panel">
         <div className="ing-tab-chips">
-          {current.items.map(item => renderChip(item, current.list, current.setList))}
+          {current.items.some(i => i.group) ? (() => {
+            let lastGroup = null;
+            return current.items.map(item => {
+              const header = item.group && item.group !== lastGroup
+                ? <div key={`group-${item.group}`} className="ing-sub-header">{item.group}</div>
+                : null;
+              if (item.group) lastGroup = item.group;
+              return <React.Fragment key={item.id}>{header}{renderChip(item, current.list, current.setList)}</React.Fragment>;
+            });
+          })() : current.items.map(item => renderChip(item, current.list, current.setList))}
 
           {/* Custom chips */}
           {current.custom.map((label, idx) => (
