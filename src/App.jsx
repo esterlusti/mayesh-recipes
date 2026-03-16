@@ -347,7 +347,7 @@ export default function App() {
             <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
             <h1 className="hero-title">מה יש לך<br /><em>בבית?</em></h1>
             <p className="hero-sub">ספרו לנו מה יש לכם במקרר ובמזווה —<br />נמציא לכם מתכון שאפשר להכין עכשיו</p>
-            <p className="hero-joke">*חוץ מאסוך שמן</p>
+            <p className="hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
           </section>
         )}
 
