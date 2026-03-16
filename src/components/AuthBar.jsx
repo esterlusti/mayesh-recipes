@@ -1,5 +1,8 @@
 import React from 'react';
 
+// Set to image path when logo is ready, e.g. '/logo.png'
+const LOGO_URL = null;
+
 export default function AuthBar({ user, onAvatarClick, useGenderText }) {
   const emoji = useGenderText('👨‍🍳', '👩‍🍳');
 
@@ -12,7 +15,10 @@ export default function AuthBar({ user, onAvatarClick, useGenderText }) {
   return (
     <div className="auth-bar">
       <div className="auth-bar-right">
-        <span className="auth-logo">מה יש</span>
+        {LOGO_URL
+          ? <img src={LOGO_URL} alt="מה יש" className="auth-logo-img" />
+          : <span className="auth-logo">מה יש</span>
+        }
       </div>
       <div className="auth-bar-left">
         {displayName && (

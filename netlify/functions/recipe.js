@@ -88,7 +88,7 @@ ${kosherRule}
 RECIPE PARAMETERS:
 - Category: ${category}
 ${dishType ? `- Specific dish requested: ${dishType}` : ''}
-- Servings: ${servings}
+- Servings: ${servings} standard adult portions. Provide EXACT quantities (grams/ml/units) scaled for this amount.
 - ${difficultyGuide}
 ${timeConstraint}
 ${ideaGuide}
@@ -97,7 +97,8 @@ ${optionGuide}
 AVAILABLE INGREDIENTS (what the user has at home):
 ${allIngredients.length > 0 ? allIngredients.join(', ') : '(use basic pantry items)'}
 
-AVAILABLE EQUIPMENT: ${(equipment || []).join(', ') || 'standard kitchen equipment'}
+EQUIPMENT CONSTRAINT: The user has ONLY these tools: ${(equipment || []).join(', ') || 'standard kitchen equipment'}.
+Do NOT suggest any equipment not listed here. If no oven — do not bake. If no stovetop — do not fry. Adapt the recipe to available tools only.
 
 CRITICAL RULES FOR INGREDIENT USAGE:
 1. Do NOT force all listed ingredients into the recipe. Use only what makes culinary sense for the dish.
@@ -150,15 +151,22 @@ SELECTED: NONE
 
 When the user selects an option, provide the full recipe in the SINGLE format above.`;
 
-  const systemInstruction = forceSingle
-    ? 'CRITICAL: You MUST respond ONLY in OPTION: SINGLE format. Under no circumstances use OPTION: DUAL. Provide a single complete recipe immediately.'
-    : selectedOption
-    ? 'You MUST respond using OPTION: SINGLE format only. NEVER use OPTION: DUAL. The user has already made their choice. Provide one complete recipe, nothing else.'
-    : null;
+  const baseSystem = `You are a professional Israeli home-cooking chef specializing in Israeli and Mediterranean cuisine.
+You respond ONLY in Hebrew. You follow kosher laws strictly and without exception.
+Your recipes are practical, well-portioned, and designed for home kitchens.
+Prefer local Israeli flavors and spices (za'atar, cumin, paprika, sumac, baharat).
+Provide exact quantities in grams, ml, or units for every ingredient.`;
 
-  const messages = systemInstruction
-    ? [{ role: 'system', content: systemInstruction }, { role: 'user', content: prompt }]
-    : [{ role: 'user', content: prompt }];
+  const systemInstruction = forceSingle
+    ? baseSystem + '\nCRITICAL: You MUST respond ONLY in OPTION: SINGLE format. Under no circumstances use OPTION: DUAL. Provide a single complete recipe immediately.'
+    : selectedOption
+    ? baseSystem + '\nYou MUST respond using OPTION: SINGLE format only. NEVER use OPTION: DUAL. The user has already made their choice. Provide one complete recipe, nothing else.'
+    : baseSystem;
+
+  const messages = [
+    { role: 'system', content: systemInstruction },
+    { role: 'user', content: prompt }
+  ];
 
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -170,8 +178,8 @@ When the user selects an option, provide the full recipe in the SINGLE format ab
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages,
-        max_tokens: 2000,
-        temperature: 0.75
+        max_tokens: 2500,
+        temperature: 0.6
       })
     });
 

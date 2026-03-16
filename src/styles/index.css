@@ -81,6 +81,9 @@ body {
   font-family: 'Rubik', sans-serif; font-weight: 900;
   font-size: 18px; color: #FFFFFF; letter-spacing: -0.5px;
 }
+.auth-logo-img {
+  max-height: 32px; width: auto;
+}
 .auth-bar-left { display: flex; align-items: center; gap: 10px; }
 
 /* ── AUTH MODAL ── */
@@ -288,6 +291,38 @@ body {
 .progress-seg.active { background: var(--accent); border-color: var(--accent); }
 .progress-step-label {
   display: none;
+}
+
+/* ── BREADCRUMBS ── */
+.breadcrumbs {
+  display: flex; align-items: center; gap: 8px;
+  max-width: 720px; margin: 0 auto;
+  padding: 12px 20px 0;
+  direction: rtl;
+  flex-wrap: wrap;
+}
+.breadcrumb-chip {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  box-shadow: 3px 3px 0 var(--border);
+  padding: 4px 12px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.breadcrumb-chip:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--border);
+}
+.breadcrumb-sep {
+  color: var(--text-30);
+  font-size: 14px;
+  user-select: none;
 }
 
 /* ── STEPS CONTAINER ── */

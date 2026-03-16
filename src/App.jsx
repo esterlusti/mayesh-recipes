@@ -9,6 +9,7 @@ import AuthModal from './components/AuthModal';
 import GenderSelect from './components/GenderSelect';
 import ProfilePanel from './components/ProfilePanel';
 import ProgressBar from './components/ProgressBar';
+import Breadcrumbs from './components/Breadcrumbs';
 import ContactFooter from './components/ContactFooter';
 import Step1Kosher from './steps/Step1Kosher';
 import Step2Equipment from './steps/Step2Equipment';
@@ -325,15 +326,25 @@ export default function App() {
       )}
 
       <main className="main-content">
-        {/* Hero */}
-        <section className="hero">
-          <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
-          <h1 className="playfair hero-title">מה יש לך<br /><em>בבית?</em></h1>
-          <p className="hero-sub">ספרו לנו מה יש לכם במקרר ובמזווה —<br />נמציא לכם מתכון שאפשר להכין עכשיו</p>
-          <p className="hero-joke">*חוץ מאסוך שמן</p>
-        </section>
+        {/* Hero — only on step 1 */}
+        {step <= 1 && (
+          <section className="hero">
+            <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
+            <h1 className="playfair hero-title">מה יש לך<br /><em>בבית?</em></h1>
+            <p className="hero-sub">ספרו לנו מה יש לכם במקרר ובמזווה —<br />נמציא לכם מתכון שאפשר להכין עכשיו</p>
+            <p className="hero-joke">*חוץ מאסוך שמן</p>
+          </section>
+        )}
 
         <ProgressBar current={step} />
+        <Breadcrumbs
+          step={step}
+          kosherType={kosherType}
+          equipment={equipment}
+          category={category}
+          dishType={dishType}
+          goToStep={(s) => { if (s < step) setStep(s); }}
+        />
 
         <div className="steps-container">
           <AnimatePresence mode="wait">
