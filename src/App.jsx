@@ -19,6 +19,7 @@ import Step3Category from './steps/Step3Category';
 import Step4DishType from './steps/Step4DishType';
 import Step5Ingredients from './steps/Step5Ingredients';
 import Step6Recipe from './steps/Step6Recipe';
+import StepQuick from './steps/StepQuick';
 import { Toaster } from 'react-hot-toast';
 import { EQUIPMENT } from './data/equipment';
 import { getAuthRedirectResult, signInGoogle } from './firebase';
@@ -79,6 +80,7 @@ export default function App() {
   const [recipeServings, setRecipeServings] = useState(4);
   const [recipeDifficulty, setRecipeDifficulty] = useState('medium');
   const [lastRequestData, setLastRequestData] = useState(null);
+  const [quickMode, setQuickMode] = useState(false);
 
   // Show auth modal if no user
   if (authLoading) {
@@ -169,6 +171,19 @@ export default function App() {
       }
     }
     setStep(2);
+  };
+
+  const handleQuickMode = (type, pareveEquip) => {
+    setKosherType(type);
+    setPareveEquipType(pareveEquip);
+    setQuickMode(true);
+    if (user && !user.isAnonymous && savedEquipment.length > 0) {
+      const effectiveType = type === 'pareve' ? pareveEquip : type;
+      if (savedEquipmentType === effectiveType) {
+        setEquipment(savedEquipment);
+      }
+    }
+    setStep('quick');
   };
 
   const handleCategorySelect = (cat) => {
@@ -301,6 +316,7 @@ export default function App() {
     setDishType(null);
     setRecipe(null);
     setRecipeError(null);
+    setQuickMode(false);
   };
 
   return (
@@ -364,7 +380,7 @@ export default function App() {
           </section>
         )}
 
-        <ProgressBar current={step} />
+        {step !== 'quick' && <ProgressBar current={step} />}
 
         <div className="steps-container">
           <AnimatePresence mode="wait">
@@ -376,7 +392,8 @@ export default function App() {
               exit="exit"
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
-              {step === 1 && <Step1Kosher onSelect={handleKosherSelect} useGenderText={useGenderText} />}
+              {step === 1 && <Step1Kosher onSelect={handleKosherSelect} onQuickMode={handleQuickMode} />}
+              {step === 'quick' && <StepQuick onGenerate={handleGenerate} useGenderText={useGenderText} />}
               {step === 2 && (
                 <Step2Equipment
                   kosherType={kosherType}
@@ -428,8 +445,11 @@ export default function App() {
           </AnimatePresence>
         </div>
 
-        {step > 1 && step < 6 && (
-          <button className="btn btn-back" onClick={() => setStep(s => s - 1)}>
+        {((step > 1 && step < 6) || step === 'quick') && (
+          <button className="btn btn-back" onClick={() => {
+            if (step === 'quick') { setQuickMode(false); setStep(1); }
+            else setStep(s => s - 1);
+          }}>
             → חזרה
           </button>
         )}

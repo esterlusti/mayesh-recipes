@@ -7,18 +7,27 @@ const KOSHER_OPTIONS = [
   { id: 'pareve', name: 'פרווה',iconKey: 'pareve', color: 'var(--pareve)', bg: 'var(--pareve-lt)', desc: 'דגים, ירקות, קטניות' },
 ];
 
-export default function Step1Kosher({ onSelect }) {
+export default function Step1Kosher({ onSelect, onQuickMode }) {
   const [selected, setSelected] = useState(null);
   const [pareveEquip, setPareveEquip] = useState(null);
 
   const handleSelect = (id) => {
     setSelected(id);
-    if (id !== 'pareve') onSelect(id, null);
+    setPareveEquip(null);
   };
 
   const handlePareveEquip = (type) => {
     setPareveEquip(type);
-    onSelect('pareve', type);
+  };
+
+  const isReady = selected && (selected !== 'pareve' || pareveEquip);
+
+  const handleContinue = () => {
+    onSelect(selected, selected === 'pareve' ? pareveEquip : null);
+  };
+
+  const handleQuick = () => {
+    onQuickMode(selected, selected === 'pareve' ? pareveEquip : null);
   };
 
   return (
@@ -60,6 +69,17 @@ export default function Step1Kosher({ onSelect }) {
               כלים חלביים
             </button>
           </div>
+        </div>
+      )}
+
+      {isReady && (
+        <div className="kosher-actions animate-in">
+          <button className="btn btn-next" onClick={handleContinue}>
+            המשיכו לבחירה מלאה →
+          </button>
+          <button className="btn btn-quick" onClick={handleQuick}>
+            ⚡ מצב מהיר
+          </button>
         </div>
       )}
     </div>

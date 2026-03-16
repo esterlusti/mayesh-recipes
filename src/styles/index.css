@@ -1246,6 +1246,38 @@ body {
 .recipe-popup-tip.serving { border-right-color: #5b9bd5; background: #f0f7ff; }
 .recipe-popup-empty { color: var(--text-30); font-size: 14px; text-align: center; padding: 20px; }
 
+/* ── QUICK MODE ── */
+.kosher-actions {
+  display: flex; flex-direction: column; gap: 10px;
+  margin-top: 18px; align-items: center; animation: fadeIn 0.3s ease;
+}
+.kosher-actions .btn-next { width: 100%; max-width: 280px; }
+.btn-quick {
+  background: transparent; border: 1px solid var(--accent);
+  color: var(--accent); padding: 10px 24px; border-radius: var(--r-sm);
+  font-family: inherit; font-size: 14px; cursor: pointer;
+  transition: all 0.2s; font-weight: 600; width: 100%; max-width: 280px;
+}
+.btn-quick:hover { background: var(--accent); color: white; }
+.quick-step { text-align: center; }
+.quick-textarea {
+  width: 100%; padding: 14px; border: 1px solid var(--border);
+  border-radius: var(--r-sm); font-family: inherit; font-size: 14px;
+  resize: vertical; margin-bottom: 16px; direction: rtl;
+  background: var(--surface); color: var(--text);
+  transition: border-color 0.2s;
+}
+.quick-textarea:focus { border-color: var(--accent); outline: none; }
+.quick-settings {
+  display: flex; justify-content: center; gap: 24px;
+  margin-bottom: 18px; flex-wrap: wrap;
+}
+.quick-setting-group { text-align: center; }
+.quick-setting-label {
+  display: block; font-size: 12px; font-weight: 700;
+  color: var(--text-60); margin-bottom: 6px;
+}
+
 /* ── API ERROR BANNER ── */
 .api-error-banner {
   position: fixed; top: 0; left: 0; right: 0; z-index: 200;
