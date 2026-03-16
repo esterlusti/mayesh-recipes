@@ -570,6 +570,7 @@ body {
 .ing-tab-panel { min-height: 120px; }
 .ing-tab-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 14px; }
 .ing-tab-chips .chip { padding: 9px 18px; font-size: 14px; }
+.ing-sub-header { width: 100%; font-size: 13px; font-weight: 600; color: var(--text-secondary, #888); border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 4px; margin-top: 6px; }
 
 /* Custom chip */
 .chip-custom { display: flex; align-items: center; gap: 6px; background: var(--accent) !important; color: white !important; }

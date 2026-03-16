@@ -2,41 +2,38 @@
 // qtyType: 'count' | 'weight' — if present, shows a quantity selector when selected.
 // qtyStep: increment amount, defaultQty: starting value, unit: label (גרם / ק"ג / '')
 // pantry: true — pre-selected as a pantry staple by default.
+// group: sub-category header label (only for proteins.meat)
 
 export const PROTEINS = {
   meat: [
-    { id: 'chicken-legs',    label: 'כרעיים',           qtyType: 'count',  qtyStep: 2,  defaultQty: 4,   unit: '' },
-    { id: 'chicken-wings',   label: 'כנפיים',           qtyType: 'count',  qtyStep: 4,  defaultQty: 8,   unit: '' },
-    { id: 'chicken-breast',  label: 'חזה עוף',          qtyType: 'weight', qtyStep: 200, defaultQty: 400, unit: 'גרם' },
-    { id: 'ground-chicken',  label: 'עוף טחון',         qtyType: 'weight', qtyStep: 500, defaultQty: 500, unit: 'גרם' },
-    { id: 'chicken-thighs',  label: 'ירכיים',           qtyType: 'count',  qtyStep: 2,  defaultQty: 4,   unit: '' },
-    { id: 'chicken-schnitzel',label: 'שניצל עוף',       qtyType: 'count',  qtyStep: 1,  defaultQty: 4,   unit: '' },
-    { id: 'chicken-triangle',label: 'משולש',            qtyType: 'weight', qtyStep: 500, defaultQty: 500, unit: 'גרם' },
-    { id: 'entrecote',       label: 'אנטריקוט',         qtyType: 'weight', qtyStep: 200, defaultQty: 400, unit: 'גרם' },
-    { id: 'ground-beef',     label: 'בשר בקר טחון',    qtyType: 'weight', qtyStep: 500, defaultQty: 500, unit: 'גרם' },
-    { id: 'beef-shoulder',   label: 'כתף בקר',          qtyType: 'weight', qtyStep: 500, defaultQty: 500, unit: 'גרם' },
-    { id: 'ground-lamb',     label: 'כבש טחון',         qtyType: 'weight', qtyStep: 500, defaultQty: 500, unit: 'גרם' },
-    { id: 'sausages',        label: 'נקניקיות',          qtyType: 'count',  qtyStep: 2,  defaultQty: 4,   unit: '' },
-    { id: 'chicken-skewers', label: 'שיפודי עוף',       qtyType: 'count',  qtyStep: 2,  defaultQty: 6,   unit: '' },
-    { id: 'meatballs-ready', label: 'קציצות מוכנות',   qtyType: 'count',  qtyStep: 4,  defaultQty: 8,   unit: '' },
-    { id: 'turkey-breast',   label: 'חזה הודו',         qtyType: 'weight', qtyStep: 500, defaultQty: 500, unit: 'גרם' },
+    // עוף
+    { id: 'chicken-breast',   label: 'חזה עוף',          group: 'עוף', qtyType: 'weight', qtyStep: 200, defaultQty: 400, unit: 'גרם' },
+    { id: 'chicken-legs',     label: 'כרעיים',           group: 'עוף', qtyType: 'count',  qtyStep: 2,  defaultQty: 4,   unit: '' },
+    { id: 'chicken-thighs',   label: 'ירכיים',           group: 'עוף', qtyType: 'count',  qtyStep: 2,  defaultQty: 4,   unit: '' },
+    { id: 'chicken-schnitzel',label: 'שניצל עוף',        group: 'עוף', qtyType: 'count',  qtyStep: 1,  defaultQty: 4,   unit: '' },
+    { id: 'ground-chicken',   label: 'עוף טחון',         group: 'עוף', qtyType: 'weight', qtyStep: 500, defaultQty: 500, unit: 'גרם' },
+    // בשר
+    { id: 'entrecote',        label: 'אנטריקוט',         group: 'בשר', qtyType: 'weight', qtyStep: 200, defaultQty: 400, unit: 'גרם' },
+    { id: 'ground-beef',      label: 'בשר בקר טחון',    group: 'בשר', qtyType: 'weight', qtyStep: 500, defaultQty: 500, unit: 'גרם' },
+    { id: 'beef-shoulder',    label: 'כתף בקר',          group: 'בשר', qtyType: 'weight', qtyStep: 500, defaultQty: 500, unit: 'גרם' },
+    { id: 'ground-lamb',      label: 'כבש טחון',         group: 'בשר', qtyType: 'weight', qtyStep: 500, defaultQty: 500, unit: 'גרם' },
+    // אחר
+    { id: 'sausages',         label: 'נקניקיות',          group: 'אחר', qtyType: 'count',  qtyStep: 2,  defaultQty: 4,   unit: '' },
+    { id: 'meatballs-ready',  label: 'קציצות מוכנות',   group: 'אחר', qtyType: 'count',  qtyStep: 4,  defaultQty: 8,   unit: '' },
+    { id: 'turkey-breast',    label: 'חזה הודו',         group: 'אחר', qtyType: 'weight', qtyStep: 500, defaultQty: 500, unit: 'גרם' },
   ],
   dairy: [
     { id: 'eggs',            label: 'ביצים',             qtyType: 'count',  qtyStep: 1,  defaultQty: 3,   unit: '', pantry: true },
     { id: 'yellow-cheese',   label: 'גבינה צהובה',      qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
-    { id: 'white-cheese-5',  label: 'גבינה לבנה 5%',   qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
-    { id: 'white-cheese-9',  label: 'גבינה לבנה 9%',   qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
-    { id: 'ricotta',         label: 'ריקוטה',            qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
+    { id: 'white-cheese',    label: 'גבינה לבנה',       qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
     { id: 'bulgarian-cheese',label: 'גבינה בולגרית',    qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
-    { id: 'cottage',         label: "גבינת קוטג'",      qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
+    { id: 'mozzarella',      label: 'גבינת מוצרלה',     qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
+    { id: 'parmesan',        label: 'גבינת פרמזן',      qtyType: 'weight', qtyStep: 100, defaultQty: 100, unit: 'גרם' },
     { id: 'sour-cream',      label: 'שמנת חמוצה' },
     { id: 'butter',          label: 'חמאה',              qtyType: 'weight', qtyStep: 100, defaultQty: 100, unit: 'גרם' },
     { id: 'milk',            label: 'חלב',               pantry: true },
     { id: 'cooking-cream',   label: 'שמנת לבישול' },
     { id: 'yogurt',          label: 'יוגורט טבעי',      qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
-    { id: 'mozzarella',      label: 'גבינת מוצרלה',     qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
-    { id: 'parmesan',        label: 'גבינת פרמזן',      qtyType: 'weight', qtyStep: 100, defaultQty: 100, unit: 'גרם' },
-    { id: 'brie',            label: 'גבינת ברי',         qtyType: 'weight', qtyStep: 100, defaultQty: 100, unit: 'גרם' },
   ],
   pareve: [
     { id: 'fresh-salmon',    label: 'סלמון טרי',        qtyType: 'weight', qtyStep: 200, defaultQty: 400, unit: 'גרם' },
@@ -51,8 +48,6 @@ export const PROTEINS = {
     { id: 'white-beans',     label: 'שעועית לבנה' },
     { id: 'red-beans',       label: 'שעועית אדומה' },
     { id: 'tofu',            label: 'טופו',              qtyType: 'weight', qtyStep: 200, defaultQty: 200, unit: 'גרם' },
-    { id: 'rice-noodles',    label: 'אטריות אורז',      qtyType: 'weight', qtyStep: 200, defaultQty: 200, unit: 'גרם' },
-    { id: 'quinoa',          label: 'קינואה' },
   ]
 };
 
@@ -96,6 +91,8 @@ export const CARBS = [
   { id: 'couscous',       label: 'קוסקוס',                pantry: true },
   { id: 'bulgur',         label: 'בורגול' },
   { id: 'ptitim',         label: 'פתיתים' },
+  { id: 'quinoa',         label: 'קינואה' },
+  { id: 'rice-noodles',   label: 'אטריות אורז',           qtyType: 'weight', qtyStep: 200, defaultQty: 200, unit: 'גרם' },
   { id: 'bread',          label: 'לחם',                   pantry: true },
   { id: 'breadcrumbs',    label: 'פירורי לחם',            pantry: true },
   { id: 'pita',           label: 'פיתות' },

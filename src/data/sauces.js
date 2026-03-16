@@ -37,4 +37,5 @@ export const SAUCES = [
   { id: 'tomato-sauce',    label: 'רוטב עגבניות',     emoji: '🍅', kosher: 'all',  pantry: true  },
   { id: 'red-wine',        label: 'יין אדום לבישול',  emoji: '🍷', kosher: 'all'   },
   { id: 'pomegranate-mol', label: 'דבש רימונים',      emoji: '🫙', kosher: 'all'   },
+  { id: 'silan',           label: 'סילאן',             emoji: '🫙', kosher: 'all'   },
 ];
