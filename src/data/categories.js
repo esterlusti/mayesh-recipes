@@ -40,10 +40,10 @@ export const CATEGORIES = {
     { id: 'salad',   name: 'סלטים',       desc: 'טרי, קל, ים-תיכוני',    emoji: '🥗',
       img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=75',
       dishes: ['סלט ים תיכוני','טאבולה','סלט קינואה','סלט עדשים','פלאפל'] },
-    { id: 'soup_p',  name: 'מרק פרווה',   desc: 'עדשים, ירקות, קטניות',  emoji: '🫕',
+    { id: 'soup_p',  name: 'מרק פרווה',   desc: 'עדשים, ירקות, קטניות',  emoji: '🥣',
       img: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&q=75',
       dishes: ['מרק עדשים','מרק ירקות','מרק עגבניות','מרק דלעת','מינסטרונה'] },
-    { id: 'legumes', name: 'קטניות',      desc: 'חומוס, שעועית, עדשים',  emoji: '🫘',
+    { id: 'legumes', name: 'קטניות',      desc: 'חומוס, שעועית, עדשים',  emoji: '🥜',
       img: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&q=75',
       dishes: ['חומוס ביתי','פול מדמס','שעועית ברוטב','עדשים עם אורז','מג\'דרה'] },
   ]

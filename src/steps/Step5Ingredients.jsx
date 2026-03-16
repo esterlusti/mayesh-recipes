@@ -266,8 +266,15 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
             <span className="ing-setting-label">מנות</span>
             <div className="servings-row">
               <button className="servings-btn" onClick={() => setServings(Math.max(1, servings - 1))}>−</button>
-              <span className="servings-num">{servings}</span>
-              <button className="servings-btn" onClick={() => setServings(Math.min(12, servings + 1))}>+</button>
+              <input
+                type="number"
+                min="1"
+                max="200"
+                className="servings-input"
+                value={servings}
+                onChange={e => { const v = parseInt(e.target.value); if (!isNaN(v) && v >= 1) setServings(v); }}
+              />
+              <button className="servings-btn" onClick={() => setServings(servings + 1)}>+</button>
             </div>
           </div>
         </div>

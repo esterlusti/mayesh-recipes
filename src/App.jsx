@@ -385,6 +385,7 @@ export default function App() {
                   setEquipment={setEquipment}
                   onNext={() => setStep(3)}
                   useGenderText={useGenderText}
+                  preloadedFromProfile={!user?.isAnonymous && savedEquipment.length > 0 && savedEquipmentType === (kosherType === 'pareve' ? pareveEquipType : kosherType)}
                 />
               )}
               {step === 3 && (

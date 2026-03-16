@@ -471,8 +471,8 @@ body {
 }
 .chip:hover { box-shadow: 2px 2px 0 #111; }
 .chip.on {
-  background: #111; border-color: #111;
-  color: #f2f0eb; font-weight: 700;
+  background: var(--accent); border-color: var(--accent);
+  color: #fff; font-weight: 700;
 }
 
 /* ── CATEGORIES ── */
@@ -710,6 +710,14 @@ body {
 }
 .servings-btn:hover { border-color: var(--accent); background: var(--surface-2); }
 .servings-num { font-size: 22px; font-weight: 900; min-width: 28px; text-align: center; }
+.servings-input {
+  font-size: 20px; font-weight: 900; width: 52px; text-align: center;
+  border: 2px solid #111; background: var(--surface); color: var(--text);
+  padding: 2px 4px; outline: none; border-radius: 0;
+  font-family: 'Rubik', sans-serif;
+}
+.servings-input::-webkit-inner-spin-button,
+.servings-input::-webkit-outer-spin-button { opacity: 1; }
 
 /* Recipe idea card */
 .ing-idea-card {
@@ -807,6 +815,8 @@ body {
   width: 100%; background: var(--surface); color: var(--text-60);
   margin-top: 12px;
 }
+.profile-guest-login { text-align: center; }
+.profile-guest-login .auth-btn { font-size: 14px; padding: 10px; }
 .btn-save-equip {
   margin-top: 10px; background: var(--teal); color: white; width: 100%;
   border-color: transparent;
