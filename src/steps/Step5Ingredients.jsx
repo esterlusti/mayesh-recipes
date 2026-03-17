@@ -3,12 +3,18 @@ import { X, Plus } from 'lucide-react';
 import { PROTEINS, VEGETABLES, SPICES, CARBS } from '../data/ingredients';
 import { SAUCES } from '../data/sauces';
 
-const TABS = [
-  { key: 'proteins',   label: 'חלבון'   },
-  { key: 'carbs',      label: 'פחמימות' },
-  { key: 'vegetables', label: 'ירקות'   },
-  { key: 'sauces',     label: 'רטבים'   },
-  { key: 'spices',     label: 'תבלינים' },
+const PROTEIN_TAB_LABELS = {
+  meat:   'בשר ועוף',
+  dairy:  'גבינות וביצים',
+  pareve: 'דגים וקטניות',
+};
+
+const getTabs = (kosherType) => [
+  { key: 'proteins',   label: PROTEIN_TAB_LABELS[kosherType] || 'בשר ודגים' },
+  { key: 'carbs',      label: 'דגנים ופסטה' },
+  { key: 'vegetables', label: 'ירקות'       },
+  { key: 'sauces',     label: 'רטבים'       },
+  { key: 'spices',     label: 'תבלינים'     },
 ];
 
 export default function Step5Ingredients({ kosherType, onGenerate, useGenderText, pantryStaples = [] }) {
@@ -37,6 +43,7 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
   const [recipeStyle, setRecipeStyle] = useState('classic'); // 'classic' | 'special'
   const [activeTab, setActiveTab]   = useState(0);
 
+  const tabs = getTabs(kosherType);
   const generateText = useGenderText('צור לי מתכון ✦', 'צרי לי מתכון ✦');
 
   const proteinList = PROTEINS[kosherType] || PROTEINS.pareve;
@@ -143,7 +150,7 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
     spices:     { items: SPICES,         list: spices,     setList: setSpices,     custom: customSpices,     customKey: 'spices'     },
   };
 
-  const currentTab = TABS[activeTab];
+  const currentTab = tabs[activeTab];
   const current = tabContent[currentTab.key];
 
   const tabCount = (key) => {
@@ -159,7 +166,7 @@ export default function Step5Ingredients({ kosherType, onGenerate, useGenderText
 
       {/* Tabs */}
       <div className="ing-tabs">
-        {TABS.map((tab, i) => (
+        {tabs.map((tab, i) => (
           <div key={tab.key} className={`ing-tab ${activeTab === i ? 'active' : ''}`} onClick={() => setActiveTab(i)}>
             {tab.label}
             {tabCount(tab.key) > 0 && <span className="tab-badge">{tabCount(tab.key)}</span>}

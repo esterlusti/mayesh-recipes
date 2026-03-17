@@ -4,8 +4,8 @@ import { getAuth, GoogleAuthProvider, OAuthProvider,
          linkWithPopup,
          signInAnonymously, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc, deleteDoc,
-         collection, query, orderBy, limit,
-         getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
+         collection, collectionGroup, query, orderBy, limit,
+         getDocs, addDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyABfmxXuZlzHIXuGx0cHKxAdctQ_ep-_sA",
@@ -66,6 +66,88 @@ export const saveContactMessage = (data) =>
   addDoc(collection(db, 'contact'), {
     ...data, createdAt: serverTimestamp()
   });
+
+// ── Admin helpers ──
+
+export const logRecipeQuery = (uid, displayName, payload) =>
+  addDoc(collection(db, 'queryLogs'), {
+    uid, displayName, requestPayload: payload, createdAt: serverTimestamp()
+  });
+
+export const getAllRecentRecipes = async (limitCount = 50) => {
+  const q = query(
+    collectionGroup(db, 'recipes'),
+    orderBy('createdAt', 'desc'),
+    limit(limitCount)
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => ({
+    id: d.id,
+    uid: d.ref.parent.parent?.id || '',
+    ...d.data()
+  }));
+};
+
+export const getRecentQueryLogs = async (limitCount = 50) => {
+  const q = query(
+    collection(db, 'queryLogs'),
+    orderBy('createdAt', 'desc'),
+    limit(limitCount)
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+};
+
+export const deleteRecipeDoc = (uid, recipeId) =>
+  deleteDoc(doc(db, 'users', uid, 'recipes', recipeId));
+
+export const getAllUsers = async (limitCount = 100) => {
+  const q = query(collection(db, 'users'), limit(limitCount));
+  const snap = await getDocs(q);
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+};
+
+// ── AI Settings ──
+
+export const updateAIModel = (model, uid) =>
+  setDoc(doc(db, 'settings', 'ai'), {
+    activeModel: model,
+    updatedAt: serverTimestamp(),
+    updatedBy: uid
+  }, { merge: true });
+
+export const onAISettingsChange = (callback) =>
+  onSnapshot(doc(db, 'settings', 'ai'), (snap) => {
+    callback(snap.exists() ? snap.data() : { activeModel: 'openai' });
+  });
+
+// ── About page content ──
+
+export const getAboutContent = async () => {
+  const snap = await getDoc(doc(db, 'settings', 'about'));
+  return snap.exists() ? snap.data() : null;
+};
+
+export const saveAboutContent = (content, uid) =>
+  setDoc(doc(db, 'settings', 'about'), {
+    content,
+    updatedAt: serverTimestamp(),
+    updatedBy: uid
+  }, { merge: true });
+
+// ── Default pantry staples (admin) ──
+
+export const getDefaultPantryStaples = async () => {
+  const snap = await getDoc(doc(db, 'settings', 'defaults'));
+  return snap.exists() ? (snap.data().pantryStaples || []) : [];
+};
+
+export const saveDefaultPantryStaples = (staples, uid) =>
+  setDoc(doc(db, 'settings', 'defaults'), {
+    pantryStaples: staples,
+    updatedAt: serverTimestamp(),
+    updatedBy: uid
+  }, { merge: true });
 
 export const getRecentRecipes = async (uid) => {
   const q = query(

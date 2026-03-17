@@ -1,17 +1,19 @@
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return { statusCode: 500, body: JSON.stringify({ error: 'API key missing' }) };
-
   const body = JSON.parse(event.body);
   const {
     category, kosherType, equipmentType,
     dishType, proteins, carbs, sauces, vegetables,
     spices, customProteins, customCarbs, customVegetables, customSauces, customSpices,
     equipment, servings, recipeIdea,
-    difficulty, recipeStyle, maxMinutes, selectedOption, forceSingle
+    difficulty, recipeStyle, maxMinutes, selectedOption, forceSingle,
+    model
   } = body;
+
+  const useGemini = model === 'gemini';
+  const apiKey = useGemini ? process.env.GEMINI_API_KEY : process.env.OPENAI_API_KEY;
+  if (!apiKey) return { statusCode: 500, body: JSON.stringify({ error: 'API key missing' }) };
 
   const sanitize = (str) => str ? str.replace(/[<>{}]/g, '').slice(0, 100) : '';
   const sanitizeArr = (arr) => (arr || []).map(s => sanitize(s)).filter(Boolean);
@@ -174,27 +176,51 @@ OUTPUT RULES:
   ];
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-4.1-mini',
-        messages,
-        max_tokens: 2000,
-        temperature: 0.6
-      })
-    });
+    let text;
 
-    if (!response.ok) {
-      const err = await response.text();
-      return { statusCode: response.status, body: JSON.stringify({ error: err }) };
+    if (useGemini) {
+      const geminiBody = {
+        contents: [{ parts: [{ text: baseSystemMsg + formatOverride + '\n\n' + prompt }] }],
+        generationConfig: { temperature: 0.6, maxOutputTokens: 2000 }
+      };
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(geminiBody)
+        }
+      );
+      if (!response.ok) {
+        const err = await response.text();
+        return { statusCode: response.status, body: JSON.stringify({ error: err }) };
+      }
+      const data = await response.json();
+      text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    } else {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4.1-mini',
+          messages,
+          max_tokens: 2000,
+          temperature: 0.6
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.text();
+        return { statusCode: response.status, body: JSON.stringify({ error: err }) };
+      }
+
+      const data = await response.json();
+      text = data.choices?.[0]?.message?.content || '';
     }
 
-    const data = await response.json();
-    const text = data.choices?.[0]?.message?.content || '';
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
