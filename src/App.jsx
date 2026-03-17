@@ -24,6 +24,40 @@ import { Toaster } from 'react-hot-toast';
 import { EQUIPMENT } from './data/equipment';
 import { getAuthRedirectResult, signInGoogle } from './firebase';
 
+const DECO_EMOJIS = [
+  { emoji: '🍅', top: '12%', right: '3%', size: 38, rotate: -15 },
+  { emoji: '🥕', top: '28%', left: '4%', size: 32, rotate: 12 },
+  { emoji: '🧅', top: '45%', right: '5%', size: 28, rotate: -8 },
+  { emoji: '🌿', top: '60%', left: '3%', size: 34, rotate: 20 },
+  { emoji: '🍋', top: '75%', right: '4%', size: 30, rotate: -12 },
+  { emoji: '🫒', top: '18%', left: '5%', size: 26, rotate: 8 },
+  { emoji: '🧄', top: '85%', left: '4%', size: 28, rotate: -18 },
+  { emoji: '🌶️', top: '38%', right: '3%', size: 30, rotate: 15 },
+];
+
+function DecoEmojis() {
+  return (
+    <div className="deco-emojis" aria-hidden="true">
+      {DECO_EMOJIS.map((d, i) => (
+        <span
+          key={i}
+          className="deco-emoji"
+          style={{
+            top: d.top,
+            right: d.right,
+            left: d.left,
+            fontSize: d.size,
+            transform: `rotate(${d.rotate}deg)`,
+            animationDelay: `${i * 0.8}s`,
+          }}
+        >
+          {d.emoji}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 const stepVariants = {
   enter: { opacity: 0, x: -30 },
   center: { opacity: 1, x: 0 },
@@ -104,10 +138,10 @@ export default function App() {
           <div className="blob b2" />
           <div className="blob b3" />
         </div>
+        <DecoEmojis />
         <div className="hero-welcome">
-          <h1 className="welcome-main-title">מה יש</h1>
-          <h2 className="welcome-second-title">לך בבית?</h2>
-          <p className="welcome-joke">{`{חוץ מאסוך שמן}`}</p>
+          <h1 className="hero-title welcome-hero-title">מה יש לך<br /><em>בבית?</em></h1>
+          <p className="hero-joke welcome-hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
           <p className="welcome-tagline">מתכונים בהתאמה אישית</p>
 
           <div className="welcome-features">
@@ -369,14 +403,15 @@ export default function App() {
         </div>
       )}
 
+      <DecoEmojis />
       <main className="main-content">
         {/* Hero — only on step 1 (before kosher selection) */}
         {step === 1 && (
           <section className="hero">
             <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
             <h1 className="hero-title">מה יש לך<br /><em>בבית?</em></h1>
-            <p className="hero-sub">מתכון בהתאמה אישית לפי הרכיבים הקיימים בבית</p>
             <p className="hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
+            <p className="hero-sub">מתכון בהתאמה אישית לפי הרכיבים הקיימים בבית</p>
           </section>
         )}
 
