@@ -6,13 +6,17 @@ import { useAuth } from './hooks/useAuth';
 import { useGender } from './hooks/useGender';
 import { useUserData } from './hooks/useUserData';
 import { usePantryStaples } from './hooks/usePantryStaples';
+import { useAdmin } from './hooks/useAdmin';
 import AuthBar from './components/AuthBar';
 import AuthModal from './components/AuthModal';
 import OnboardingTour from './components/OnboardingTour';
 import GenderSelect from './components/GenderSelect';
 import ProfilePanel from './components/ProfilePanel';
+import AdminPanel from './components/AdminPanel';
 import ProgressBar from './components/ProgressBar';
 import ContactFooter from './components/ContactFooter';
+import AboutPage from './components/AboutPage';
+import ContactPage from './components/ContactPage';
 import Step1Kosher from './steps/Step1Kosher';
 import Step2Equipment from './steps/Step2Equipment';
 import Step3Category from './steps/Step3Category';
@@ -23,6 +27,40 @@ import StepQuick from './steps/StepQuick';
 import { Toaster } from 'react-hot-toast';
 import { EQUIPMENT } from './data/equipment';
 import { getAuthRedirectResult, signInGoogle } from './firebase';
+
+const DECO_EMOJIS = [
+  { emoji: '🍅', top: '12%', right: '3%', size: 38, rotate: -15 },
+  { emoji: '🥕', top: '28%', left: '4%', size: 32, rotate: 12 },
+  { emoji: '🍊', top: '45%', right: '5%', size: 28, rotate: -8 },
+  { emoji: '🌿', top: '60%', left: '3%', size: 34, rotate: 20 },
+  { emoji: '🍋', top: '75%', right: '4%', size: 30, rotate: -12 },
+  { emoji: '🥬', top: '18%', left: '5%', size: 26, rotate: 8 },
+  { emoji: '🍆', top: '85%', left: '4%', size: 28, rotate: -18 },
+  { emoji: '🌶️', top: '38%', right: '3%', size: 30, rotate: 15 },
+];
+
+function DecoEmojis() {
+  return (
+    <div className="deco-emojis" aria-hidden="true">
+      {DECO_EMOJIS.map((d, i) => (
+        <span
+          key={i}
+          className="deco-emoji"
+          style={{
+            top: d.top,
+            right: d.right,
+            left: d.left,
+            fontSize: d.size,
+            transform: `rotate(${d.rotate}deg)`,
+            animationDelay: `${i * 0.8}s`,
+          }}
+        >
+          {d.emoji}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 const stepVariants = {
   enter: { opacity: 0, x: -30 },
@@ -35,11 +73,14 @@ export default function App() {
   const { gender, setGender, genderLoaded, useGenderText } = useGender(user);
   const { savedEquipment, savedEquipmentType } = useUserData(user);
   const { pantryStaples, setPantryStaples } = usePantryStaples(user);
+  const { isAdmin } = useAdmin(user);
 
   const [showAuth, setShowAuth] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const [step, setStep] = useState(1);
+  const [page, setPage] = useState('recipe'); // 'recipe' | 'about' | 'contact'
   const [apiError, setApiError] = useState(null);
 
   useEffect(() => {
@@ -104,10 +145,10 @@ export default function App() {
           <div className="blob b2" />
           <div className="blob b3" />
         </div>
+        <DecoEmojis />
         <div className="hero-welcome">
-          <h1 className="welcome-main-title">מה יש</h1>
-          <h2 className="welcome-second-title">לך בבית?</h2>
-          <p className="welcome-joke">{`{חוץ מאסוך שמן}`}</p>
+          <h1 className="hero-title welcome-hero-title">מה יש לך<br /><em>בבית?</em></h1>
+          <p className="hero-joke welcome-hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
           <p className="welcome-tagline">מתכונים בהתאמה אישית</p>
 
           <div className="welcome-features">
@@ -163,7 +204,6 @@ export default function App() {
   const handleKosherSelect = (type, pareveEquip) => {
     setKosherType(type);
     setPareveEquipType(pareveEquip);
-    // Pre-load saved equipment if matching
     if (user && !user.isAnonymous && savedEquipment.length > 0) {
       const effectiveType = type === 'pareve' ? pareveEquip : type;
       if (savedEquipmentType === effectiveType) {
@@ -264,7 +304,6 @@ export default function App() {
     try {
       let recipeText = await fetchWithOption({ ...lastRequestData, selectedOption: option });
 
-      // Guard against loop: if API returned DUAL again, retry once with stronger signal
       if (recipeText.trim().startsWith('OPTION: DUAL')) {
         recipeText = await fetchWithOption({
           ...lastRequestData,
@@ -273,7 +312,6 @@ export default function App() {
         });
       }
 
-      // If still DUAL after retry, show a generic error
       if (recipeText.trim().startsWith('OPTION: DUAL')) {
         throw new Error('לא הצלחנו לטעון מתכון, אנא נסו שוב');
       }
@@ -319,6 +357,13 @@ export default function App() {
     setQuickMode(false);
   };
 
+  const handleNavChange = (newPage) => {
+    setPage(newPage);
+    if (newPage === 'recipe') {
+      // keep current step state
+    }
+  };
+
   return (
     <>
       <Toaster
@@ -333,11 +378,16 @@ export default function App() {
         <div className="blob b2" />
         <div className="blob b3" />
       </div>
+      <DecoEmojis />
 
       <AuthBar
         user={user}
         onAvatarClick={() => setShowProfile(true)}
+        onAdminClick={() => setShowAdmin(true)}
         useGenderText={useGenderText}
+        isAdmin={isAdmin}
+        page={page}
+        onPageChange={handleNavChange}
       />
 
       {user?.isAnonymous && (
@@ -363,99 +413,120 @@ export default function App() {
         onPantryChange={setPantryStaples}
       />
 
+      {isAdmin && (
+        <AdminPanel
+          open={showAdmin}
+          onClose={() => setShowAdmin(false)}
+          user={user}
+        />
+      )}
+
       {apiError && (
         <div className="api-error-banner">
           <span>⚠️ {apiError}</span>
         </div>
       )}
 
-      <main className="main-content">
-        {/* Hero — only on step 1 (before kosher selection) */}
-        {step === 1 && (
-          <section className="hero">
-            <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
-            <h1 className="hero-title">מה יש לך<br /><em>בבית?</em></h1>
-            <p className="hero-sub">מתכון בהתאמה אישית לפי הרכיבים הקיימים בבית</p>
-            <p className="hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
-          </section>
-        )}
+      {page === 'about' && (
+        <main className="main-content page-content">
+          <AboutPage isAdmin={isAdmin} />
+        </main>
+      )}
 
-        {step !== 'quick' && <ProgressBar current={step} />}
+      {page === 'contact' && (
+        <main className="main-content page-content">
+          <ContactPage user={user} />
+        </main>
+      )}
 
-        <div className="steps-container">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={step}
-              variants={stepVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {step === 1 && <Step1Kosher onSelect={handleKosherSelect} onQuickMode={handleQuickMode} />}
-              {step === 'quick' && <StepQuick onGenerate={handleGenerate} useGenderText={useGenderText} />}
-              {step === 2 && (
-                <Step2Equipment
-                  kosherType={kosherType}
-                  pareveEquipType={pareveEquipType}
-                  equipment={equipment}
-                  setEquipment={setEquipment}
-                  onNext={() => setStep(3)}
-                  useGenderText={useGenderText}
-                  preloadedFromProfile={!user?.isAnonymous && savedEquipment.length > 0 && savedEquipmentType === (kosherType === 'pareve' ? pareveEquipType : kosherType)}
-                />
-              )}
-              {step === 3 && (
-                <Step3Category
-                  kosherType={kosherType}
-                  onSelect={handleCategorySelect}
-                />
-              )}
-              {step === 4 && (
-                <Step4DishType
-                  category={category}
-                  onSelect={handleDishSelect}
-                />
-              )}
-              {step === 5 && (
-                <Step5Ingredients
-                  kosherType={kosherType}
-                  onGenerate={handleGenerate}
-                  useGenderText={useGenderText}
-                  pantryStaples={pantryStaples}
-                />
-              )}
-              {step === 6 && (
-                <Step6Recipe
-                  recipe={recipe}
-                  loading={recipeLoading}
-                  error={recipeError}
-                  user={user}
-                  kosherType={kosherType}
-                  category={category?.name}
-                  servings={recipeServings}
-                  difficulty={recipeDifficulty}
-                  onRestart={handleRestart}
-                  onSelectOption={handleSelectOption}
-                  onAnotherRecipe={handleAnotherRecipe}
-                  useGenderText={useGenderText}
-                />
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
+      {page === 'recipe' && (
+        <main className="main-content">
+          {step === 1 && (
+            <section className="hero">
+              <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
+              <h1 className="hero-title">מה יש לך<br /><em>בבית?</em></h1>
+              <p className="hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
+              <p className="hero-sub">מתכון בהתאמה אישית לפי הרכיבים הקיימים בבית</p>
+            </section>
+          )}
 
-        {((step > 1 && step < 6) || step === 'quick') && (
-          <button className="btn btn-back" onClick={() => {
-            if (step === 'quick') { setQuickMode(false); setStep(1); }
-            else setStep(s => s - 1);
-          }}>
-            → חזרה
-          </button>
-        )}
-      </main>
+          {step !== 'quick' && <ProgressBar current={step} />}
 
-      <ContactFooter user={user} />
+          <div className="steps-container">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                variants={stepVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {step === 1 && <Step1Kosher onSelect={handleKosherSelect} onQuickMode={handleQuickMode} />}
+                {step === 'quick' && <StepQuick onGenerate={handleGenerate} useGenderText={useGenderText} />}
+                {step === 2 && (
+                  <Step2Equipment
+                    kosherType={kosherType}
+                    pareveEquipType={pareveEquipType}
+                    equipment={equipment}
+                    setEquipment={setEquipment}
+                    onNext={() => setStep(3)}
+                    useGenderText={useGenderText}
+                    preloadedFromProfile={!user?.isAnonymous && savedEquipment.length > 0 && savedEquipmentType === (kosherType === 'pareve' ? pareveEquipType : kosherType)}
+                  />
+                )}
+                {step === 3 && (
+                  <Step3Category
+                    kosherType={kosherType}
+                    onSelect={handleCategorySelect}
+                  />
+                )}
+                {step === 4 && (
+                  <Step4DishType
+                    category={category}
+                    onSelect={handleDishSelect}
+                  />
+                )}
+                {step === 5 && (
+                  <Step5Ingredients
+                    kosherType={kosherType}
+                    onGenerate={handleGenerate}
+                    useGenderText={useGenderText}
+                    pantryStaples={pantryStaples}
+                  />
+                )}
+                {step === 6 && (
+                  <Step6Recipe
+                    recipe={recipe}
+                    loading={recipeLoading}
+                    error={recipeError}
+                    user={user}
+                    kosherType={kosherType}
+                    category={category?.name}
+                    servings={recipeServings}
+                    difficulty={recipeDifficulty}
+                    onRestart={handleRestart}
+                    onSelectOption={handleSelectOption}
+                    onAnotherRecipe={handleAnotherRecipe}
+                    useGenderText={useGenderText}
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {((step > 1 && step < 6) || step === 'quick') && (
+            <button className="btn btn-back" onClick={() => {
+              if (step === 'quick') { setQuickMode(false); setStep(1); }
+              else setStep(s => s - 1);
+            }}>
+              → חזרה
+            </button>
+          )}
+        </main>
+      )}
+
+      <ContactFooter user={user} onContactClick={() => setPage('contact')} />
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} useGenderText={useGenderText} isAnonymous={!!user?.isAnonymous} />}
       {showTour && <OnboardingTour onClose={() => setShowTour(false)} useGenderText={useGenderText} />}
     </>
