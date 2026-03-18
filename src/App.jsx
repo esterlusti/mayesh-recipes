@@ -387,7 +387,6 @@ export default function App() {
         <div className="blob b2" />
         <div className="blob b3" />
       </div>
-      <DecoEmojis />
 
       <AuthBar
         user={user}
@@ -436,17 +435,33 @@ export default function App() {
         </div>
       )}
 
-      {page === 'about' && (
-        <main className="main-content page-content">
-          <AboutPage isAdmin={isAdmin} />
-        </main>
-      )}
+      <AnimatePresence mode="wait">
+        {page === 'about' && (
+          <motion.main
+            key="about"
+            className="main-content page-content page-transition-wrap"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18 }}
+          >
+            <AboutPage isAdmin={isAdmin} />
+          </motion.main>
+        )}
 
-      {page === 'contact' && (
-        <main className="main-content page-content">
-          <ContactPage user={user} />
-        </main>
-      )}
+        {page === 'contact' && (
+          <motion.main
+            key="contact"
+            className="main-content page-content page-transition-wrap"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18 }}
+          >
+            <ContactPage user={user} />
+          </motion.main>
+        )}
+      </AnimatePresence>
 
       {page === 'recipe' && (
         <main className="main-content">
