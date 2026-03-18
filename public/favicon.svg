@@ -1,7 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <ellipse cx="50" cy="55" rx="38" ry="30" fill="#d4826a" />
-  <ellipse cx="50" cy="50" rx="38" ry="10" fill="#e8a990" />
-  <rect x="44" y="15" width="12" height="20" rx="6" fill="#d4826a" opacity="0.6"/>
-  <rect x="22" y="80" width="56" height="6" rx="3" fill="#b5614a"/>
-  <ellipse cx="50" cy="86" rx="12" ry="3" fill="#b5614a"/>
+  <!-- Pot body -->
+  <rect x="18" y="48" width="64" height="36" rx="2" fill="#e85d04" stroke="#111" stroke-width="4"/>
+  <!-- Pot rim -->
+  <rect x="14" y="42" width="72" height="12" rx="2" fill="#e85d04" stroke="#111" stroke-width="4"/>
+  <!-- Lid -->
+  <rect x="22" y="28" width="56" height="16" rx="2" fill="#fff" stroke="#111" stroke-width="4"/>
+  <!-- Lid knob -->
+  <rect x="44" y="18" width="12" height="12" rx="2" fill="#e85d04" stroke="#111" stroke-width="4"/>
+  <!-- Handle left -->
+  <rect x="4" y="44" width="14" height="8" rx="2" fill="#fff" stroke="#111" stroke-width="4"/>
+  <!-- Handle right -->
+  <rect x="82" y="44" width="14" height="8" rx="2" fill="#fff" stroke="#111" stroke-width="4"/>
+  <!-- Steam lines -->
+  <line x1="38" y1="14" x2="34" y2="6" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="50" y1="12" x2="50" y2="4" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="62" y1="14" x2="66" y2="6" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
 </svg>

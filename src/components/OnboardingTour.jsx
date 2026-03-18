@@ -5,7 +5,7 @@ const STEPS = [
   {
     icon: <ChefHat size={36} strokeWidth={1.5} />,
     title: null, // filled dynamically
-    body: 'כאן תוכלי לקבל מתכון מותאם אישית לפי מה שיש לך בבית — בלי ריצות לסופר.',
+    body: 'כאן תוכלי לקבל מתכון מותאם אישית לפי מה שיש לך בבית.',
   },
   {
     icon: <Utensils size={36} strokeWidth={1.5} />,
