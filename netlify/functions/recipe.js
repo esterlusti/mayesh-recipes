@@ -47,10 +47,10 @@ exports.handler = async (event) => {
        Equipment: ${equipmentType === 'meat' ? 'meat utensils' : 'dairy utensils'} — choose ingredients accordingly.`;
 
   const difficultyGuide = difficulty === 'easy'
-    ? 'DIFFICULTY: Easy — up to 30 minutes, minimal steps, beginner-friendly.'
+    ? 'DIFFICULTY: Easy — maximum 20 minutes total, very simple steps, suitable for beginners or kids. Think scrambled eggs, simple pasta with store-bought sauce, basic salad, or a quick sandwich. No complex techniques whatsoever.'
     : difficulty === 'hard'
-    ? 'DIFFICULTY: Advanced — complex techniques are welcome, no time restriction.'
-    : 'DIFFICULTY: Medium — up to 1 hour, standard home cooking techniques.';
+    ? 'DIFFICULTY: Advanced — over 45 minutes allowed, use complex cooking techniques (braising, multi-step sauces, stuffed dishes), multiple components. Requires genuine cooking experience.'
+    : 'DIFFICULTY: Medium — 30-45 minutes, standard home cooking, familiar techniques like sautéing, roasting, or basic sauces. Comfortable for an average home cook.';
 
   const timeConstraint = maxMinutes
     ? `⏱️ HARD TIME LIMIT: Total cooking + prep time MUST NOT exceed ${maxMinutes} minutes. Design the recipe accordingly.`

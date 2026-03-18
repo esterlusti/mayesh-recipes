@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
+import Confetti from 'react-confetti';
 import { saveRecipe, saveRating } from '../firebase';
-import { FileDown, Share2, BookmarkPlus, Check, RotateCcw, RefreshCw, ChefHat, ListChecks, Lightbulb, ShoppingCart, Utensils, Star, CookingPot, Mail, MessageCircle, Copy, X, Link } from 'lucide-react';
+import { FileDown, Share2, BookmarkPlus, Check, RotateCcw, RefreshCw, ChefHat, ListChecks, Lightbulb, ShoppingCart, Utensils, Star, CookingPot, Mail, MessageCircle, Copy, X, Link, Printer } from 'lucide-react';
 
 export default function RecipeResult({ recipe, user, kosherType, category, servings, difficulty, onRestart, onSelectOption, onAnotherRecipe, useGenderText }) {
   const [saved, setSaved] = useState(false);
@@ -212,7 +213,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
 
     const container = document.createElement('div');
     container.innerHTML = htmlContent;
-    container.style.cssText = 'position:absolute;left:-9999px;top:0;width:794px;';
+    container.style.cssText = 'position:fixed;top:0;left:0;width:794px;opacity:0;pointer-events:none;z-index:9999;';
     document.body.appendChild(container);
 
     await html2pdf().set({
@@ -323,9 +324,12 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
           ))}
         </ol>
         {interactiveMode && allStepsDone && (
-          <div className="all-done-banner">
-            {useGenderText('סיימת!', 'סיימת!')} בתיאבון!
-          </div>
+          <>
+            <Confetti recycle={false} numberOfPieces={220} gravity={0.25} style={{ position: 'fixed', top: 0, left: 0, zIndex: 9999, pointerEvents: 'none' }} />
+            <div className="all-done-banner">
+              {useGenderText('סיימת!', 'סיימת!')} בתיאבון!
+            </div>
+          </>
         )}
       </div>
 
@@ -371,6 +375,9 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
         )}
         <button className="btn btn-pdf" onClick={handleDownloadPDF}>
           <FileDown size={15} /> הורדה כ-PDF
+        </button>
+        <button className="btn btn-print" onClick={() => window.print()}>
+          <Printer size={15} /> הדפסה
         </button>
         <button className="btn btn-share" onClick={() => setShowShareModal(true)}>
           <Share2 size={15} /> שיתוף

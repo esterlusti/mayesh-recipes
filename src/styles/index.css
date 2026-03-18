@@ -554,6 +554,7 @@ body {
   width: 8px; height: 8px; border-radius: 50%;
 }
 .category-emoji { font-size: 32px; line-height: 1; }
+.category-icon { display: flex; align-items: center; justify-content: center; color: var(--text); }
 .category-name { font-size: 14px; font-weight: 900; font-family: 'Rubik', sans-serif; margin: 0; }
 .category-desc { font-size: 11px; color: var(--text-60); margin: 0; }
 
@@ -623,6 +624,23 @@ body {
 .ing-tab-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 14px; }
 .ing-tab-chips .chip { padding: 9px 18px; font-size: 14px; }
 .ing-sub-header { width: 100%; font-size: 13px; font-weight: 600; color: var(--text-secondary, #888); border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 4px; margin-top: 6px; }
+
+/* Chip group headers with black divider */
+.chip-group-header {
+  width: 100%;
+  font-size: 11px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-60);
+  border-top: 2px solid #111;
+  padding-top: 10px; margin-top: 6px;
+}
+.chip-group-header.first { border-top: none; margin-top: 0; padding-top: 0; }
+
+/* Hint text under step subtitle */
+.ing-hint {
+  font-size: 12px; color: var(--text-60);
+  margin-bottom: 12px; margin-top: -4px;
+}
 
 /* Custom chip */
 .chip-custom { display: flex; align-items: center; gap: 6px; background: var(--accent) !important; color: white !important; }
@@ -1533,4 +1551,13 @@ body {
   .blob { display: none; }
   .deco-emojis { display: none; }
   .auth-nav-btn { font-size: 11px; padding: 5px 8px; }
+}
+
+/* ── PRINT ── */
+@media print {
+  .auth-bar, .guest-banner, .progress-bar-wrap, .recipe-actions,
+  .btn-print, .recipe-rating, .app-footer, .share-modal,
+  .all-done-banner, .onboarding-tour { display: none !important; }
+  .recipe-result { border: none; box-shadow: none; padding: 0; }
+  body { background: white; background-image: none; }
 }
