@@ -213,8 +213,9 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
 
     const container = document.createElement('div');
     container.innerHTML = htmlContent;
-    container.style.cssText = 'position:fixed;top:0;left:0;width:794px;opacity:0;pointer-events:none;z-index:9999;';
+    container.style.cssText = 'position:fixed;top:0;left:0;width:794px;background:white;pointer-events:none;z-index:9999;';
     document.body.appendChild(container);
+    await new Promise(r => setTimeout(r, 50));
 
     await html2pdf().set({
       margin: [0, 0, 0, 0],
