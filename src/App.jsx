@@ -22,6 +22,7 @@ import Step2Equipment from './steps/Step2Equipment';
 import Step3Category from './steps/Step3Category';
 import Step4DishType from './steps/Step4DishType';
 import Step5Ingredients from './steps/Step5Ingredients';
+import Step6Settings from './steps/Step6Settings';
 import Step6Recipe from './steps/Step6Recipe';
 import StepQuick from './steps/StepQuick';
 import { Toaster } from 'react-hot-toast';
@@ -113,6 +114,7 @@ export default function App() {
   const [equipment, setEquipment] = useState([]);
   const [category, setCategory] = useState(null);
   const [dishType, setDishType] = useState(null);
+  const [pendingIngredients, setPendingIngredients] = useState(null);
 
   // Recipe state
   const [recipe, setRecipe] = useState(null);
@@ -236,10 +238,16 @@ export default function App() {
     setStep(5);
   };
 
-  const handleGenerate = async (data) => {
-    setRecipeServings(data.servings);
-    setRecipeDifficulty(data.difficulty);
+  const handleIngredientsNext = (ingredientData) => {
+    setPendingIngredients(ingredientData);
     setStep(6);
+  };
+
+  const handleGenerate = async (data) => {
+    const mergedData = pendingIngredients ? { ...pendingIngredients, ...data } : data;
+    setRecipeServings(mergedData.servings);
+    setRecipeDifficulty(mergedData.difficulty);
+    setStep(7);
     setRecipeLoading(true);
     setRecipeError(null);
     setRecipe(null);
@@ -249,22 +257,22 @@ export default function App() {
       kosherType,
       equipmentType: pareveEquipType,
       dishType,
-      proteins: data.proteins,
-      carbs: data.carbs,
-      sauces: data.sauces,
-      vegetables: data.vegetables,
-      spices: data.spices,
-      customProteins: data.customProteins,
-      customCarbs: data.customCarbs,
-      customVegetables: data.customVegetables,
-      customSauces: data.customSauces,
-      customSpices: data.customSpices,
+      proteins: mergedData.proteins,
+      carbs: mergedData.carbs,
+      sauces: mergedData.sauces,
+      vegetables: mergedData.vegetables,
+      spices: mergedData.spices,
+      customProteins: mergedData.customProteins,
+      customCarbs: mergedData.customCarbs,
+      customVegetables: mergedData.customVegetables,
+      customSauces: mergedData.customSauces,
+      customSpices: mergedData.customSpices,
       equipment: getEquipmentLabels(),
-      servings: data.servings,
-      recipeIdea: data.recipeIdea,
-      difficulty: data.difficulty,
-      recipeStyle: data.recipeStyle,
-      maxMinutes: data.maxMinutes
+      servings: mergedData.servings,
+      recipeIdea: mergedData.recipeIdea,
+      difficulty: mergedData.difficulty,
+      recipeStyle: mergedData.recipeStyle,
+      maxMinutes: mergedData.maxMinutes
     };
     setLastRequestData(requestPayload);
 
@@ -355,6 +363,7 @@ export default function App() {
     setRecipe(null);
     setRecipeError(null);
     setQuickMode(false);
+    setPendingIngredients(null);
   };
 
   const handleNavChange = (newPage) => {
@@ -450,7 +459,7 @@ export default function App() {
             </section>
           )}
 
-          {step !== 'quick' && <ProgressBar current={step} />}
+          {step !== 'quick' && step < 7 && <ProgressBar current={step} total={6} />}
 
           <div className="steps-container">
             <AnimatePresence mode="wait">
@@ -490,12 +499,18 @@ export default function App() {
                 {step === 5 && (
                   <Step5Ingredients
                     kosherType={kosherType}
-                    onGenerate={handleGenerate}
+                    onNext={handleIngredientsNext}
                     useGenderText={useGenderText}
                     pantryStaples={pantryStaples}
                   />
                 )}
                 {step === 6 && (
+                  <Step6Settings
+                    onGenerate={handleGenerate}
+                    useGenderText={useGenderText}
+                  />
+                )}
+                {step === 7 && (
                   <Step6Recipe
                     recipe={recipe}
                     loading={recipeLoading}
@@ -515,7 +530,7 @@ export default function App() {
             </AnimatePresence>
           </div>
 
-          {((step > 1 && step < 6) || step === 'quick') && (
+          {((step > 1 && step < 7) || step === 'quick') && (
             <button className="btn btn-back" onClick={() => {
               if (step === 'quick') { setQuickMode(false); setStep(1); }
               else setStep(s => s - 1);

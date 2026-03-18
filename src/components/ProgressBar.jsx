@@ -1,6 +1,6 @@
 import React from 'react';
 
-const STEP_LABELS = ['סוג מנה', 'ציוד', 'קטגוריה', 'מנה', 'מרכיבים', 'מתכון'];
+const STEP_LABELS = ['סוג מנה', 'ציוד', 'קטגוריה', 'מנה', 'מרכיבים', 'הגדרות'];
 
 export default function ProgressBar({ current, total = 6 }) {
   return (

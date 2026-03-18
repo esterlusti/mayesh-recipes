@@ -47,6 +47,22 @@ export const ICONS = {
   clock:    Clock,
   servings: Users,
   next:     ChevronLeft,
+
+  // Category icons (Step3)
+  cat_roast:   Flame,
+  cat_pan:     UtensilsCrossed,
+  cat_stew:    CookingPot,
+  cat_grill:   Flame,
+  cat_asian:   UtensilsCrossed,
+  cat_pasta:   UtensilsCrossed,
+  cat_pie:     Egg,
+  cat_eggs:    Egg,
+  cat_bake:    Star,
+  cat_salad:   Salad,
+  cat_soup:    CookingPot,
+  cat_legumes: Leaf,
+  cat_dessert: Cherry,
+  cat_fish:    Fish,
 };
 
 /**

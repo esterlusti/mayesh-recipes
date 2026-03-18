@@ -1,5 +1,6 @@
 import React from 'react';
 import { CATEGORIES } from '../data/categories';
+import Icon from '../components/icons';
 
 export default function Step3Category({ kosherType, onSelect }) {
   const categories = CATEGORIES[kosherType] || [];
@@ -20,7 +21,9 @@ export default function Step3Category({ kosherType, onSelect }) {
             style={{ '--i': index }}
           >
             <div className="category-dot" style={{ background: dotColor }} />
-            <span className="category-emoji">{cat.emoji}</span>
+            <div className="category-icon">
+              <Icon name={cat.iconKey} size={32} />
+            </div>
             <h3 className="playfair category-name">{cat.name}</h3>
             <p className="category-desc">{cat.desc}</p>
           </div>
