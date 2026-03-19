@@ -464,7 +464,7 @@ export default function App() {
       </AnimatePresence>
 
       {page === 'recipe' && (
-        <main className="main-content">
+        <main className="main-content" style={{ paddingTop: 85 }}>
           {step === 1 && (
             <section className="hero">
               <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
