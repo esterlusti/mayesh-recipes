@@ -602,34 +602,55 @@ body {
 }
 .dish-custom-submit:disabled { opacity: 0.4; cursor: default; }
 
-/* ── INGREDIENTS (TABS) ── */
+/* ── INGREDIENTS (STEP PROGRESS) ── */
 .ingredients-step .step-card { padding-bottom: 20px; }
-.ing-tabs {
-  display: flex; gap: 0;
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
-  margin-bottom: 16px; margin-top: 4px;
-  border: 2px solid #111;
+
+/* Step progress indicator */
+.ing-tab-progress {
+  display: flex; align-items: flex-start;
+  margin-bottom: 24px; margin-top: 4px;
+  position: relative;
 }
-.ing-tab {
-  flex: 1; text-align: center;
-  padding: 9px 0; font-size: 12px; font-weight: 700;
-  color: #555;
-  border-radius: 0;
-  border: none;
-  border-left: 2px solid #111;
-  background: transparent;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  letter-spacing: 0.01em;
+.ing-tab-step {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px;
+  cursor: pointer; position: relative; padding-bottom: 4px;
 }
-.ing-tab:first-child { border-left: none; }
-.ing-tab:hover { background: var(--surface-2); color: #111; }
-.ing-tab.active {
-  color: #fff;
-  background: var(--accent);
+.ing-tab-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 12px; left: -50%;
+  width: 100%; height: 2px;
+  background: var(--border);
+  z-index: 0;
 }
+.ing-tab-step.done:not(:last-child)::after,
+.ing-tab-step.done + .ing-tab-step::after,
+.ing-tab-step.current:not(:last-child)::after { background: var(--accent); }
+.ing-tab-step-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 900; color: var(--text-60);
+  background: var(--surface); position: relative; z-index: 1;
+  transition: all 0.2s;
+}
+.ing-tab-step.done .ing-tab-step-num {
+  background: var(--accent); border-color: var(--accent); color: white;
+}
+.ing-tab-step.current .ing-tab-step-num {
+  background: var(--accent); border-color: var(--accent); color: white;
+  box-shadow: 0 0 0 4px rgba(232, 93, 4, 0.15);
+}
+.ing-tab-step-label {
+  font-size: 10px; font-weight: 600; color: var(--text-30); text-align: center; line-height: 1.2;
+}
+.ing-tab-step.current .ing-tab-step-label { color: var(--accent); font-weight: 800; }
+.ing-tab-step.done .ing-tab-step-label { color: var(--text-30); }
+.ing-tab-step .tab-badge {
+  position: absolute; top: -4px; left: 2px; z-index: 2;
+}
+
+/* Tab panel and chips */
 .ing-tab-panel { min-height: 120px; }
 .ing-tab-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 14px; }
 .ing-tab-chips .chip { padding: 9px 18px; font-size: 14px; }
@@ -685,7 +706,7 @@ body {
   width: 16px; height: 16px; border-radius: 50%;
   margin-right: 4px; margin-bottom: 1px; vertical-align: middle;
 }
-.ing-tab.active .tab-badge { background: rgba(255,255,255,0.3); }
+.ing-tab-step.current .tab-badge { background: white; color: var(--accent); }
 
 /* Tab summary bar */
 .tab-summary {
@@ -709,19 +730,26 @@ body {
   padding: 0 2px; line-height: 1;
 }
 .qty-value { font-size: 11px; font-weight: 700; color: var(--text); min-width: 40px; text-align: center; }
-/* Next tab navigation button */
+/* Ingredients navigation row */
+.ing-nav-row {
+  display: flex; flex-direction: column; gap: 8px; margin-top: 8px;
+}
 .btn-next-tab {
-  display: block; width: 100%;
-  margin-top: 14px;
-  background: var(--surface); border: 1px dashed var(--border);
-  color: var(--text-60); font-family: inherit; font-size: 13px;
-  font-weight: 700; cursor: pointer; border-radius: var(--r-sm);
-  padding: 10px; transition: all 0.2s; text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; background: var(--accent); color: white;
+  border: none; border-radius: var(--r-full);
+  font-family: inherit; font-size: 15px; font-weight: 700;
+  padding: 13px 20px; cursor: pointer; transition: background 0.2s;
 }
-.btn-next-tab:hover {
-  border-color: var(--accent); color: var(--accent);
-  background: var(--accent-lt);
+.btn-next-tab:hover { background: #c0440a; }
+.btn-next-tab-icon { flex-shrink: 0; }
+.btn-skip-to-end {
+  background: transparent; border: none; color: var(--text-30);
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  cursor: pointer; padding: 4px; text-align: center;
+  text-decoration: underline; text-underline-offset: 3px; width: 100%;
 }
+.btn-skip-to-end:hover { color: var(--text-60); }
 .ing-extra {
   margin-top: 12px; padding-top: 12px;
   border-top: 1px solid var(--border);
@@ -1555,7 +1583,7 @@ body {
   .recipe-actions .btn { width: 100%; }
   .dual-cards { grid-template-columns: 1fr; }
   .ing-settings-row { flex-direction: column; gap: 16px; }
-  .ing-tab { font-size: 12px; padding: 9px 0; }
+  .ing-tab-step-label { font-size: 9px; }
   .share-options { grid-template-columns: repeat(2, 1fr); }
 
   .blob { display: none; }

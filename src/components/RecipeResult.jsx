@@ -211,21 +211,24 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
         </div>
       </div>`;
 
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position:fixed;top:0;left:0;overflow:hidden;width:0;height:0;z-index:-9999;';
     const container = document.createElement('div');
     container.innerHTML = htmlContent;
-    container.style.cssText = 'position:absolute;top:-9999px;left:0;width:794px;background:white;';
-    document.body.appendChild(container);
-    await new Promise(r => setTimeout(r, 200));
+    container.style.cssText = 'position:absolute;top:0;left:0;width:794px;background:white;';
+    wrapper.appendChild(container);
+    document.body.appendChild(wrapper);
+    await new Promise(r => setTimeout(r, 300));
 
     await html2pdf().set({
       margin: [0, 0, 0, 0],
       filename: `${parsed.title || 'מתכון'}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, scrollY: 0, backgroundColor: '#ffffff', windowWidth: 794 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', windowWidth: 794, logging: false },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     }).from(container).save();
 
-    document.body.removeChild(container);
+    document.body.removeChild(wrapper);
   };
 
   const getShareText = () => {
