@@ -16,6 +16,8 @@ export default function AuthBar({ user, onAvatarClick, onAdminClick, useGenderTe
   ];
 
   return (
+    <>
+    <div className="dev-banner">האתר בהרצה — ייתכנו שגיאות</div>
     <div className="auth-bar">
       <div className="auth-bar-right">
         <span className="auth-logo">מה יש</span>
@@ -48,5 +50,6 @@ export default function AuthBar({ user, onAvatarClick, onAdminClick, useGenderTe
         </button>
       </div>
     </div>
+    </>
   );
 }

@@ -64,9 +64,19 @@ body {
   100% { transform: translate(10px, -10px) scale(1.02); }
 }
 
+/* ── DEV BANNER ── */
+.dev-banner {
+  position: fixed; top: 0; right: 0; left: 0; z-index: 101;
+  background: #e85d04; color: #fff;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+  text-align: center; padding: 5px 0;
+  border-bottom: 2px solid #111;
+  direction: rtl;
+}
+
 /* ── AUTH BAR ── */
 .auth-bar {
-  position: fixed; top: 0; right: 0; left: 0; z-index: 100;
+  position: fixed; top: 29px; right: 0; left: 0; z-index: 100;
   background: var(--surface);
   border-bottom: 2px solid var(--border);
   padding: 0 24px; height: 56px;
@@ -267,7 +277,7 @@ body {
 
 /* ── HERO ── */
 .hero {
-  text-align: center; padding: 72px 20px 20px;
+  text-align: center; padding: 101px 20px 20px;
   position: relative; z-index: 1;
 }
 .hero-welcome {
@@ -417,7 +427,7 @@ body {
 
 /* ── STEPS CONTAINER ── */
 .main-content { position: relative; z-index: 1; padding-bottom: 40px; min-height: 0; }
-.page-content { padding-top: 20px; }
+.page-content { padding-top: 49px; }
 
 /* ── PAGE TRANSITION WRAPPER ── */
 .page-transition-wrap { width: 100%; }
@@ -1555,7 +1565,7 @@ body {
 
 /* ── PRINT ── */
 @media print {
-  .auth-bar, .guest-banner, .progress-bar-wrap, .recipe-actions,
+  .dev-banner, .auth-bar, .guest-banner, .progress-bar-wrap, .recipe-actions,
   .btn-print, .recipe-rating, .app-footer, .share-modal,
   .all-done-banner, .onboarding-tour { display: none !important; }
   .recipe-result { border: none; box-shadow: none; padding: 0; }
