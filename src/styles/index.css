@@ -602,7 +602,7 @@ body {
 }
 .dish-custom-submit:disabled { opacity: 0.4; cursor: default; }
 
-/* ── INGREDIENTS (TABS) ── */
+/* ── INGREDIENTS (STEP PROGRESS) ── */
 .ingredients-step .step-card { padding-bottom: 20px; }
 
 /* Segmented tab bar */
@@ -759,12 +759,6 @@ body {
   font-size: 10px; font-weight: 900; line-height: 1;
   width: 16px; height: 16px; border-radius: 50%;
 }
-/* Badge overlaid on top-right of the circle number */
-.ing-tab-step .tab-badge {
-  position: absolute; top: -4px; left: calc(50% + 5px); z-index: 2;
-  margin: 0;
-}
-.ing-tab-step.current .tab-badge { background: white; color: var(--accent); }
 .ing-tab.active .tab-badge { background: rgba(255,255,255,0.3); }
 
 /* Navigation row */
@@ -800,19 +794,26 @@ body {
   padding: 0 2px; line-height: 1;
 }
 .qty-value { font-size: 11px; font-weight: 700; color: var(--text); min-width: 40px; text-align: center; }
-/* Next tab navigation button */
+/* Ingredients navigation row */
+.ing-nav-row {
+  display: flex; flex-direction: column; gap: 8px; margin-top: 8px;
+}
 .btn-next-tab {
-  display: block; width: 100%;
-  margin-top: 14px;
-  background: var(--surface); border: 1px dashed var(--border);
-  color: var(--text-60); font-family: inherit; font-size: 13px;
-  font-weight: 700; cursor: pointer; border-radius: var(--r-sm);
-  padding: 10px; transition: all 0.2s; text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; background: var(--accent); color: white;
+  border: none; border-radius: var(--r-full);
+  font-family: inherit; font-size: 15px; font-weight: 700;
+  padding: 13px 20px; cursor: pointer; transition: background 0.2s;
 }
-.btn-next-tab:hover {
-  border-color: var(--accent); color: var(--accent);
-  background: var(--accent-lt);
+.btn-next-tab:hover { background: #c0440a; }
+.btn-next-tab-icon { flex-shrink: 0; }
+.btn-skip-to-end {
+  background: transparent; border: none; color: var(--text-30);
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  cursor: pointer; padding: 4px; text-align: center;
+  text-decoration: underline; text-underline-offset: 3px; width: 100%;
 }
+.btn-skip-to-end:hover { color: var(--text-60); }
 .ing-extra {
   margin-top: 12px; padding-top: 12px;
   border-top: 1px solid var(--border);
@@ -1654,7 +1655,7 @@ body {
   .recipe-actions .btn { width: 100%; }
   .dual-cards { grid-template-columns: 1fr; }
   .ing-settings-row { flex-direction: column; gap: 16px; }
-  .ing-tab { font-size: 12px; padding: 9px 0; }
+  .ing-tab-step-label { font-size: 9px; }
   .share-options { grid-template-columns: repeat(2, 1fr); }
 
   .blob { display: none; }

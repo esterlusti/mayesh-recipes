@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>כיווני עיצוב</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&family=Rubik:wght@700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Heebo', sans-serif;
+  background: #0a0a0a;
+  padding: 48px 24px;
+  direction: rtl;
+  min-height: 100vh;
+}
+.page-title {
+  text-align: center;
+  font-family: 'Rubik', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 56px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 48px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.direction-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  color: rgba(255,255,255,0.25);
+  text-align: center;
+}
+
+/* ══════════════════════════════════════
+   THEME 1 — OBSIDIAN GLASS
+   כהה, glassmorphism, gradient mesh
+══════════════════════════════════════ */
+.t1-wrap {
+  border-radius: 28px;
+  overflow: hidden;
+  position: relative;
+  background: #0f0f12;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+}
+.t1-wrap::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -60px;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(255,100,60,0.35) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.t1-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: -40px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(120,60,255,0.25) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.t1-bar {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+}
+.t1-logo {
+  font-family: 'Rubik', sans-serif;
+  font-size: 20px; font-weight: 900;
+  background: linear-gradient(135deg, #ff6b3d, #ff9a3d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.t1-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b3d, #9b59b6);
+}
+.t1-body { padding: 20px; position: relative; z-index: 1; }
+.t1-progress {
+  margin-bottom: 22px;
+  display: flex; align-items: center; gap: 10px;
+}
+.t1-step-num {
+  font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.3);
+  letter-spacing: 0.1em;
+}
+.t1-bar-track {
+  flex: 1; height: 3px; border-radius: 2px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.t1-bar-fill {
+  height: 100%; width: 60%;
+  background: linear-gradient(90deg, #ff6b3d, #ff9a3d);
+  border-radius: 2px;
+}
+.t1-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 20px;
+  backdrop-filter: blur(20px);
+  margin-bottom: 12px;
+}
+.t1-title {
+  font-family: 'Rubik', sans-serif;
+  font-size: 22px; font-weight: 900;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+.t1-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 18px;
+}
+.t1-tabs {
+  display: flex; gap: 4px; margin-bottom: 16px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 10px; padding: 4px;
+}
+.t1-tab {
+  flex: 1; text-align: center;
+  padding: 7px 0; font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,0.35);
+  border-radius: 7px; cursor: pointer;
+}
+.t1-tab.on {
+  background: rgba(255,107,61,0.2);
+  color: #ff9a3d;
+  border: 1px solid rgba(255,107,61,0.3);
+}
+.t1-chips {
+  display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px;
+}
+.t1-chip {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  font-size: 13px; color: rgba(255,255,255,0.65);
+}
+.t1-chip.on {
+  background: rgba(255,107,61,0.15);
+  border-color: rgba(255,107,61,0.5);
+  color: #ff9a3d;
+  font-weight: 600;
+}
+.t1-settings {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px; padding: 14px; margin-bottom: 14px;
+}
+.t1-settings-label {
+  font-size: 10px; font-weight: 700;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.t1-row { display: flex; gap: 6px; }
+.t1-row .t1-chip { flex: 1; text-align: center; }
+.t1-btn {
+  width: 100%; padding: 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff6b3d, #ff9a3d);
+  color: #fff;
+  font-family: 'Heebo', sans-serif;
+  font-size: 15px; font-weight: 800;
+  border: none; cursor: pointer;
+  letter-spacing: 0.01em;
+  box-shadow: 0 8px 24px rgba(255,107,61,0.35);
+}
+
+/* ══════════════════════════════════════
+   THEME 2 — EDITORIAL / NEUBRUTALISM
+   לבן קר, borders עבים, typography מלך
+══════════════════════════════════════ */
+.t2-wrap {
+  border-radius: 0;
+  overflow: hidden;
+  background: #f2f0eb;
+  border: 3px solid #111;
+  box-shadow: 8px 8px 0 #111;
+}
+.t2-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 3px solid #111;
+  background: #111;
+}
+.t2-logo {
+  font-family: 'Rubik', sans-serif;
+  font-size: 20px; font-weight: 900;
+  color: #f2f0eb;
+  letter-spacing: -0.02em;
+}
+.t2-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 2px solid #f2f0eb;
+  background: #e85d04;
+}
+.t2-body { padding: 20px; }
+.t2-progress {
+  display: flex; gap: 4px; margin-bottom: 22px;
+}
+.t2-dot {
+  flex: 1; height: 5px; background: #ddd;
+  border: 1.5px solid #111;
+}
+.t2-dot.on { background: #e85d04; }
+.t2-big-title {
+  font-family: 'Rubik', sans-serif;
+  font-size: 36px; font-weight: 900;
+  color: #111;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 6px;
+}
+.t2-big-title span { color: #e85d04; }
+.t2-sub {
+  font-size: 13px; color: #666;
+  margin-bottom: 20px;
+  border-right: 3px solid #e85d04;
+  padding-right: 10px;
+}
+.t2-tabs {
+  display: flex; gap: 0; margin-bottom: 16px;
+  border: 2px solid #111;
+}
+.t2-tab {
+  flex: 1; text-align: center;
+  padding: 8px 0; font-size: 12px; font-weight: 700;
+  color: #555;
+  border-left: 2px solid #111;
+  cursor: pointer;
+  background: transparent;
+}
+.t2-tab:last-child { border-left: none; }
+.t2-tab.on {
+  background: #e85d04;
+  color: #fff;
+}
+.t2-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.t2-chip {
+  padding: 6px 14px;
+  border: 2px solid #111;
+  font-size: 13px; font-weight: 600;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+}
+.t2-chip.on {
+  background: #111;
+  color: #f2f0eb;
+}
+.t2-settings {
+  border: 2px solid #111; padding: 12px; margin-bottom: 14px;
+  background: #fff;
+}
+.t2-settings-label {
+  font-size: 10px; font-weight: 900;
+  color: #aaa; letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.t2-row { display: flex; gap: 6px; }
+.t2-row .t2-chip { flex: 1; text-align: center; }
+.t2-btn {
+  width: 100%; padding: 14px;
+  background: #e85d04;
+  color: #fff;
+  font-family: 'Heebo', sans-serif;
+  font-size: 15px; font-weight: 900;
+  border: 2px solid #111;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  box-shadow: 4px 4px 0 #111;
+}
+
+/* ══════════════════════════════════════
+   THEME 3 — AURORA SOFT
+   סגול/ורוד עדין, mesh gradient, עגול
+══════════════════════════════════════ */
+.t3-wrap {
+  border-radius: 28px;
+  overflow: hidden;
+  position: relative;
+  background: #0e0b1a;
+  box-shadow: 0 32px 80px rgba(120,60,200,0.4);
+}
+.t3-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 10%, rgba(180,100,255,0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(60,180,255,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(255,80,160,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.t3-bar {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.t3-logo {
+  font-family: 'Rubik', sans-serif;
+  font-size: 20px; font-weight: 900;
+  background: linear-gradient(135deg, #c084fc, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.t3-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #c084fc, #60a5fa);
+}
+.t3-body { padding: 20px; position: relative; z-index: 1; }
+.t3-progress { display: flex; align-items: center; gap: 8px; margin-bottom: 22px; }
+.t3-bar-track { flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.t3-bar-fill { height: 100%; width: 60%; background: linear-gradient(90deg, #c084fc, #60a5fa); border-radius: 2px; }
+.t3-step { font-size: 11px; color: rgba(255,255,255,0.3); font-weight: 600; }
+.t3-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 20px;
+  backdrop-filter: blur(24px);
+  margin-bottom: 10px;
+}
+.t3-title {
+  font-family: 'Rubik', sans-serif;
+  font-size: 22px; font-weight: 900; color: #fff;
+  line-height: 1.1; margin-bottom: 4px;
+}
+.t3-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 18px; }
+.t3-tabs {
+  display: flex; gap: 0; margin-bottom: 16px;
+  background: rgba(0,0,0,0.25); border-radius: 12px; padding: 4px;
+}
+.t3-tab {
+  flex: 1; text-align: center;
+  padding: 7px 0; font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,0.3); border-radius: 9px; cursor: pointer;
+}
+.t3-tab.on {
+  background: linear-gradient(135deg, rgba(192,132,252,0.3), rgba(96,165,250,0.3));
+  color: #c084fc;
+  border: 1px solid rgba(192,132,252,0.4);
+}
+.t3-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+.t3-chip {
+  padding: 7px 14px; border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  font-size: 13px; color: rgba(255,255,255,0.6);
+}
+.t3-chip.on {
+  background: linear-gradient(135deg, rgba(192,132,252,0.2), rgba(96,165,250,0.2));
+  border-color: rgba(192,132,252,0.5);
+  color: #c084fc; font-weight: 700;
+}
+.t3-settings {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px; padding: 14px; margin-bottom: 12px;
+}
+.t3-settings-label {
+  font-size: 10px; font-weight: 700;
+  color: rgba(255,255,255,0.25); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.t3-row { display: flex; gap: 6px; }
+.t3-row .t3-chip { flex: 1; text-align: center; border-radius: 10px; }
+.t3-btn {
+  width: 100%; padding: 14px; border-radius: 14px;
+  background: linear-gradient(135deg, #c084fc, #60a5fa);
+  color: #fff;
+  font-family: 'Heebo', sans-serif;
+  font-size: 15px; font-weight: 800; border: none; cursor: pointer;
+  box-shadow: 0 8px 28px rgba(192,132,252,0.4);
+}
+</style>
+</head>
+<body>
+
+<p class="page-title">3 כיווני עיצוב — בחר אחד</p>
+
+<div class="grid">
+
+  <!-- THEME 1 -->
+  <div>
+    <div class="direction-label">1 — Obsidian · כהה + כתום לוהט</div>
+    <div class="t1-wrap">
+      <div class="t1-bar">
+        <span class="t1-logo">מה יש</span>
+        <div class="t1-avatar"></div>
+      </div>
+      <div class="t1-body">
+        <div class="t1-progress">
+          <span class="t1-step-num">צעד 5/6</span>
+          <div class="t1-bar-track"><div class="t1-bar-fill"></div></div>
+        </div>
+        <div class="t1-card">
+          <div class="t1-title">מה יש לכם?</div>
+          <div class="t1-sub">סמנו את המרכיבים הזמינים</div>
+          <div class="t1-tabs">
+            <div class="t1-tab on">חלבון</div>
+            <div class="t1-tab">ירקות</div>
+            <div class="t1-tab">רטבים</div>
+            <div class="t1-tab">תבלינים</div>
+          </div>
+          <div class="t1-chips">
+            <div class="t1-chip on">עוף</div>
+            <div class="t1-chip on">בקר</div>
+            <div class="t1-chip">הודו</div>
+            <div class="t1-chip">סלמון</div>
+            <div class="t1-chip">טונה</div>
+            <div class="t1-chip">ביצים</div>
+            <div class="t1-chip">טופו</div>
+          </div>
+        </div>
+        <div class="t1-settings">
+          <div class="t1-settings-label">הגדרות מתכון</div>
+          <div class="t1-row">
+            <div class="t1-chip">קל</div>
+            <div class="t1-chip on">בינוני</div>
+            <div class="t1-chip">מאתגר</div>
+          </div>
+        </div>
+        <div class="t1-btn">צור לי מתכון ✦</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THEME 2 -->
+  <div>
+    <div class="direction-label">2 — Editorial · שחור-לבן + כתום אגרסיבי</div>
+    <div class="t2-wrap">
+      <div class="t2-bar">
+        <span class="t2-logo">מה יש</span>
+        <div class="t2-avatar"></div>
+      </div>
+      <div class="t2-body">
+        <div class="t2-progress">
+          <div class="t2-dot on"></div>
+          <div class="t2-dot on"></div>
+          <div class="t2-dot on"></div>
+          <div class="t2-dot on"></div>
+          <div class="t2-dot on"></div>
+          <div class="t2-dot"></div>
+        </div>
+        <div class="t2-big-title">מה <span>יש</span><br>לכם?</div>
+        <div class="t2-sub">סמנו את המרכיבים הזמינים</div>
+        <div class="t2-tabs">
+          <div class="t2-tab on">חלבון</div>
+          <div class="t2-tab">ירקות</div>
+          <div class="t2-tab">רטבים</div>
+          <div class="t2-tab">תבלינים</div>
+        </div>
+        <div class="t2-chips">
+          <div class="t2-chip on">עוף</div>
+          <div class="t2-chip on">בקר</div>
+          <div class="t2-chip">הודו</div>
+          <div class="t2-chip">סלמון</div>
+          <div class="t2-chip">טונה</div>
+          <div class="t2-chip">ביצים</div>
+          <div class="t2-chip">טופו</div>
+        </div>
+        <div class="t2-settings">
+          <div class="t2-settings-label">הגדרות</div>
+          <div class="t2-row">
+            <div class="t2-chip">קל</div>
+            <div class="t2-chip on">בינוני</div>
+            <div class="t2-chip">מאתגר</div>
+          </div>
+        </div>
+        <div class="t2-btn">צור לי מתכון →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THEME 3 -->
+  <div>
+    <div class="direction-label">3 — Aurora · כהה + סגול/כחול זוהר</div>
+    <div class="t3-wrap">
+      <div class="t3-bg"></div>
+      <div class="t3-bar">
+        <span class="t3-logo">מה יש</span>
+        <div class="t3-avatar"></div>
+      </div>
+      <div class="t3-body">
+        <div class="t3-progress">
+          <span class="t3-step">5 / 6</span>
+          <div class="t3-bar-track"><div class="t3-bar-fill"></div></div>
+        </div>
+        <div class="t3-card">
+          <div class="t3-title">מה יש לכם?</div>
+          <div class="t3-sub">סמנו את המרכיבים הזמינים</div>
+          <div class="t3-tabs">
+            <div class="t3-tab on">חלבון</div>
+            <div class="t3-tab">ירקות</div>
+            <div class="t3-tab">רטבים</div>
+            <div class="t3-tab">תבלינים</div>
+          </div>
+          <div class="t3-chips">
+            <div class="t3-chip on">עוף</div>
+            <div class="t3-chip on">בקר</div>
+            <div class="t3-chip">הודו</div>
+            <div class="t3-chip">סלמון</div>
+            <div class="t3-chip">טונה</div>
+            <div class="t3-chip">ביצים</div>
+            <div class="t3-chip">טופו</div>
+          </div>
+        </div>
+        <div class="t3-settings">
+          <div class="t3-settings-label">הגדרות מתכון</div>
+          <div class="t3-row">
+            <div class="t3-chip">קל</div>
+            <div class="t3-chip on">בינוני</div>
+            <div class="t3-chip">מאתגר</div>
+          </div>
+        </div>
+        <div class="t3-btn">צור לי מתכון</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"C:/VibeCoding/recipe-app\" && mv netlify/functions/recipe.cjs netlify/functions/recipe.js && mv netlify/functions/server-local.cjs netlify/functions/server-local.js)",
+      "Bash(cd \"C:/VibeCoding/recipe-app\" && timeout 12 npm run dev 2>&1 || true)",
+      "Bash(cd:*)",
+      "Bash(netstat:*)",
+      "Bash(git checkout:*)",
+      "Bash(git pull:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npx vite:*)"
+    ]
+  }
+}

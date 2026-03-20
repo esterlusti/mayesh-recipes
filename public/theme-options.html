@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>בחירת עיצוב — מה יש בבית?</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;900&family=Rubik:wght@700;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Heebo', sans-serif;
+  background: #111;
+  color: #eee;
+  padding: 40px 20px;
+  direction: rtl;
+}
+h1 {
+  text-align: center;
+  font-family: 'Rubik', sans-serif;
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+.subtitle {
+  text-align: center;
+  color: #999;
+  margin-bottom: 40px;
+  font-size: 15px;
+}
+.themes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(540px, 1fr));
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.theme-card {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid #333;
+  transition: all 0.3s;
+}
+.theme-card:hover {
+  border-color: #666;
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+.theme-label {
+  background: #1a1a1a;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.theme-label h2 {
+  font-family: 'Rubik', sans-serif;
+  font-size: 20px;
+}
+.theme-label span {
+  font-size: 13px;
+  color: #888;
+}
+.theme-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: #333;
+  font-size: 13px;
+  font-weight: 900;
+  margin-left: 10px;
+}
+.preview {
+  padding: 24px;
+  min-height: 420px;
+  position: relative;
+  overflow: hidden;
+}
+/* Mini UI components inside each preview */
+.p-bar { display:flex; gap:4px; margin-bottom:16px; }
+.p-dot { width:10px; height:10px; border-radius:50%; }
+.p-card {
+  padding: 20px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+}
+.p-title {
+  font-family: 'Rubik', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+.p-sub { font-size: 12px; margin-bottom: 14px; }
+.p-chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
+.p-chip {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: default;
+}
+.p-btn {
+  padding: 10px 24px;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: default;
+  width: 100%;
+  text-align: center;
+}
+.p-badge { display:inline-block; padding:3px 10px; font-size:11px; font-weight:700; margin-left:6px; }
+.p-ingredients { list-style:none; padding:0; margin-top:8px; }
+.p-ingredients li { padding: 5px 0; font-size: 12px; display:flex; align-items:center; gap:6px; }
+.p-dot-sm { width:4px; height:4px; flex-shrink:0; }
+.p-section-title { font-family:'Rubik',sans-serif; font-size:13px; font-weight:900; margin-bottom:8px; letter-spacing:0.06em; }
+.p-meta { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+
+/* ════════ THEME 1: Warm Terracotta ════════ */
+.t1 .preview {
+  background: #f5ebe0;
+  color: #3d2b1f;
+}
+.t1 .preview::before {
+  content:''; position:absolute; top:-60px; left:-60px;
+  width:200px; height:200px; border-radius:50%;
+  background: rgba(198,134,83,0.15); filter:blur(40px);
+}
+.t1 .p-card { background:#fff; border:1px solid rgba(61,43,31,0.12); box-shadow: 0 2px 12px rgba(61,43,31,0.06); }
+.t1 .p-title { color: #8b4513; }
+.t1 .p-sub { color: rgba(61,43,31,0.5); }
+.t1 .p-chip { background: #fff; border:1.5px solid rgba(61,43,31,0.15); border-radius:100px; color:#3d2b1f; }
+.t1 .p-chip.on { background:#c68653; color:white; border-color:#c68653; }
+.t1 .p-btn { background: linear-gradient(135deg,#c68653,#d4956a); color:white; border-radius:12px; }
+.t1 .p-badge { background:rgba(198,134,83,0.12); color:#8b4513; border-radius:100px; }
+.t1 .p-dot { background:#c68653; }
+.t1 .p-dot.done { background:#3d2b1f; }
+.t1 .p-dot-sm { background:#c68653; border-radius:50%; }
+.t1 .p-section-title { color:rgba(61,43,31,0.6); }
+
+/* ════════ THEME 2: Matcha Zen ════════ */
+.t2 .preview {
+  background: #f8f7f2;
+  color: #2d3a2e;
+}
+.t2 .p-card { background:white; border:1px solid #e5e3db; border-radius:16px; }
+.t2 .p-title { color: #4a7c59; }
+.t2 .p-sub { color: rgba(45,58,46,0.5); }
+.t2 .p-chip { background:#f0eee6; border:none; border-radius:8px; color:#2d3a2e; }
+.t2 .p-chip.on { background:#4a7c59; color:white; }
+.t2 .p-btn { background:#4a7c59; color:white; border-radius:14px; }
+.t2 .p-badge { background:#eef5ee; color:#4a7c59; border-radius:6px; }
+.t2 .p-dot { background:#d4d0c4; border:2px solid #d4d0c4; }
+.t2 .p-dot.done { background:#4a7c59; border-color:#4a7c59; }
+.t2 .p-dot-sm { background:#4a7c59; border-radius:2px; }
+.t2 .p-section-title { color:#4a7c59; }
+
+/* ════════ THEME 3: Midnight Luxe ════════ */
+.t3 .preview {
+  background: #0c1222;
+  color: #e8e4dc;
+}
+.t3 .preview::before {
+  content:''; position:absolute; top:0; right:0;
+  width:300px; height:300px; border-radius:50%;
+  background: radial-gradient(circle, rgba(212,175,55,0.08), transparent 70%);
+}
+.t3 .p-card { background:rgba(255,255,255,0.04); border:1px solid rgba(212,175,55,0.15); border-radius:14px; backdrop-filter:blur(10px); }
+.t3 .p-title { color: #d4af37; }
+.t3 .p-sub { color: rgba(232,228,220,0.45); }
+.t3 .p-chip { background:rgba(255,255,255,0.05); border:1px solid rgba(212,175,55,0.2); border-radius:100px; color:#e8e4dc; }
+.t3 .p-chip.on { background:rgba(212,175,55,0.15); border-color:#d4af37; color:#d4af37; }
+.t3 .p-btn { background:linear-gradient(135deg,#d4af37,#c5a028); color:#0c1222; border-radius:10px; font-weight:900; }
+.t3 .p-badge { background:rgba(212,175,55,0.1); color:#d4af37; border-radius:100px; border:1px solid rgba(212,175,55,0.2); }
+.t3 .p-dot { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); }
+.t3 .p-dot.done { background:#d4af37; border-color:#d4af37; }
+.t3 .p-dot-sm { background:#d4af37; border-radius:50%; }
+.t3 .p-section-title { color:rgba(232,228,220,0.5); }
+
+/* ════════ THEME 4: Sunset Kitchen ════════ */
+.t4 .preview {
+  background: linear-gradient(160deg, #fff5f0 0%, #ffecd2 100%);
+  color: #4a2c2a;
+}
+.t4 .p-card { background:rgba(255,255,255,0.7); border:none; border-radius:18px; box-shadow:0 4px 20px rgba(255,111,97,0.08); }
+.t4 .p-title { background:linear-gradient(135deg,#ff6f61,#ff9a76); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.t4 .p-sub { color: rgba(74,44,42,0.5); }
+.t4 .p-chip { background:white; border:1.5px solid rgba(255,111,97,0.2); border-radius:100px; color:#4a2c2a; }
+.t4 .p-chip.on { background:#ff6f61; color:white; border-color:#ff6f61; box-shadow:0 2px 8px rgba(255,111,97,0.3); }
+.t4 .p-btn { background:linear-gradient(135deg,#ff6f61,#ff9a76); color:white; border-radius:100px; box-shadow:0 4px 16px rgba(255,111,97,0.3); }
+.t4 .p-badge { background:rgba(255,111,97,0.1); color:#ff6f61; border-radius:100px; }
+.t4 .p-dot { background:#ffd4cc; }
+.t4 .p-dot.done { background:#ff6f61; }
+.t4 .p-dot-sm { background:#ff6f61; border-radius:50%; }
+.t4 .p-section-title { color:#ff6f61; }
+
+/* ════════ THEME 5: Nordic Frost ════════ */
+.t5 .preview {
+  background: #f0f4f8;
+  color: #1a2a3a;
+}
+.t5 .p-card { background:white; border:1px solid #dce4ec; border-radius:12px; }
+.t5 .p-title { color:#1a2a3a; }
+.t5 .p-sub { color:rgba(26,42,58,0.45); }
+.t5 .p-chip { background:#e8eef4; border:none; border-radius:6px; color:#1a2a3a; }
+.t5 .p-chip.on { background:#3a7bd5; color:white; }
+.t5 .p-btn { background:#1a2a3a; color:white; border-radius:8px; }
+.t5 .p-badge { background:#e8eef4; color:#3a7bd5; border-radius:4px; font-weight:700; }
+.t5 .p-dot { background:#dce4ec; }
+.t5 .p-dot.done { background:#1a2a3a; }
+.t5 .p-dot-sm { background:#3a7bd5; border-radius:1px; }
+.t5 .p-section-title { color:#3a7bd5; text-transform:uppercase; }
+
+/* ════════ THEME 6: Spice Market ════════ */
+.t6 .preview {
+  background: #1c1410;
+  color: #f0e6d3;
+}
+.t6 .preview::before {
+  content:''; position:absolute; bottom:-40px; right:-40px;
+  width:250px; height:250px; border-radius:50%;
+  background: radial-gradient(circle, rgba(196,69,30,0.12), transparent 70%);
+}
+.t6 .p-card { background:rgba(240,230,211,0.06); border:1px solid rgba(240,230,211,0.1); border-radius:10px; }
+.t6 .p-title { color: #e8a838; }
+.t6 .p-sub { color: rgba(240,230,211,0.45); }
+.t6 .p-chip { background:rgba(240,230,211,0.06); border:1px solid rgba(232,168,56,0.25); border-radius:4px; color:#f0e6d3; }
+.t6 .p-chip.on { background:#c4451e; border-color:#c4451e; color:white; }
+.t6 .p-btn { background:linear-gradient(135deg,#c4451e,#e8a838); color:white; border-radius:6px; }
+.t6 .p-badge { background:rgba(232,168,56,0.1); color:#e8a838; border-radius:4px; border:1px solid rgba(232,168,56,0.2); }
+.t6 .p-dot { background:rgba(240,230,211,0.15); }
+.t6 .p-dot.done { background:#e8a838; }
+.t6 .p-dot-sm { background:#c4451e; border-radius:50%; }
+.t6 .p-section-title { color:#e8a838; }
+
+/* ════════ THEME 7: Garden Fresh ════════ */
+.t7 .preview {
+  background: #f4f8f1;
+  color: #2c3e2d;
+}
+.t7 .preview::before {
+  content:''; position:absolute; top:-80px; left:50%;
+  width:300px; height:300px; border-radius:50%;
+  background: radial-gradient(circle, rgba(134,187,106,0.1), transparent 70%);
+}
+.t7 .p-card { background:white; border:1.5px solid #d4e4cf; border-radius:20px; }
+.t7 .p-title { color: #4a8c3f; }
+.t7 .p-sub { color: rgba(44,62,45,0.5); }
+.t7 .p-chip { background:#edf5ea; border:1.5px solid #d4e4cf; border-radius:100px; color:#2c3e2d; }
+.t7 .p-chip.on { background:#86bb6a; color:white; border-color:#86bb6a; }
+.t7 .p-btn { background:#4a8c3f; color:white; border-radius:100px; }
+.t7 .p-badge { background:#edf5ea; color:#4a8c3f; border-radius:100px; }
+.t7 .p-dot { background:#d4e4cf; }
+.t7 .p-dot.done { background:#4a8c3f; }
+.t7 .p-dot-sm { background:#86bb6a; border-radius:50%; }
+.t7 .p-section-title { color:#4a8c3f; }
+
+/* ════════ THEME 8: Neon Bistro ════════ */
+.t8 .preview {
+  background: #141318;
+  color: #e4e2ec;
+}
+.t8 .preview::before {
+  content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:300px; height:300px; border-radius:50%;
+  background: radial-gradient(circle, rgba(168,85,247,0.06), rgba(236,72,153,0.04), transparent 70%);
+}
+.t8 .p-card { background:rgba(255,255,255,0.03); border:1px solid rgba(168,85,247,0.15); border-radius:16px; }
+.t8 .p-title { background:linear-gradient(135deg,#a855f7,#ec4899); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.t8 .p-sub { color: rgba(228,226,236,0.4); }
+.t8 .p-chip { background:rgba(168,85,247,0.08); border:1px solid rgba(168,85,247,0.2); border-radius:100px; color:#e4e2ec; }
+.t8 .p-chip.on { background:rgba(168,85,247,0.2); border-color:#a855f7; color:#a855f7; box-shadow:0 0 12px rgba(168,85,247,0.15); }
+.t8 .p-btn { background:linear-gradient(135deg,#a855f7,#ec4899); color:white; border-radius:12px; box-shadow:0 0 20px rgba(168,85,247,0.25); }
+.t8 .p-badge { background:rgba(168,85,247,0.1); color:#a855f7; border-radius:100px; border:1px solid rgba(168,85,247,0.2); }
+.t8 .p-dot { background:rgba(255,255,255,0.08); border:1px solid rgba(168,85,247,0.2); }
+.t8 .p-dot.done { background:#a855f7; border-color:#a855f7; box-shadow:0 0 8px rgba(168,85,247,0.4); }
+.t8 .p-dot-sm { background:#ec4899; border-radius:50%; }
+.t8 .p-section-title { color:#a855f7; }
+
+/* ════════ THEME 9: Vanilla Cream ════════ */
+.t9 .preview {
+  background: #faf8f5;
+  color: #4a3f35;
+}
+.t9 .p-card { background:white; border:none; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03); }
+.t9 .p-title { color: #4a3f35; }
+.t9 .p-sub { color: rgba(74,63,53,0.45); }
+.t9 .p-chip { background:#f5f0ea; border:none; border-radius:100px; color:#4a3f35; }
+.t9 .p-chip.on { background:#4a3f35; color:#faf8f5; }
+.t9 .p-btn { background:#4a3f35; color:#faf8f5; border-radius:100px; }
+.t9 .p-badge { background:#f0ebe4; color:#7a6a5a; border-radius:100px; }
+.t9 .p-dot { background:#e8e0d6; }
+.t9 .p-dot.done { background:#4a3f35; }
+.t9 .p-dot-sm { background:#4a3f35; border-radius:50%; }
+.t9 .p-section-title { color:rgba(74,63,53,0.6); }
+
+/* ════════ THEME 10: Ocean Breeze ════════ */
+.t10 .preview {
+  background: linear-gradient(170deg, #f0fafa 0%, #e6f3f5 100%);
+  color: #1a3a4a;
+}
+.t10 .preview::before {
+  content:''; position:absolute; bottom:-60px; left:-60px;
+  width:200px; height:200px; border-radius:50%;
+  background: radial-gradient(circle, rgba(0,180,180,0.08), transparent 70%);
+}
+.t10 .p-card { background:rgba(255,255,255,0.8); border:1px solid rgba(0,150,150,0.12); border-radius:16px; backdrop-filter:blur(10px); }
+.t10 .p-title { color: #00838f; }
+.t10 .p-sub { color: rgba(26,58,74,0.45); }
+.t10 .p-chip { background:white; border:1.5px solid rgba(0,131,143,0.2); border-radius:100px; color:#1a3a4a; }
+.t10 .p-chip.on { background:#00838f; color:white; border-color:#00838f; }
+.t10 .p-btn { background:linear-gradient(135deg,#00838f,#26a69a); color:white; border-radius:14px; box-shadow:0 4px 16px rgba(0,131,143,0.2); }
+.t10 .p-badge { background:rgba(0,131,143,0.08); color:#00838f; border-radius:100px; }
+.t10 .p-dot { background:#c8e6e8; }
+.t10 .p-dot.done { background:#00838f; }
+.t10 .p-dot-sm { background:#00838f; border-radius:50%; }
+.t10 .p-section-title { color:#00838f; }
+
+@media (max-width: 600px) {
+  .themes-grid { grid-template-columns: 1fr; }
+  h1 { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<h1>בחירת עיצוב — מה יש בבית?</h1>
+<p class="subtitle">10 אופציות • לחץ על המועדף שלך</p>
+
+<div class="themes-grid">
+
+<!-- ═══ THEME 1 ═══ -->
+<div class="theme-card t1">
+  <div class="theme-label">
+    <h2><span class="theme-num">1</span>Warm Terracotta</h2>
+    <span>ים-תיכוני חם, חימר וקרמיקה</span>
+  </div>
+  <div class="preview">
+    <div class="p-bar">
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px;background:#e8ddd0"></div>
+      <div class="p-dot" style="width:10px;height:10px;background:#e8ddd0"></div>
+      <div class="p-dot" style="width:10px;height:10px;background:#e8ddd0"></div>
+    </div>
+    <div class="p-card">
+      <div class="p-title">מרכיבים</div>
+      <div class="p-sub">סמנו מה יש לכם בבית</div>
+      <div class="p-chips">
+        <span class="p-chip on">עוף</span>
+        <span class="p-chip on">בצל</span>
+        <span class="p-chip">טחינה</span>
+        <span class="p-chip on">עגבניות</span>
+        <span class="p-chip">פטרוזיליה</span>
+        <span class="p-chip">שום</span>
+      </div>
+      <div class="p-meta">
+        <span class="p-badge">בשרי</span>
+        <span class="p-badge">בינוני</span>
+        <span class="p-badge">4 מנות</span>
+      </div>
+      <div class="p-btn">צור לי מתכון ✦</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ THEME 2 ═══ -->
+<div class="theme-card t2">
+  <div class="theme-label">
+    <h2><span class="theme-num">2</span>Matcha Zen</h2>
+    <span>מינימליזם יפני, ירוק רך</span>
+  </div>
+  <div class="preview">
+    <div class="p-bar">
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+    </div>
+    <div class="p-card">
+      <div class="p-title">מרכיבים</div>
+      <div class="p-sub">סמנו מה יש לכם בבית</div>
+      <div class="p-chips">
+        <span class="p-chip on">עוף</span>
+        <span class="p-chip on">בצל</span>
+        <span class="p-chip">טחינה</span>
+        <span class="p-chip on">עגבניות</span>
+        <span class="p-chip">פטרוזיליה</span>
+        <span class="p-chip">שום</span>
+      </div>
+      <div class="p-meta">
+        <span class="p-badge">בשרי</span>
+        <span class="p-badge">בינוני</span>
+        <span class="p-badge">4 מנות</span>
+      </div>
+      <div class="p-btn">צור לי מתכון ✦</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ THEME 3 ═══ -->
+<div class="theme-card t3">
+  <div class="theme-label">
+    <h2><span class="theme-num">3</span>Midnight Luxe</h2>
+    <span>כחול חצות עם זהב, יוקרתי</span>
+  </div>
+  <div class="preview">
+    <div class="p-bar">
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+    </div>
+    <div class="p-card">
+      <div class="p-title">שקשוקה מרוקאית</div>
+      <div class="p-meta">
+        <span class="p-badge">בשרי</span>
+        <span class="p-badge">הכנה: 10 דק׳</span>
+        <span class="p-badge">בישול: 25 דק׳</span>
+      </div>
+      <div class="p-section-title">🧾 מרכיבים</div>
+      <ul class="p-ingredients">
+        <li><span class="p-dot-sm"></span> 4 ביצים</li>
+        <li><span class="p-dot-sm"></span> 3 עגבניות בשלות</li>
+        <li><span class="p-dot-sm"></span> פלפל חריף</li>
+        <li><span class="p-dot-sm"></span> כמון, פפריקה</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ THEME 4 ═══ -->
+<div class="theme-card t4">
+  <div class="theme-label">
+    <h2><span class="theme-num">4</span>Sunset Kitchen</h2>
+    <span>שקיעה חמה, קורל ואפרסק</span>
+  </div>
+  <div class="preview">
+    <div class="p-bar">
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px;background:rgba(255,111,97,0.15)"></div>
+      <div class="p-dot" style="width:10px;height:10px;background:rgba(255,111,97,0.15)"></div>
+      <div class="p-dot" style="width:10px;height:10px;background:rgba(255,111,97,0.15)"></div>
+    </div>
+    <div class="p-card">
+      <div class="p-title">מרכיבים</div>
+      <div class="p-sub">סמנו מה יש לכם בבית</div>
+      <div class="p-chips">
+        <span class="p-chip on">עוף</span>
+        <span class="p-chip on">בצל</span>
+        <span class="p-chip">טחינה</span>
+        <span class="p-chip on">עגבניות</span>
+        <span class="p-chip">פטרוזיליה</span>
+        <span class="p-chip">שום</span>
+      </div>
+      <div class="p-meta">
+        <span class="p-badge">בשרי</span>
+        <span class="p-badge">בינוני</span>
+        <span class="p-badge">4 מנות</span>
+      </div>
+      <div class="p-btn">צור לי מתכון ✦</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ THEME 5 ═══ -->
+<div class="theme-card t5">
+  <div class="theme-label">
+    <h2><span class="theme-num">5</span>Nordic Frost</h2>
+    <span>סקנדינבי נקי, כחול קרח</span>
+  </div>
+  <div class="preview">
+    <div class="p-bar">
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+    </div>
+    <div class="p-card">
+      <div class="p-title">סוג כשרות</div>
+      <div class="p-sub">בחרו את סוג הכשרות של המנה</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;">
+        <div style="text-align:center;padding:14px 8px;background:#e8eef4;border-radius:8px;">
+          <div style="font-size:24px;margin-bottom:4px;">🥩</div>
+          <div style="font-size:13px;font-weight:900;">בשרי</div>
+        </div>
+        <div style="text-align:center;padding:14px 8px;background:#e8eef4;border-radius:8px;border:2px solid #3a7bd5;">
+          <div style="font-size:24px;margin-bottom:4px;">🧀</div>
+          <div style="font-size:13px;font-weight:900;">חלבי</div>
+        </div>
+        <div style="text-align:center;padding:14px 8px;background:#e8eef4;border-radius:8px;">
+          <div style="font-size:24px;margin-bottom:4px;">🌿</div>
+          <div style="font-size:13px;font-weight:900;">פרווה</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ THEME 6 ═══ -->
+<div class="theme-card t6">
+  <div class="theme-label">
+    <h2><span class="theme-num">6</span>Spice Market</h2>
+    <span>שוק תבלינים, זעפרן ואדום עמוק</span>
+  </div>
+  <div class="preview">
+    <div class="p-bar">
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px;background:rgba(240,230,211,0.1)"></div>
+      <div class="p-dot" style="width:10px;height:10px;background:rgba(240,230,211,0.1)"></div>
+      <div class="p-dot" style="width:10px;height:10px;background:rgba(240,230,211,0.1)"></div>
+    </div>
+    <div class="p-card">
+      <div class="p-title">מתכון: חריימה</div>
+      <div class="p-meta">
+        <span class="p-badge">בשרי</span>
+        <span class="p-badge">הכנה: 15 דק׳</span>
+        <span class="p-badge">בישול: 30 דק׳</span>
+      </div>
+      <div class="p-section-title">🧾 מרכיבים</div>
+      <ul class="p-ingredients">
+        <li><span class="p-dot-sm"></span> 500 גר׳ דג</li>
+        <li><span class="p-dot-sm"></span> רוטב עגבניות</li>
+        <li><span class="p-dot-sm"></span> פלפל חריף</li>
+        <li><span class="p-dot-sm"></span> שום, כמון</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ THEME 7 ═══ -->
+<div class="theme-card t7">
+  <div class="theme-label">
+    <h2><span class="theme-num">7</span>Garden Fresh</h2>
+    <span>גן ירק, ירוק מרווה, בוטני</span>
+  </div>
+  <div class="preview">
+    <div class="p-bar">
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+    </div>
+    <div class="p-card">
+      <div class="p-title">מרכיבים</div>
+      <div class="p-sub">סמנו מה יש לכם בבית</div>
+      <div class="p-chips">
+        <span class="p-chip on">עוף</span>
+        <span class="p-chip on">בצל</span>
+        <span class="p-chip">טחינה</span>
+        <span class="p-chip on">עגבניות</span>
+        <span class="p-chip">פטרוזיליה</span>
+        <span class="p-chip">שום</span>
+      </div>
+      <div class="p-meta">
+        <span class="p-badge">פרווה</span>
+        <span class="p-badge">קל</span>
+        <span class="p-badge">4 מנות</span>
+      </div>
+      <div class="p-btn">צור לי מתכון ✦</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ THEME 8 ═══ -->
+<div class="theme-card t8">
+  <div class="theme-label">
+    <h2><span class="theme-num">8</span>Neon Bistro</h2>
+    <span>אורבני כהה, סגול וורוד ניאון</span>
+  </div>
+  <div class="preview">
+    <div class="p-bar">
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+    </div>
+    <div class="p-card">
+      <div class="p-title">מרכיבים</div>
+      <div class="p-sub">סמנו מה יש לכם בבית</div>
+      <div class="p-chips">
+        <span class="p-chip on">עוף</span>
+        <span class="p-chip on">בצל</span>
+        <span class="p-chip">טחינה</span>
+        <span class="p-chip on">עגבניות</span>
+        <span class="p-chip">פטרוזיליה</span>
+        <span class="p-chip">שום</span>
+      </div>
+      <div class="p-meta">
+        <span class="p-badge">בשרי</span>
+        <span class="p-badge">בינוני</span>
+        <span class="p-badge">4 מנות</span>
+      </div>
+      <div class="p-btn">צור לי מתכון ✦</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ THEME 9 ═══ -->
+<div class="theme-card t9">
+  <div class="theme-label">
+    <h2><span class="theme-num">9</span>Vanilla Cream</h2>
+    <span>קרם רך, מינימלי וחמים</span>
+  </div>
+  <div class="preview">
+    <div class="p-bar">
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px"></div>
+    </div>
+    <div class="p-card">
+      <div class="p-title">סוג כשרות</div>
+      <div class="p-sub">בחרו את סוג הכשרות של המנה</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;">
+        <div style="text-align:center;padding:14px 8px;background:#f5f0ea;border-radius:100px;">
+          <div style="font-size:20px;margin-bottom:2px;">🥩</div>
+          <div style="font-size:12px;font-weight:900;">בשרי</div>
+        </div>
+        <div style="text-align:center;padding:14px 8px;background:#4a3f35;color:#faf8f5;border-radius:100px;">
+          <div style="font-size:20px;margin-bottom:2px;">🧀</div>
+          <div style="font-size:12px;font-weight:900;">חלבי</div>
+        </div>
+        <div style="text-align:center;padding:14px 8px;background:#f5f0ea;border-radius:100px;">
+          <div style="font-size:20px;margin-bottom:2px;">🌿</div>
+          <div style="font-size:12px;font-weight:900;">פרווה</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ THEME 10 ═══ -->
+<div class="theme-card t10">
+  <div class="theme-label">
+    <h2><span class="theme-num">10</span>Ocean Breeze</h2>
+    <span>חוף ים, טורקיז ורעננות</span>
+  </div>
+  <div class="preview">
+    <div class="p-bar">
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot done" style="width:10px;height:10px"></div>
+      <div class="p-dot" style="width:10px;height:10px;background:#c8e6e8"></div>
+      <div class="p-dot" style="width:10px;height:10px;background:#c8e6e8"></div>
+      <div class="p-dot" style="width:10px;height:10px;background:#c8e6e8"></div>
+    </div>
+    <div class="p-card">
+      <div class="p-title">מרכיבים</div>
+      <div class="p-sub">סמנו מה יש לכם בבית</div>
+      <div class="p-chips">
+        <span class="p-chip on">סלמון</span>
+        <span class="p-chip on">לימון</span>
+        <span class="p-chip">שמיר</span>
+        <span class="p-chip on">שום</span>
+        <span class="p-chip">זיתים</span>
+        <span class="p-chip">קפרס</span>
+      </div>
+      <div class="p-meta">
+        <span class="p-badge">פרווה</span>
+        <span class="p-badge">קל</span>
+        <span class="p-badge">2 מנות</span>
+      </div>
+      <div class="p-btn">צור לי מתכון ✦</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<p style="text-align:center; margin-top:40px; color:#555; font-size:13px;">
+  פתח את הקובץ: <code style="color:#888;">public/theme-options.html</code>
+</p>
+
+</body>
+</html>

@@ -2,7 +2,7 @@
 // qtyType: 'count' | 'weight' — if present, shows a quantity selector when selected.
 // qtyStep: increment amount, defaultQty: starting value, unit: label (גרם / ק"ג / '')
 // pantry: true — pre-selected as a pantry staple by default.
-// group: sub-category header label (only for proteins.meat)
+// group: sub-category header label
 
 export const PROTEINS = {
   meat: [
@@ -23,31 +23,36 @@ export const PROTEINS = {
     { id: 'turkey-breast',    label: 'חזה הודו',         group: 'אחר', qtyType: 'weight', qtyStep: 500, defaultQty: 500, unit: 'גרם' },
   ],
   dairy: [
-    { id: 'eggs',            label: 'ביצים',             qtyType: 'count',  qtyStep: 1,  defaultQty: 3,   unit: '', pantry: true },
-    { id: 'yellow-cheese',   label: 'גבינה צהובה',      qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
-    { id: 'white-cheese',    label: 'גבינה לבנה',       qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
-    { id: 'bulgarian-cheese',label: 'גבינה בולגרית',    qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
-    { id: 'mozzarella',      label: 'גבינת מוצרלה',     qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
-    { id: 'parmesan',        label: 'גבינת פרמזן',      qtyType: 'weight', qtyStep: 100, defaultQty: 100, unit: 'גרם' },
-    { id: 'sour-cream',      label: 'שמנת חמוצה' },
-    { id: 'butter',          label: 'חמאה',              qtyType: 'weight', qtyStep: 100, defaultQty: 100, unit: 'גרם' },
-    { id: 'milk',            label: 'חלב',               pantry: true },
-    { id: 'cooking-cream',   label: 'שמנת לבישול' },
-    { id: 'yogurt',          label: 'יוגורט טבעי',      qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
+    // ביצים וחלב
+    { id: 'eggs',            label: 'ביצים',             group: 'ביצים וחלב', qtyType: 'count',  qtyStep: 1,  defaultQty: 3,   unit: '', pantry: true },
+    { id: 'milk',            label: 'חלב',               group: 'ביצים וחלב', pantry: true },
+    { id: 'butter',          label: 'חמאה',              group: 'ביצים וחלב', qtyType: 'weight', qtyStep: 100, defaultQty: 100, unit: 'גרם' },
+    { id: 'sour-cream',      label: 'שמנת חמוצה',        group: 'ביצים וחלב' },
+    { id: 'cooking-cream',   label: 'שמנת לבישול',       group: 'ביצים וחלב' },
+    { id: 'yogurt',          label: 'יוגורט טבעי',       group: 'ביצים וחלב', qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
+    // גבינות
+    { id: 'yellow-cheese',   label: 'גבינה צהובה',       group: 'גבינות', qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
+    { id: 'white-cheese',    label: 'גבינה לבנה',        group: 'גבינות', qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
+    { id: 'bulgarian-cheese',label: 'גבינה בולגרית',     group: 'גבינות', qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
+    { id: 'mozzarella',      label: 'גבינת מוצרלה',      group: 'גבינות', qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
+    { id: 'parmesan',        label: 'גבינת פרמזן',       group: 'גבינות', qtyType: 'weight', qtyStep: 100, defaultQty: 100, unit: 'גרם' },
+    { id: 'ricotta',         label: 'ריקוטה',            group: 'גבינות', qtyType: 'weight', qtyStep: 250, defaultQty: 250, unit: 'גרם' },
   ],
   pareve: [
-    { id: 'fresh-salmon',    label: 'סלמון טרי',        qtyType: 'weight', qtyStep: 200, defaultQty: 400, unit: 'גרם' },
-    { id: 'smoked-salmon',   label: 'סלמון מעושן',      qtyType: 'weight', qtyStep: 100, defaultQty: 100, unit: 'גרם' },
-    { id: 'tuna-oil',        label: 'טונה בשמן' },
-    { id: 'tuna-water',      label: 'טונה במים' },
-    { id: 'nile-fish',       label: 'דג נילוס',          qtyType: 'weight', qtyStep: 200, defaultQty: 400, unit: 'גרם' },
-    { id: 'cod-fillet',      label: 'פילה בקלה',        qtyType: 'weight', qtyStep: 200, defaultQty: 400, unit: 'גרם' },
-    { id: 'chickpeas',       label: 'גרגרי חומוס' },
-    { id: 'red-lentils',     label: 'עדשים כתומות' },
-    { id: 'black-lentils',   label: 'עדשים שחורות' },
-    { id: 'white-beans',     label: 'שעועית לבנה' },
-    { id: 'red-beans',       label: 'שעועית אדומה' },
-    { id: 'tofu',            label: 'טופו',              qtyType: 'weight', qtyStep: 200, defaultQty: 200, unit: 'גרם' },
+    // דגים
+    { id: 'fresh-salmon',    label: 'סלמון טרי',        group: 'דגים', qtyType: 'weight', qtyStep: 200, defaultQty: 400, unit: 'גרם' },
+    { id: 'smoked-salmon',   label: 'סלמון מעושן',      group: 'דגים', qtyType: 'weight', qtyStep: 100, defaultQty: 100, unit: 'גרם' },
+    { id: 'tuna-oil',        label: 'טונה בשמן',        group: 'דגים' },
+    { id: 'tuna-water',      label: 'טונה במים',        group: 'דגים' },
+    { id: 'nile-fish',       label: 'דג נילוס',          group: 'דגים', qtyType: 'weight', qtyStep: 200, defaultQty: 400, unit: 'גרם' },
+    { id: 'cod-fillet',      label: 'פילה בקלה',        group: 'דגים', qtyType: 'weight', qtyStep: 200, defaultQty: 400, unit: 'גרם' },
+    // קטניות וטופו
+    { id: 'chickpeas',       label: 'גרגרי חומוס',      group: 'קטניות וטופו' },
+    { id: 'red-lentils',     label: 'עדשים כתומות',     group: 'קטניות וטופו' },
+    { id: 'black-lentils',   label: 'עדשים שחורות',     group: 'קטניות וטופו' },
+    { id: 'white-beans',     label: 'שעועית לבנה',      group: 'קטניות וטופו' },
+    { id: 'red-beans',       label: 'שעועית אדומה',     group: 'קטניות וטופו' },
+    { id: 'tofu',            label: 'טופו',              group: 'קטניות וטופו', qtyType: 'weight', qtyStep: 200, defaultQty: 200, unit: 'גרם' },
   ]
 };
 
@@ -72,7 +77,7 @@ export const VEGETABLES = [
   { id: 'zucchini',       label: 'קישוא',                 group: 'פלפלים וקישואים', qtyType: 'count', qtyStep: 1, defaultQty: 1, unit: '' },
   { id: 'eggplant',       label: 'חציל',                  group: 'פלפלים וקישואים', qtyType: 'count', qtyStep: 1, defaultQty: 1, unit: '' },
   { id: 'cucumber',       label: 'מלפפון',                group: 'פלפלים וקישואים', qtyType: 'count', qtyStep: 1, defaultQty: 1, unit: '' },
-  // ירוקים
+  // ירוקים וכרוב
   { id: 'cauliflower',    label: 'כרובית',                group: 'ירוקים וכרוב' },
   { id: 'broccoli',       label: 'ברוקולי',               group: 'ירוקים וכרוב' },
   { id: 'spinach',        label: 'תרד',                   group: 'ירוקים וכרוב' },
@@ -92,21 +97,24 @@ export const VEGETABLES = [
 ];
 
 export const CARBS = [
-  { id: 'rice',           label: 'אורז',                  pantry: true },
-  { id: 'pasta',          label: 'פסטה',                  pantry: true },
-  { id: 'couscous',       label: 'קוסקוס',                pantry: true },
-  { id: 'bulgur',         label: 'בורגול' },
-  { id: 'ptitim',         label: 'פתיתים' },
-  { id: 'quinoa',         label: 'קינואה' },
-  { id: 'rice-noodles',   label: 'אטריות אורז',           qtyType: 'weight', qtyStep: 200, defaultQty: 200, unit: 'גרם' },
-  { id: 'bread',          label: 'לחם',                   pantry: true },
-  { id: 'breadcrumbs',    label: 'פירורי לחם',            pantry: true },
-  { id: 'pita',           label: 'פיתות' },
-  { id: 'tortilla',       label: 'טורטיות' },
-  { id: 'egg-noodles',    label: 'אטריות ביצים' },
-  { id: 'lasagna-sheets', label: 'יריעות לזניה' },
-  { id: 'polenta',        label: 'פולנטה' },
-  { id: 'oats',           label: 'שיבולת שועל',          pantry: true },
+  // דגנים
+  { id: 'rice',           label: 'אורז',                  group: 'דגנים', pantry: true },
+  { id: 'couscous',       label: 'קוסקוס',                group: 'דגנים', pantry: true },
+  { id: 'bulgur',         label: 'בורגול',                group: 'דגנים' },
+  { id: 'quinoa',         label: 'קינואה',                group: 'דגנים' },
+  { id: 'oats',           label: 'שיבולת שועל',           group: 'דגנים', pantry: true },
+  { id: 'polenta',        label: 'פולנטה',                group: 'דגנים' },
+  // פסטה ואטריות
+  { id: 'pasta',          label: 'פסטה',                  group: 'פסטה ואטריות', pantry: true },
+  { id: 'egg-noodles',    label: 'אטריות ביצים',          group: 'פסטה ואטריות' },
+  { id: 'rice-noodles',   label: 'אטריות אורז',           group: 'פסטה ואטריות', qtyType: 'weight', qtyStep: 200, defaultQty: 200, unit: 'גרם' },
+  { id: 'lasagna-sheets', label: 'יריעות לזניה',          group: 'פסטה ואטריות' },
+  { id: 'ptitim',         label: 'פתיתים',                group: 'פסטה ואטריות' },
+  // לחם ומאפים
+  { id: 'bread',          label: 'לחם',                   group: 'לחם ומאפים', pantry: true },
+  { id: 'breadcrumbs',    label: 'פירורי לחם',            group: 'לחם ומאפים', pantry: true },
+  { id: 'pita',           label: 'פיתות',                 group: 'לחם ומאפים' },
+  { id: 'tortilla',       label: 'טורטיות',               group: 'לחם ומאפים' },
 ];
 
 export const SPICES = [

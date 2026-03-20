@@ -11,7 +11,7 @@ const PROTEIN_TAB_LABELS = {
 
 const getTabs = (kosherType) => [
   { key: 'proteins',   label: PROTEIN_TAB_LABELS[kosherType] || 'בשר ודגים' },
-  { key: 'carbs',      label: 'דגנים ופסטה' },
+  { key: 'carbs',      label: 'דגנים ולחם' },
   { key: 'vegetables', label: 'ירקות'       },
   { key: 'flavors',    label: 'טעמים'       },
 ];
@@ -144,6 +144,7 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
   };
 
   const renderGroupedChips = (items, list, setList) => {
+    const firstGroup = items.find(i => i.group)?.group;
     let lastGroup = null;
     return items.map(item => {
       const showHeader = item.group && item.group !== lastGroup;
@@ -151,7 +152,9 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
       return (
         <React.Fragment key={item.id}>
           {showHeader && (
-            <div className="chip-group-header">{item.group}</div>
+            <div className={`chip-group-header${item.group === firstGroup ? ' first' : ''}`}>
+              {item.group}
+            </div>
           )}
           {renderChip(item, list, setList)}
         </React.Fragment>
