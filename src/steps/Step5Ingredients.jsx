@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, ChevronLeft } from 'lucide-react';
 import { PROTEINS, VEGETABLES, SPICES, CARBS } from '../data/ingredients';
 import { SAUCES } from '../data/sauces';
 
@@ -11,7 +11,7 @@ const PROTEIN_TAB_LABELS = {
 
 const getTabs = (kosherType) => [
   { key: 'proteins',   label: PROTEIN_TAB_LABELS[kosherType] || 'בשר ודגים' },
-  { key: 'carbs',      label: 'דגנים ופסטה' },
+  { key: 'carbs',      label: 'דגנים ולחם' },
   { key: 'vegetables', label: 'ירקות'       },
   { key: 'flavors',    label: 'טעמים'       },
 ];
@@ -39,6 +39,7 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
 
   const tabs = getTabs(kosherType);
   const nextText = useGenderText('המשך ←', 'המשך ←');
+  const isLastTab = activeTab === tabs.length - 1;
 
   const proteinList = PROTEINS[kosherType] || PROTEINS.pareve;
 
@@ -139,6 +140,7 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
   };
 
   const renderGroupedChips = (items, list, setList) => {
+    const firstGroup = items.find(i => i.group)?.group;
     let lastGroup = null;
     return items.map(item => {
       const showHeader = item.group && item.group !== lastGroup;
@@ -146,7 +148,9 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
       return (
         <React.Fragment key={item.id}>
           {showHeader && (
-            <div className="chip-group-header">{item.group}</div>
+            <div className={`chip-group-header${item.group === firstGroup ? ' first' : ''}`}>
+              {item.group}
+            </div>
           )}
           {renderChip(item, list, setList)}
         </React.Fragment>
@@ -254,11 +258,16 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
       <p className="step-sub">סמנו מה יש לכם בבית</p>
       <p className="ing-hint">מה שלא סימנתם — לא יופיע במתכון</p>
 
-      {/* Tabs */}
-      <div className="ing-tabs">
+      {/* Tab progress bar */}
+      <div className="ing-tab-progress">
         {tabs.map((tab, i) => (
-          <div key={tab.key} className={`ing-tab ${activeTab === i ? 'active' : ''}`} onClick={() => setActiveTab(i)}>
-            {tab.label}
+          <div
+            key={tab.key}
+            className={`ing-tab-step ${i < activeTab ? 'done' : ''} ${i === activeTab ? 'current' : ''}`}
+            onClick={() => setActiveTab(i)}
+          >
+            <div className="ing-tab-step-num">{i < activeTab ? '✓' : i + 1}</div>
+            <div className="ing-tab-step-label">{tab.label}</div>
             {tabCountMap[tab.key] > 0 && <span className="tab-badge">{tabCountMap[tab.key]}</span>}
           </div>
         ))}
@@ -271,9 +280,24 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
         </div>
       </div>
 
-      <button className="btn btn-next btn-generate" onClick={handleNext}>
-        {nextText}
-      </button>
+      {/* Navigation */}
+      <div className="ing-nav-row">
+        {!isLastTab ? (
+          <>
+            <button className="btn btn-next btn-next-tab" onClick={() => setActiveTab(activeTab + 1)}>
+              {tabs[activeTab + 1].label} ←
+              <ChevronLeft size={16} className="btn-next-tab-icon" />
+            </button>
+            <button className="btn btn-skip-to-end" onClick={handleNext}>
+              {nextText}
+            </button>
+          </>
+        ) : (
+          <button className="btn btn-next btn-generate" onClick={handleNext}>
+            {nextText}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
