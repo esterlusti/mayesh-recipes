@@ -677,15 +677,73 @@ body {
 }
 .chip-add-confirm:disabled { opacity: 0.4; }
 
+/* Step progress indicator (ing-tab-progress) */
+.ing-tab-progress {
+  display: flex; align-items: flex-start;
+  margin-bottom: 24px; margin-top: 4px;
+  position: relative;
+}
+.ing-tab-step {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px;
+  cursor: pointer; position: relative; padding-bottom: 4px;
+}
+.ing-tab-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 12px; left: -50%;
+  width: 100%; height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+.ing-tab-step.done:not(:last-child)::after,
+.ing-tab-step.done + .ing-tab-step::after,
+.ing-tab-step.current:not(:last-child)::after { background: var(--accent); }
+.ing-tab-step-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 900; color: var(--text-60);
+  background: var(--surface); position: relative; z-index: 1;
+  transition: all 0.2s;
+}
+.ing-tab-step.done .ing-tab-step-num {
+  background: var(--accent); border-color: var(--accent); color: white;
+}
+.ing-tab-step.current .ing-tab-step-num {
+  background: var(--accent); border-color: var(--accent); color: white;
+  box-shadow: 0 0 0 4px rgba(232, 93, 4, 0.15);
+}
+.ing-tab-step-label {
+  font-size: 10px; font-weight: 600; color: var(--text-30); text-align: center; line-height: 1.2;
+}
+.ing-tab-step.current .ing-tab-step-label { color: var(--accent); font-weight: 800; }
+.ing-tab-step.done .ing-tab-step-label { color: var(--text-30); }
+
 /* Tab badge — item count */
 .tab-badge {
   display: inline-flex; align-items: center; justify-content: center;
   background: var(--accent); color: white;
   font-size: 10px; font-weight: 900; line-height: 1;
   width: 16px; height: 16px; border-radius: 50%;
-  margin-right: 4px; margin-bottom: 1px; vertical-align: middle;
 }
+/* Badge overlaid on top-right of the circle number */
+.ing-tab-step .tab-badge {
+  position: absolute; top: -4px; left: calc(50% + 5px); z-index: 2;
+  margin: 0;
+}
+.ing-tab-step.current .tab-badge { background: white; color: var(--accent); }
 .ing-tab.active .tab-badge { background: rgba(255,255,255,0.3); }
+
+/* Navigation row */
+.ing-nav-row { margin-top: 12px; }
+.btn-skip-to-end {
+  display: block; width: 100%; text-align: center;
+  margin-top: 8px; background: none; border: none;
+  color: var(--text-60); font-size: 13px; font-weight: 600;
+  cursor: pointer; padding: 6px;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.btn-skip-to-end:hover { color: var(--text); }
 
 /* Tab summary bar */
 .tab-summary {
