@@ -36,7 +36,7 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; overflow-x: hidden; }
+html { scroll-behavior: smooth; }
 body {
   font-family: 'Heebo', sans-serif;
   background: var(--bg);
@@ -605,52 +605,64 @@ body {
 /* ── INGREDIENTS (STEP PROGRESS) ── */
 .ingredients-step .step-card { padding-bottom: 20px; }
 
-/* Step progress indicator */
-.ing-tab-progress {
-  display: flex; align-items: flex-start;
-  margin-bottom: 24px; margin-top: 4px;
-  position: relative;
+/* Segmented tab bar */
+.ing-seg-bar {
+  display: flex; gap: 0;
+  border: 2px solid #111;
+  margin-bottom: 0; margin-top: 4px;
+  overflow: hidden;
 }
-.ing-tab-step {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px;
-  cursor: pointer; position: relative; padding-bottom: 4px;
+.ing-seg-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
+  padding: 10px 4px; font-size: 12px; font-weight: 700;
+  border: none; border-left: 2px solid #111;
+  background: transparent; color: var(--text-60);
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+  font-family: inherit;
 }
-.ing-tab-step:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  top: 12px; left: -50%;
-  width: 100%; height: 2px;
-  background: var(--border);
-  z-index: 0;
+.ing-seg-btn:first-child { border-left: none; }
+.ing-seg-btn.active {
+  background: var(--accent); color: #fff; font-weight: 900;
 }
-.ing-tab-step.done:not(:last-child)::after,
-.ing-tab-step.done + .ing-tab-step::after,
-.ing-tab-step.current:not(:last-child)::after { background: var(--accent); }
-.ing-tab-step-num {
-  width: 26px; height: 26px; border-radius: 50%;
-  border: 2px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 900; color: var(--text-60);
-  background: var(--surface); position: relative; z-index: 1;
-  transition: all 0.2s;
+.ing-seg-btn.done {
+  background: var(--surface-2); color: var(--text);
 }
-.ing-tab-step.done .ing-tab-step-num {
-  background: var(--accent); border-color: var(--accent); color: white;
+.ing-seg-btn.done:hover { background: rgba(232,93,4,0.08); }
+.ing-seg-btn.visited { color: var(--text-60); }
+.ing-seg-btn.future { color: var(--text-30); cursor: pointer; }
+.seg-label { font-size: 12px; }
+.seg-check { flex-shrink: 0; color: var(--accent); }
+.ing-seg-btn.done .seg-check { color: var(--accent); }
+.seg-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--accent); color: white;
+  font-size: 9px; font-weight: 900; line-height: 1;
+  width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
 }
-.ing-tab-step.current .ing-tab-step-num {
-  background: var(--accent); border-color: var(--accent); color: white;
-  box-shadow: 0 0 0 4px rgba(232, 93, 4, 0.15);
+.ing-seg-btn.done .seg-count { background: var(--accent); }
+
+/* Section header */
+.ing-section-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin: 14px 0 10px;
 }
-.ing-tab-step-label {
-  font-size: 10px; font-weight: 600; color: var(--text-30); text-align: center; line-height: 1.2;
+.ing-section-title {
+  font-size: 16px; font-weight: 900; color: var(--text);
 }
-.ing-tab-step.current .ing-tab-step-label { color: var(--accent); font-weight: 800; }
-.ing-tab-step.done .ing-tab-step-label { color: var(--text-30); }
-.ing-tab-step .tab-badge {
-  position: absolute; top: -4px; left: 2px; z-index: 2;
+.ing-section-count {
+  font-size: 12px; font-weight: 700; color: var(--accent);
 }
 
-/* Tab panel and chips */
+/* Navigation */
+.ing-nav-row { margin-top: 12px; }
+.ing-btn-next-tab { margin-top: 0; }
+.btn-skip-to-end {
+  display: block; width: 100%; text-align: center;
+  margin-top: 8px; background: none; border: none;
+  color: var(--text-30); font-size: 12px; font-weight: 600;
+  cursor: pointer; padding: 4px; font-family: inherit;
+}
+.btn-skip-to-end:hover { color: var(--text-60); }
 .ing-tab-panel { min-height: 120px; }
 .ing-tab-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 14px; }
 .ing-tab-chips .chip { padding: 9px 18px; font-size: 14px; }
@@ -698,15 +710,67 @@ body {
 }
 .chip-add-confirm:disabled { opacity: 0.4; }
 
+/* Step progress indicator (ing-tab-progress) */
+.ing-tab-progress {
+  display: flex; align-items: flex-start;
+  margin-bottom: 24px; margin-top: 4px;
+  position: relative;
+}
+.ing-tab-step {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px;
+  cursor: pointer; position: relative; padding-bottom: 4px;
+}
+.ing-tab-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 12px; left: -50%;
+  width: 100%; height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+.ing-tab-step.done:not(:last-child)::after,
+.ing-tab-step.done + .ing-tab-step::after,
+.ing-tab-step.current:not(:last-child)::after { background: var(--accent); }
+.ing-tab-step-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 900; color: var(--text-60);
+  background: var(--surface); position: relative; z-index: 1;
+  transition: all 0.2s;
+}
+.ing-tab-step.done .ing-tab-step-num {
+  background: var(--accent); border-color: var(--accent); color: white;
+}
+.ing-tab-step.current .ing-tab-step-num {
+  background: var(--accent); border-color: var(--accent); color: white;
+  box-shadow: 0 0 0 4px rgba(232, 93, 4, 0.15);
+}
+.ing-tab-step-label {
+  font-size: 10px; font-weight: 600; color: var(--text-30); text-align: center; line-height: 1.2;
+}
+.ing-tab-step.current .ing-tab-step-label { color: var(--accent); font-weight: 800; }
+.ing-tab-step.done .ing-tab-step-label { color: var(--text-30); }
+
 /* Tab badge — item count */
 .tab-badge {
   display: inline-flex; align-items: center; justify-content: center;
   background: var(--accent); color: white;
   font-size: 10px; font-weight: 900; line-height: 1;
   width: 16px; height: 16px; border-radius: 50%;
-  margin-right: 4px; margin-bottom: 1px; vertical-align: middle;
 }
-.ing-tab-step.current .tab-badge { background: white; color: var(--accent); }
+.ing-tab.active .tab-badge { background: rgba(255,255,255,0.3); }
+
+/* Navigation row */
+.ing-nav-row { margin-top: 12px; }
+.btn-skip-to-end {
+  display: block; width: 100%; text-align: center;
+  margin-top: 8px; background: none; border: none;
+  color: var(--text-60); font-size: 13px; font-weight: 600;
+  cursor: pointer; padding: 6px;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.btn-skip-to-end:hover { color: var(--text); }
 
 /* Tab summary bar */
 .tab-summary {
@@ -1435,6 +1499,14 @@ body {
   border-right-color: #f5b731 !important;
 }
 .pdf-mode .ing-dot { background: #e85520 !important; }
+.pdf-mode .btn-interactive,
+.pdf-mode .steps-progress,
+.pdf-mode .ing-checkbox,
+.pdf-mode .all-done-banner { display: none !important; }
+.pdf-mode .recipe-steps { list-style: decimal !important; }
+.pdf-mode .interactive-steps { list-style: decimal !important; padding-right: 20px !important; }
+.pdf-mode .interactive-step { display: list-item !important; }
+.pdf-mode .step-checkbox { display: none !important; }
 
 /* Hide all interactive elements in PDF */
 .pdf-mode .recipe-actions,

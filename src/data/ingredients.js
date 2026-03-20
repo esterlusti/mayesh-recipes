@@ -62,7 +62,7 @@ export const VEGETABLES = [
   { id: 'garlic',         label: 'שום',                   group: 'בצל ועגבניות', pantry: true },
   { id: 'tomato',         label: 'עגבנייה',               group: 'בצל ועגבניות', qtyType: 'count', qtyStep: 1, defaultQty: 2, unit: '', pantry: true },
   { id: 'cherry-tomatoes',label: 'עגבניות שרי',           group: 'בצל ועגבניות' },
-  { id: 'canned-tomatoes',label: 'עגבניות מרוסקות בקופסה',group: 'בצל ועגבניות', pantry: true },
+
   { id: 'spring-onion',   label: 'בצל ירוק',              group: 'בצל ועגבניות' },
   // שורש
   { id: 'potato',         label: 'תפוח אדמה',             group: 'ירקות שורש', qtyType: 'count', qtyStep: 1, defaultQty: 2, unit: '', pantry: true },

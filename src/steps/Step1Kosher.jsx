@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Icon from '../components/icons';
 
 const KOSHER_OPTIONS = [
@@ -10,6 +10,7 @@ const KOSHER_OPTIONS = [
 export default function Step1Kosher({ onSelect, onQuickMode }) {
   const [selected, setSelected] = useState(null);
   const [pareveEquip, setPareveEquip] = useState(null);
+  const actionsRef = useRef(null);
 
   const handleSelect = (id) => {
     setSelected(id);
@@ -21,6 +22,12 @@ export default function Step1Kosher({ onSelect, onQuickMode }) {
   };
 
   const isReady = selected && (selected !== 'pareve' || pareveEquip);
+
+  useEffect(() => {
+    if (isReady && actionsRef.current) {
+      actionsRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [isReady]);
 
   const handleContinue = () => {
     onSelect(selected, selected === 'pareve' ? pareveEquip : null);
@@ -73,7 +80,7 @@ export default function Step1Kosher({ onSelect, onQuickMode }) {
       )}
 
       {isReady && (
-        <div className="kosher-actions animate-in">
+        <div className="kosher-actions animate-in" ref={actionsRef}>
           <button className="btn btn-next" onClick={handleContinue}>
             המשיכו לבחירה מלאה →
           </button>
