@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, Check } from 'lucide-react';
 import { PROTEINS, VEGETABLES, SPICES, CARBS } from '../data/ingredients';
 import { SAUCES } from '../data/sauces';
 
@@ -36,9 +36,14 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
   const inputRef = useRef();
 
   const [activeTab, setActiveTab] = useState(0);
+  const [visitedTabs, setVisitedTabs] = useState(new Set([0]));
 
   const tabs = getTabs(kosherType);
-  const nextText = useGenderText('המשך ←', 'המשך ←');
+
+  const goToTab = (i) => {
+    setActiveTab(i);
+    setVisitedTabs(prev => new Set([...prev, i]));
+  };
 
   const proteinList = PROTEINS[kosherType] || PROTEINS.pareve;
 
@@ -248,20 +253,43 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
     );
   };
 
+  const isLastTab = activeTab === tabs.length - 1;
+  const currentCount = tabCountMap[currentTab.key];
+  const nextTab = tabs[activeTab + 1];
+
   return (
     <div className="step-card ingredients-step">
       <h2 className="playfair step-title">מרכיבים</h2>
       <p className="step-sub">סמנו מה יש לכם בבית</p>
-      <p className="ing-hint">מה שלא סימנתם — לא יופיע במתכון</p>
 
-      {/* Tabs */}
-      <div className="ing-tabs">
-        {tabs.map((tab, i) => (
-          <div key={tab.key} className={`ing-tab ${activeTab === i ? 'active' : ''}`} onClick={() => setActiveTab(i)}>
-            {tab.label}
-            {tabCountMap[tab.key] > 0 && <span className="tab-badge">{tabCountMap[tab.key]}</span>}
-          </div>
-        ))}
+      {/* Segmented tab bar */}
+      <div className="ing-seg-bar">
+        {tabs.map((tab, i) => {
+          const isDone = visitedTabs.has(i) && i !== activeTab && tabCountMap[tab.key] > 0;
+          const isActive = activeTab === i;
+          const stateClass = isActive ? 'active' : isDone ? 'done' : visitedTabs.has(i) ? 'visited' : 'future';
+          return (
+            <button
+              key={tab.key}
+              className={`ing-seg-btn ${stateClass}`}
+              onClick={() => goToTab(i)}
+            >
+              {isDone && <Check size={11} className="seg-check" />}
+              <span className="seg-label">{tab.label}</span>
+              {tabCountMap[tab.key] > 0 && !isActive && (
+                <span className="seg-count">{tabCountMap[tab.key]}</span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Section header */}
+      <div className="ing-section-header">
+        <span className="ing-section-title">{currentTab.label}</span>
+        {currentCount > 0 && (
+          <span className="ing-section-count">{currentCount} נבחרו ✓</span>
+        )}
       </div>
 
       {/* Tab content */}
@@ -271,9 +299,23 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
         </div>
       </div>
 
-      <button className="btn btn-next btn-generate" onClick={handleNext}>
-        {nextText}
-      </button>
+      {/* Navigation */}
+      <div className="ing-nav-row">
+        {isLastTab ? (
+          <button className="btn btn-next btn-generate" onClick={handleNext}>
+            צור לי מתכון! ←
+          </button>
+        ) : (
+          <>
+            <button className="btn btn-next ing-btn-next-tab" onClick={() => goToTab(activeTab + 1)}>
+              המשך: {nextTab.label} ←
+            </button>
+            <button className="btn-skip-to-end" onClick={handleNext}>
+              דלג לסוף ←
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }

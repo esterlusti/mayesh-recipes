@@ -604,32 +604,65 @@ body {
 
 /* ── INGREDIENTS (TABS) ── */
 .ingredients-step .step-card { padding-bottom: 20px; }
-.ing-tabs {
+
+/* Segmented tab bar */
+.ing-seg-bar {
   display: flex; gap: 0;
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
-  margin-bottom: 16px; margin-top: 4px;
   border: 2px solid #111;
+  margin-bottom: 0; margin-top: 4px;
+  overflow: hidden;
 }
-.ing-tab {
-  flex: 1; text-align: center;
-  padding: 9px 0; font-size: 12px; font-weight: 700;
-  color: #555;
-  border-radius: 0;
-  border: none;
-  border-left: 2px solid #111;
-  background: transparent;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  letter-spacing: 0.01em;
+.ing-seg-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
+  padding: 10px 4px; font-size: 12px; font-weight: 700;
+  border: none; border-left: 2px solid #111;
+  background: transparent; color: var(--text-60);
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+  font-family: inherit;
 }
-.ing-tab:first-child { border-left: none; }
-.ing-tab:hover { background: var(--surface-2); color: #111; }
-.ing-tab.active {
-  color: #fff;
-  background: var(--accent);
+.ing-seg-btn:first-child { border-left: none; }
+.ing-seg-btn.active {
+  background: var(--accent); color: #fff; font-weight: 900;
 }
+.ing-seg-btn.done {
+  background: var(--surface-2); color: var(--text);
+}
+.ing-seg-btn.done:hover { background: rgba(232,93,4,0.08); }
+.ing-seg-btn.visited { color: var(--text-60); }
+.ing-seg-btn.future { color: var(--text-30); cursor: pointer; }
+.seg-label { font-size: 12px; }
+.seg-check { flex-shrink: 0; color: var(--accent); }
+.ing-seg-btn.done .seg-check { color: var(--accent); }
+.seg-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--accent); color: white;
+  font-size: 9px; font-weight: 900; line-height: 1;
+  width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+}
+.ing-seg-btn.done .seg-count { background: var(--accent); }
+
+/* Section header */
+.ing-section-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin: 14px 0 10px;
+}
+.ing-section-title {
+  font-size: 16px; font-weight: 900; color: var(--text);
+}
+.ing-section-count {
+  font-size: 12px; font-weight: 700; color: var(--accent);
+}
+
+/* Navigation */
+.ing-nav-row { margin-top: 12px; }
+.ing-btn-next-tab { margin-top: 0; }
+.btn-skip-to-end {
+  display: block; width: 100%; text-align: center;
+  margin-top: 8px; background: none; border: none;
+  color: var(--text-30); font-size: 12px; font-weight: 600;
+  cursor: pointer; padding: 4px; font-family: inherit;
+}
+.btn-skip-to-end:hover { color: var(--text-60); }
 .ing-tab-panel { min-height: 120px; }
 .ing-tab-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 14px; }
 .ing-tab-chips .chip { padding: 9px 18px; font-size: 14px; }
