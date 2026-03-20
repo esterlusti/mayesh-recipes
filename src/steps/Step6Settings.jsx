@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 export default function Step6Settings({ onGenerate, useGenderText }) {
   const [servings, setServings]       = useState(4);
   const [recipeIdea, setRecipeIdea]   = useState('');
-  const [difficulty, setDifficulty]   = useState('medium');
+  const [difficulty, setDifficulty]   = useState('easy');
   const [maxMinutes, setMaxMinutes]   = useState('');
   const [recipeStyle, setRecipeStyle] = useState('classic');
 

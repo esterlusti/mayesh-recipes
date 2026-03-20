@@ -156,57 +156,67 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
     const html2pdf = (await import('html2pdf.js')).default;
     const kosherLbl = kosherType === 'meat' ? 'בשרי' : kosherType === 'dairy' ? 'חלבי' : 'פרווה';
 
-    const badge = (text, color = '#555') =>
-      `<span style="display:inline-block;background:#f5f5f5;border:1px solid #ddd;color:${color};padding:3px 10px;font-size:12px;font-weight:700;border-radius:3px;margin:2px 3px;">${text}</span>`;
+    const metaBadge = (text) =>
+      `<span style="display:inline-block;background:rgba(255,255,255,0.15);color:#fff;padding:4px 12px;font-size:12px;font-weight:700;border-radius:2px;margin:0 4px;">${text}</span>`;
 
     const htmlContent = `
-      <div dir="rtl" style="font-family:'Arial',sans-serif;color:#111;padding:28px 32px;direction:rtl;line-height:1.6;">
+      <div dir="rtl" style="font-family:'Arial',sans-serif;color:#111;direction:rtl;line-height:1.6;background:#fff;">
 
-        <div style="text-align:center;border-bottom:3px solid #111;padding-bottom:18px;margin-bottom:24px;">
-          <div style="font-size:11px;color:#aaa;letter-spacing:1px;margin-bottom:8px;">מה יש בבית?</div>
-          <h1 style="font-size:26px;font-weight:900;margin:0 0 12px;">${parsed.title || 'מתכון'}</h1>
+        <!-- Header -->
+        <div style="background:#111;color:#fff;padding:28px 32px 22px;text-align:center;">
+          <div style="font-size:10px;color:#e85d04;letter-spacing:2px;font-weight:700;text-transform:uppercase;margin-bottom:10px;">מה יש בבית?</div>
+          <h1 style="font-size:28px;font-weight:900;margin:0 0 14px;color:#fff;">${parsed.title || 'מתכון'}</h1>
           <div>
-            ${badge(kosherLbl, '#e85d04')}
-            ${parsed.timePrep ? badge('הכנה: ' + parsed.timePrep) : ''}
-            ${parsed.timeCook ? badge('בישול: ' + parsed.timeCook) : ''}
-            ${parsed.difficulty ? badge(parsed.difficulty) : ''}
+            ${metaBadge(kosherLbl)}
+            ${parsed.timePrep ? metaBadge('⏱ הכנה ' + parsed.timePrep) : ''}
+            ${parsed.timeCook ? metaBadge('🍳 בישול ' + parsed.timeCook) : ''}
+            ${parsed.difficulty ? metaBadge(parsed.difficulty) : ''}
           </div>
         </div>
 
-        <div style="margin-bottom:24px;">
-          <h2 style="font-size:15px;font-weight:900;border-bottom:2px solid #111;padding-bottom:6px;margin-bottom:14px;">מרכיבים</h2>
-          <table style="width:100%;border-collapse:collapse;">
-            ${parsed.ingredients.map((ing, i) => `
-              <tr style="border-bottom:1px solid #eee;">
-                <td style="padding:6px 0;font-size:14px;vertical-align:middle;">
-                  <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#e85d04;margin-left:10px;vertical-align:middle;"></span>${ing}
-                </td>
-              </tr>`).join('')}
-          </table>
-        </div>
+        <!-- Orange accent line -->
+        <div style="height:4px;background:#e85d04;"></div>
 
-        <div style="margin-bottom:24px;">
-          <h2 style="font-size:15px;font-weight:900;border-bottom:2px solid #111;padding-bottom:6px;margin-bottom:14px;">שלבי הכנה</h2>
-          <table style="width:100%;border-collapse:collapse;">
+        <div style="padding:28px 32px;">
+
+          <!-- Ingredients -->
+          <div style="margin-bottom:28px;">
+            <h2 style="font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:#e85d04;margin:0 0 14px;padding-bottom:6px;border-bottom:2px solid #111;">מרכיבים</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
+              ${parsed.ingredients.map(ing => `
+                <div style="padding:7px 0;font-size:14px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:8px;">
+                  <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#e85d04;flex-shrink:0;"></span>
+                  <span>${ing}</span>
+                </div>`).join('')}
+            </div>
+          </div>
+
+          <!-- Steps -->
+          <div style="margin-bottom:24px;">
+            <h2 style="font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:#e85d04;margin:0 0 14px;padding-bottom:6px;border-bottom:2px solid #111;">שלבי הכנה</h2>
             ${parsed.steps.map((step, i) => `
-              <tr style="border-bottom:1px solid #eee;">
-                <td style="padding:8px 0;vertical-align:top;font-weight:900;font-size:16px;color:#e85d04;width:28px;text-align:right;">${i + 1}</td>
-                <td style="padding:8px 0 8px 8px;font-size:14px;line-height:1.75;">${step}</td>
-              </tr>`).join('')}
-          </table>
+              <div style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid #f0f0f0;align-items:flex-start;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#e85d04;color:#fff;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${i + 1}</div>
+                <p style="font-size:14px;line-height:1.7;margin:4px 0 0;">${step}</p>
+              </div>`).join('')}
+          </div>
+
+          ${parsed.serving ? `
+            <div style="background:#f8f8f8;border-right:4px solid #e85d04;padding:12px 16px;margin-bottom:10px;">
+              <strong style="font-size:13px;color:#e85d04;">🍽️ הצעת הגשה</strong>
+              <p style="font-size:13px;margin:4px 0 0;">${parsed.serving}</p>
+            </div>` : ''}
+
+          ${parsed.tip ? `
+            <div style="background:#f8f8f8;border-right:4px solid #f5b731;padding:12px 16px;margin-bottom:10px;">
+              <strong style="font-size:13px;color:#b8860b;">💡 טיפ</strong>
+              <p style="font-size:13px;margin:4px 0 0;">${parsed.tip}</p>
+            </div>` : ''}
+
         </div>
 
-        ${parsed.serving ? `
-          <div style="background:#f0f7ff;border:1px solid #c0d9f0;border-right:4px solid #5b9bd5;padding:12px 14px;margin-bottom:12px;">
-            <strong style="font-size:13px;">🍽️ הצעת הגשה: </strong><span style="font-size:13px;">${parsed.serving}</span>
-          </div>` : ''}
-
-        ${parsed.tip ? `
-          <div style="background:#fffbf0;border:1px solid #e8d9a0;border-right:4px solid #f5b731;padding:12px 14px;margin-bottom:20px;">
-            <strong style="font-size:13px;">💡 טיפ: </strong><span style="font-size:13px;">${parsed.tip}</span>
-          </div>` : ''}
-
-        <div style="text-align:center;color:#bbb;font-size:10px;margin-top:24px;padding-top:12px;border-top:1px solid #eee;">
+        <!-- Footer -->
+        <div style="text-align:center;color:#aaa;font-size:10px;padding:12px 32px;border-top:1px solid #eee;">
           נוצר באפליקציית "מה יש בבית?"
         </div>
       </div>`;

@@ -4,7 +4,7 @@ export default function StepQuick({ onGenerate, useGenderText }) {
   const [ingredients, setIngredients] = useState('');
   const [idea, setIdea] = useState('');
   const [servings, setServings] = useState(4);
-  const [difficulty, setDifficulty] = useState('medium');
+  const [difficulty, setDifficulty] = useState('easy');
 
   const generateText = useGenderText('צור לי מתכון ✦', 'צרי לי מתכון ✦');
 
