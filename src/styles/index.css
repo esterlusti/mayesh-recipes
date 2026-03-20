@@ -36,7 +36,7 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; overflow-x: hidden; }
+html { scroll-behavior: smooth; }
 body {
   font-family: 'Heebo', sans-serif;
   background: var(--bg);
@@ -1498,6 +1498,14 @@ body {
   border-right-color: #f5b731 !important;
 }
 .pdf-mode .ing-dot { background: #e85520 !important; }
+.pdf-mode .btn-interactive,
+.pdf-mode .steps-progress,
+.pdf-mode .ing-checkbox,
+.pdf-mode .all-done-banner { display: none !important; }
+.pdf-mode .recipe-steps { list-style: decimal !important; }
+.pdf-mode .interactive-steps { list-style: decimal !important; padding-right: 20px !important; }
+.pdf-mode .interactive-step { display: list-item !important; }
+.pdf-mode .step-checkbox { display: none !important; }
 
 /* Hide all interactive elements in PDF */
 .pdf-mode .recipe-actions,

@@ -16,6 +16,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
   const [showShareModal, setShowShareModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const recipeRef = useRef(null);
+  const pdfContentRef = useRef(null);
 
   const restartText = useGenderText('התחל מחדש', 'התחילי מחדש');
 
@@ -153,81 +154,23 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
   };
 
   const handleDownloadPDF = async () => {
+    const el = pdfContentRef.current;
+    if (!el) return;
     const html2pdf = (await import('html2pdf.js')).default;
-    const kosherLbl = kosherType === 'meat' ? 'בשרי' : kosherType === 'dairy' ? 'חלבי' : 'פרווה';
 
-    const metaBadge = (text) =>
-      `<span style="display:inline-block;background:rgba(255,255,255,0.15);color:#fff;padding:4px 12px;font-size:12px;font-weight:700;border-radius:2px;margin:0 4px;">${text}</span>`;
-
-    const htmlContent = `
-      <div dir="rtl" style="font-family:'Arial',sans-serif;color:#111;direction:rtl;line-height:1.6;background:#fff;">
-
-        <!-- Header -->
-        <div style="background:#111;color:#fff;padding:28px 32px 22px;text-align:center;">
-          <div style="font-size:10px;color:#e85d04;letter-spacing:2px;font-weight:700;text-transform:uppercase;margin-bottom:10px;">מה יש בבית?</div>
-          <h1 style="font-size:28px;font-weight:900;margin:0 0 14px;color:#fff;">${parsed.title || 'מתכון'}</h1>
-          <div>
-            ${metaBadge(kosherLbl)}
-            ${parsed.timePrep ? metaBadge('⏱ הכנה ' + parsed.timePrep) : ''}
-            ${parsed.timeCook ? metaBadge('🍳 בישול ' + parsed.timeCook) : ''}
-            ${parsed.difficulty ? metaBadge(parsed.difficulty) : ''}
-          </div>
-        </div>
-
-        <!-- Orange accent line -->
-        <div style="height:4px;background:#e85d04;"></div>
-
-        <div style="padding:28px 32px;">
-
-          <!-- Ingredients -->
-          <div style="margin-bottom:28px;">
-            <h2 style="font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:#e85d04;margin:0 0 14px;padding-bottom:6px;border-bottom:2px solid #111;">מרכיבים</h2>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
-              ${parsed.ingredients.map(ing => `
-                <div style="padding:7px 0;font-size:14px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:8px;">
-                  <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#e85d04;flex-shrink:0;"></span>
-                  <span>${ing}</span>
-                </div>`).join('')}
-            </div>
-          </div>
-
-          <!-- Steps -->
-          <div style="margin-bottom:24px;">
-            <h2 style="font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:#e85d04;margin:0 0 14px;padding-bottom:6px;border-bottom:2px solid #111;">שלבי הכנה</h2>
-            ${parsed.steps.map((step, i) => `
-              <div style="display:flex;gap:14px;padding:10px 0;border-bottom:1px solid #f0f0f0;align-items:flex-start;">
-                <div style="width:28px;height:28px;border-radius:50%;background:#e85d04;color:#fff;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${i + 1}</div>
-                <p style="font-size:14px;line-height:1.7;margin:4px 0 0;">${step}</p>
-              </div>`).join('')}
-          </div>
-
-          ${parsed.serving ? `
-            <div style="background:#f8f8f8;border-right:4px solid #e85d04;padding:12px 16px;margin-bottom:10px;">
-              <strong style="font-size:13px;color:#e85d04;">🍽️ הצעת הגשה</strong>
-              <p style="font-size:13px;margin:4px 0 0;">${parsed.serving}</p>
-            </div>` : ''}
-
-          ${parsed.tip ? `
-            <div style="background:#f8f8f8;border-right:4px solid #f5b731;padding:12px 16px;margin-bottom:10px;">
-              <strong style="font-size:13px;color:#b8860b;">💡 טיפ</strong>
-              <p style="font-size:13px;margin:4px 0 0;">${parsed.tip}</p>
-            </div>` : ''}
-
-        </div>
-
-        <!-- Footer -->
-        <div style="text-align:center;color:#aaa;font-size:10px;padding:12px 32px;border-top:1px solid #eee;">
-          נוצר באפליקציית "מה יש בבית?"
-        </div>
-      </div>`;
+    // Temporarily apply pdf-mode class for light styling
+    el.classList.add('pdf-mode');
+    await new Promise(r => setTimeout(r, 100));
 
     await html2pdf().set({
-      margin: [0, 0, 0, 0],
+      margin: [8, 4, 8, 4],
       filename: `${parsed.title || 'מתכון'}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', windowWidth: 794, logging: false },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', scrollY: -window.scrollY, logging: false },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }).from(htmlContent, 'string').save();
+    }).from(el).save();
+
+    el.classList.remove('pdf-mode');
   };
 
   const getShareText = () => {
@@ -264,6 +207,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
 
   return (
     <div className={`recipe-result ${interactiveMode ? 'interactive-mode' : ''}`} ref={recipeRef}>
+      <div ref={pdfContentRef} className="pdf-content-area">
       <div className="recipe-header">
         <h2 className="playfair recipe-title">{parsed.title || 'המתכון שלך'}</h2>
         <div className="recipe-meta">
@@ -349,6 +293,7 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
           <span>{parsed.tip}</span>
         </div>
       )}
+      </div>{/* end pdf-content-area */}
 
       {/* Star Rating */}
       <div className="recipe-rating">
