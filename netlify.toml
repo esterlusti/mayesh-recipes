@@ -4,6 +4,25 @@
   functions = "netlify/functions"
   ignore = "git diff --quiet $CACHED_COMMIT HEAD -- public/ src/ netlify/ package.json netlify.toml"
 
+# Cache static assets for better performance (Core Web Vitals)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+# Security headers (minor SEO signal + best practice)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
 [[redirects]]
   from = "/api/*"
   to   = "/.netlify/functions/:splat"
