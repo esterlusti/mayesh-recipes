@@ -156,21 +156,24 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
   const handleDownloadPDF = async () => {
     const el = pdfContentRef.current;
     if (!el) return;
-    const html2pdf = (await import('html2pdf.js')).default;
-
-    // Temporarily apply pdf-mode class for light styling
     el.classList.add('pdf-mode');
-    await new Promise(r => setTimeout(r, 100));
-
-    await html2pdf().set({
-      margin: [8, 4, 8, 4],
-      filename: `${parsed.title || 'מתכון'}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', scrollY: -window.scrollY, logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }).from(el).save();
-
-    el.classList.remove('pdf-mode');
+    try {
+      const html2pdfModule = await import('html2pdf.js');
+      const html2pdf = html2pdfModule.default || html2pdfModule;
+      await new Promise(r => setTimeout(r, 150));
+      await html2pdf().set({
+        margin: [8, 4, 8, 4],
+        filename: `${parsed.title || 'מתכון'}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', scrollY: -window.scrollY, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(el).save();
+    } catch (e) {
+      console.error('PDF error:', e);
+      toast.error('הורדת PDF נכשלה, נסו שוב');
+    } finally {
+      el.classList.remove('pdf-mode');
+    }
   };
 
   const getShareText = () => {
