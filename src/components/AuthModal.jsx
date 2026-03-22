@@ -29,7 +29,7 @@ export default function AuthModal({ onClose, useGenderText, isAnonymous }) {
 
   const handleGuest = async () => {
     try { await signInGuest(); onClose(); }
-    catch (e) { console.error(e); }
+    catch (e) { console.error(e); toast.error('כניסה כאורח נכשלה, נסו שוב'); }
   };
 
   return (

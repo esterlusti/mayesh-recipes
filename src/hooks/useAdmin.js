@@ -12,8 +12,10 @@ export function useAdmin(user) {
     let cancelled = false;
     getUserDoc(user.uid).then(snap => {
       if (!cancelled) {
-        setIsAdmin(snap.exists() && snap.data().isAdmin === true);
+        setIsAdmin(snap.exists() && snap.data()?.isAdmin === true);
       }
+    }).catch(() => {
+      if (!cancelled) setIsAdmin(false);
     });
     return () => { cancelled = true; };
   }, [user?.uid]);

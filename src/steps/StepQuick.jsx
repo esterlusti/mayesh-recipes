@@ -83,7 +83,7 @@ export default function StepQuick({ onGenerate, useGenderText }) {
               max="200"
               className="servings-input"
               value={servings}
-              onChange={e => { const v = parseInt(e.target.value); if (!isNaN(v) && v >= 1) setServings(v); }}
+              onChange={e => { const v = parseInt(e.target.value); if (!isNaN(v) && v >= 1 && v <= 200) setServings(v); }}
             />
             <button className="servings-btn" onClick={() => setServings(servings + 1)}>+</button>
           </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { saveContactMessage } from '../firebase';
 import { Mail } from 'lucide-react';
 
@@ -25,6 +26,7 @@ export default function ContactPage({ user }) {
       setEmail('');
     } catch (err) {
       console.error('Failed to send:', err);
+      toast.error('שליחת ההודעה נכשלה, נסו שוב');
     }
     setSending(false);
   };
