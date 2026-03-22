@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, Suspense, lazy } from 'react';
 import { CookingPot } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -11,12 +11,8 @@ import AuthBar from './components/AuthBar';
 import AuthModal from './components/AuthModal';
 import OnboardingTour from './components/OnboardingTour';
 import GenderSelect from './components/GenderSelect';
-import ProfilePanel from './components/ProfilePanel';
-import AdminPanel from './components/AdminPanel';
 import ProgressBar from './components/ProgressBar';
 import ContactFooter from './components/ContactFooter';
-import AboutPage from './components/AboutPage';
-import ContactPage from './components/ContactPage';
 import Step1Kosher from './steps/Step1Kosher';
 import Step2Equipment from './steps/Step2Equipment';
 import Step3Category from './steps/Step3Category';
@@ -29,39 +25,10 @@ import { Toaster } from 'react-hot-toast';
 import { EQUIPMENT } from './data/equipment';
 import { getAuthRedirectResult, signInGoogle } from './firebase';
 
-const DECO_EMOJIS = [
-  { emoji: '🍅', top: '12%', right: '3%', size: 38, rotate: -15 },
-  { emoji: '🥕', top: '28%', left: '4%', size: 32, rotate: 12 },
-  { emoji: '🍊', top: '45%', right: '5%', size: 28, rotate: -8 },
-  { emoji: '🌿', top: '60%', left: '3%', size: 34, rotate: 20 },
-  { emoji: '🍋', top: '75%', right: '4%', size: 30, rotate: -12 },
-  { emoji: '🥬', top: '18%', left: '5%', size: 26, rotate: 8 },
-  { emoji: '🍆', top: '85%', left: '4%', size: 28, rotate: -18 },
-  { emoji: '🌶️', top: '38%', right: '3%', size: 30, rotate: 15 },
-];
-
-function DecoEmojis() {
-  return (
-    <div className="deco-emojis" aria-hidden="true">
-      {DECO_EMOJIS.map((d, i) => (
-        <span
-          key={i}
-          className="deco-emoji"
-          style={{
-            top: d.top,
-            right: d.right,
-            left: d.left,
-            fontSize: d.size,
-            transform: `rotate(${d.rotate}deg)`,
-            animationDelay: `${i * 0.8}s`,
-          }}
-        >
-          {d.emoji}
-        </span>
-      ))}
-    </div>
-  );
-}
+const ProfilePanel = lazy(() => import('./components/ProfilePanel'));
+const AdminPanel = lazy(() => import('./components/AdminPanel'));
+const AboutPage = lazy(() => import('./components/AboutPage'));
+const ContactPage = lazy(() => import('./components/ContactPage'));
 
 const stepVariants = {
   enter: { opacity: 0, x: -30 },
@@ -100,12 +67,22 @@ export default function App() {
   }, [user?.uid, user?.isAnonymous]);
 
   useEffect(() => {
-    fetch('/api/health')
-      .then(res => res.json())
-      .then(data => {
-        if (!data.ok) setApiError('שירות המתכונים אינו זמין כרגע. נסו שוב מאוחר יותר.');
-      })
-      .catch(() => setApiError('לא ניתן להתחבר לשרת. נסו שוב מאוחר יותר.'));
+    let cancelled = false;
+    const checkHealth = async (retries = 3) => {
+      for (let i = 0; i < retries; i++) {
+        try {
+          const res = await fetch('/api/health');
+          const data = await res.json();
+          if (!cancelled) {
+            if (data.ok) { setApiError(null); return; }
+          }
+        } catch {}
+        if (i < retries - 1) await new Promise(r => setTimeout(r, 5000));
+      }
+      if (!cancelled) setApiError('לא ניתן להתחבר לשרת. נסו שוב מאוחר יותר.');
+    };
+    checkHealth();
+    return () => { cancelled = true; };
   }, []);
 
   // Step data
@@ -125,6 +102,27 @@ export default function App() {
   const [lastRequestData, setLastRequestData] = useState(null);
   const [quickMode, setQuickMode] = useState(false);
 
+  const fetchRecipe = useCallback(async (payload) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 45000);
+    try {
+      const res = await fetch('/api/recipe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'שגיאה בשרת');
+      return result.recipe;
+    } catch (e) {
+      clearTimeout(timeout);
+      if (e.name === 'AbortError') throw new Error('הבקשה ארכה יותר מדי זמן, נסו שוב');
+      throw e;
+    }
+  }, []);
+
   // Show auth modal if no user
   if (authLoading) {
     return (
@@ -142,12 +140,6 @@ export default function App() {
             <span>⚠️ {apiError}</span>
           </div>
         )}
-        <div className="blobs">
-          <div className="blob b1" />
-          <div className="blob b2" />
-          <div className="blob b3" />
-        </div>
-        <DecoEmojis />
         <div className="hero-welcome">
           <h1 className="hero-title welcome-hero-title">מה יש לך<br /><em>בבית?</em></h1>
           <p className="hero-joke welcome-hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
@@ -182,14 +174,7 @@ export default function App() {
   // Show gender select once
   if (genderLoaded && !gender) {
     return (
-      <>
-        <div className="blobs">
-          <div className="blob b1" />
-          <div className="blob b2" />
-          <div className="blob b3" />
-        </div>
-        <GenderSelect onSelect={setGender} />
-      </>
+      <GenderSelect onSelect={setGender} />
     );
   }
 
@@ -203,7 +188,7 @@ export default function App() {
     });
   };
 
-  const handleKosherSelect = (type, pareveEquip) => {
+  const handleKosherSelect = useCallback((type, pareveEquip) => {
     setKosherType(type);
     setPareveEquipType(pareveEquip);
     if (user && !user.isAnonymous && savedEquipment.length > 0) {
@@ -213,9 +198,9 @@ export default function App() {
       }
     }
     setStep(2);
-  };
+  }, [user, savedEquipment, savedEquipmentType]);
 
-  const handleQuickMode = (type, pareveEquip) => {
+  const handleQuickMode = useCallback((type, pareveEquip) => {
     setKosherType(type);
     setPareveEquipType(pareveEquip);
     setQuickMode(true);
@@ -226,24 +211,24 @@ export default function App() {
       }
     }
     setStep('quick');
-  };
+  }, [user, savedEquipment, savedEquipmentType]);
 
-  const handleCategorySelect = (cat) => {
+  const handleCategorySelect = useCallback((cat) => {
     setCategory(cat);
     setStep(4);
-  };
+  }, []);
 
-  const handleDishSelect = (dish) => {
+  const handleDishSelect = useCallback((dish) => {
     setDishType(dish);
     setStep(5);
-  };
+  }, []);
 
-  const handleIngredientsNext = (ingredientData) => {
+  const handleIngredientsNext = useCallback((ingredientData) => {
     setPendingIngredients(ingredientData);
     setStep(6);
-  };
+  }, []);
 
-  const handleGenerate = async (data) => {
+  const handleGenerate = useCallback(async (data) => {
     const mergedData = pendingIngredients ? { ...pendingIngredients, ...data } : data;
     setRecipeServings(mergedData.servings);
     setRecipeDifficulty(mergedData.difficulty);
@@ -277,43 +262,24 @@ export default function App() {
     setLastRequestData(requestPayload);
 
     try {
-      const res = await fetch('/api/recipe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestPayload)
-      });
-
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'שגיאה בשרת');
-      setRecipe(result.recipe);
+      setRecipe(await fetchRecipe(requestPayload));
     } catch (e) {
       setRecipeError(e.message || 'שגיאה לא צפויה');
     }
     setRecipeLoading(false);
-  };
+  }, [pendingIngredients, category, kosherType, pareveEquipType, dishType, fetchRecipe]);
 
-  const handleSelectOption = async (option) => {
+  const handleSelectOption = useCallback(async (option) => {
     if (!lastRequestData) return;
     setRecipeLoading(true);
     setRecipeError(null);
     setRecipe(null);
 
-    const fetchWithOption = async (payload) => {
-      const res = await fetch('/api/recipe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'שגיאה בשרת');
-      return result.recipe;
-    };
-
     try {
-      let recipeText = await fetchWithOption({ ...lastRequestData, selectedOption: option });
+      let recipeText = await fetchRecipe({ ...lastRequestData, selectedOption: option });
 
       if (recipeText.trim().startsWith('OPTION: DUAL')) {
-        recipeText = await fetchWithOption({
+        recipeText = await fetchRecipe({
           ...lastRequestData,
           selectedOption: option,
           forceSingle: true
@@ -329,31 +295,23 @@ export default function App() {
       setRecipeError(e.message || 'שגיאה לא צפויה');
     }
     setRecipeLoading(false);
-  };
+  }, [lastRequestData, fetchRecipe]);
 
-  const handleAnotherRecipe = async () => {
+  const handleAnotherRecipe = useCallback(async () => {
     if (!lastRequestData) return;
     setRecipeLoading(true);
     setRecipeError(null);
     setRecipe(null);
 
     try {
-      const res = await fetch('/api/recipe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(lastRequestData)
-      });
-
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'שגיאה בשרת');
-      setRecipe(result.recipe);
+      setRecipe(await fetchRecipe(lastRequestData));
     } catch (e) {
       setRecipeError(e.message || 'שגיאה לא צפויה');
     }
     setRecipeLoading(false);
-  };
+  }, [lastRequestData, fetchRecipe]);
 
-  const handleRestart = () => {
+  const handleRestart = useCallback(() => {
     setStep(1);
     setKosherType(null);
     setPareveEquipType(null);
@@ -364,14 +322,11 @@ export default function App() {
     setRecipeError(null);
     setQuickMode(false);
     setPendingIngredients(null);
-  };
+  }, []);
 
-  const handleNavChange = (newPage) => {
+  const handleNavChange = useCallback((newPage) => {
     setPage(newPage);
-    if (newPage === 'recipe') {
-      // keep current step state
-    }
-  };
+  }, []);
 
   return (
     <>
@@ -382,12 +337,6 @@ export default function App() {
           success: { iconTheme: { primary: '#e85d04', secondary: '#fff' } },
         }}
       />
-      <div className="blobs">
-        <div className="blob b1" />
-        <div className="blob b2" />
-        <div className="blob b3" />
-      </div>
-
       <AuthBar
         user={user}
         onAvatarClick={() => setShowProfile(true)}
@@ -412,21 +361,25 @@ export default function App() {
         </div>
       )}
 
-      <ProfilePanel
-        user={user}
-        open={showProfile}
-        onClose={() => setShowProfile(false)}
-        useGenderText={useGenderText}
-        pantryStaples={pantryStaples}
-        onPantryChange={setPantryStaples}
-      />
+      <Suspense fallback={null}>
+        <ProfilePanel
+          user={user}
+          open={showProfile}
+          onClose={() => setShowProfile(false)}
+          useGenderText={useGenderText}
+          pantryStaples={pantryStaples}
+          onPantryChange={setPantryStaples}
+        />
+      </Suspense>
 
       {isAdmin && (
-        <AdminPanel
-          open={showAdmin}
-          onClose={() => setShowAdmin(false)}
-          user={user}
-        />
+        <Suspense fallback={null}>
+          <AdminPanel
+            open={showAdmin}
+            onClose={() => setShowAdmin(false)}
+            user={user}
+          />
+        </Suspense>
       )}
 
       {apiError && (
@@ -445,7 +398,9 @@ export default function App() {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.18 }}
           >
-            <AboutPage isAdmin={isAdmin} />
+            <Suspense fallback={null}>
+              <AboutPage isAdmin={isAdmin} />
+            </Suspense>
           </motion.main>
         )}
 
@@ -458,7 +413,9 @@ export default function App() {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.18 }}
           >
-            <ContactPage user={user} />
+            <Suspense fallback={null}>
+              <ContactPage user={user} />
+            </Suspense>
           </motion.main>
         )}
       </AnimatePresence>

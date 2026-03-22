@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import toast from 'react-hot-toast';
 import { signInGoogle, signInMicrosoft, signInGuest } from '../firebase';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 export default function AuthModal({ onClose, useGenderText, isAnonymous }) {
+  const modalRef = useRef(null);
+  useFocusTrap(modalRef, true, onClose);
   const title = isAnonymous
     ? 'התחברות לחשבון'
     : useGenderText ? useGenderText('ברוך הבא!', 'ברוכה הבאה!') : 'ברוכים הבאים!';
@@ -33,9 +36,9 @@ export default function AuthModal({ onClose, useGenderText, isAnonymous }) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-card" onClick={e => e.stopPropagation()}>
-        <h2 className="modal-title playfair">{title}</h2>
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+      <div className="modal-card" ref={modalRef} onClick={e => e.stopPropagation()}>
+        <h2 id="auth-modal-title" className="modal-title playfair">{title}</h2>
         <p className="modal-sub">{subtitle}</p>
 
         <button className="auth-btn google-btn" onClick={handleGoogle}>

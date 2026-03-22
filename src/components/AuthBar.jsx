@@ -17,11 +17,11 @@ export default function AuthBar({ user, onAvatarClick, onAdminClick, useGenderTe
 
   return (
     <>
-    <div className="dev-banner">האתר בהרצה — ייתכנו שגיאות</div>
+    {import.meta.env.DEV && <div className="dev-banner">האתר בהרצה — ייתכנו שגיאות</div>}
     <div className="auth-bar">
       <div className="auth-bar-right">
         <span className="auth-logo">מה יש</span>
-        <nav className="auth-nav">
+        <nav className="auth-nav" aria-label="ניווט ראשי">
           {navItems.map(item => (
             <button
               key={item.id}
@@ -35,14 +35,14 @@ export default function AuthBar({ user, onAvatarClick, onAdminClick, useGenderTe
       </div>
       <div className="auth-bar-left">
         {isAdmin && (
-          <button className="admin-trigger-btn" onClick={onAdminClick} title="פאנל ניהול">
+          <button className="admin-trigger-btn" onClick={onAdminClick} title="פאנל ניהול" aria-label="פאנל ניהול">
             <Settings size={16} />
           </button>
         )}
         {displayName && (
           <span className="auth-greeting">{displayName}</span>
         )}
-        <button className="avatar-btn" onClick={onAvatarClick} title="הפרופיל שלי">
+        <button className="avatar-btn" onClick={onAvatarClick} title="הפרופיל שלי" aria-label="הפרופיל שלי">
           {user?.photoURL
             ? <img src={user.photoURL} alt="avatar" className="avatar-img" />
             : <span className="avatar-placeholder"><ChefHat size={17} strokeWidth={2} /></span>

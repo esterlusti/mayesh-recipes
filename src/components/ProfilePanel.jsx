@@ -3,6 +3,7 @@ import { ChefHat, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { doSignOut, getRecentRecipes, deleteRecipe, saveUserDoc, signInGoogle } from '../firebase';
 import toast from 'react-hot-toast';
 import { EQUIPMENT } from '../data/equipment';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { VEGETABLES, SPICES } from '../data/ingredients';
 import { SAUCES } from '../data/sauces';
 import { PANTRY_DEFAULTS } from '../data/pantryDefaults';
@@ -25,6 +26,7 @@ export default function ProfilePanel({ user, open, onClose, useGenderText, pantr
   const [openSections, setOpenSections] = useState({});
   const [viewRecipe, setViewRecipe] = useState(null);
   const panelRef = useRef();
+  useFocusTrap(panelRef, open, onClose);
 
   const equipTitle = useGenderText('הציוד שלי', 'הציוד שלי');
 
@@ -117,7 +119,7 @@ export default function ProfilePanel({ user, open, onClose, useGenderText, pantr
   if (!open) return null;
 
   return (
-    <div className="profile-overlay">
+    <div className="profile-overlay" role="dialog" aria-modal="true" aria-label="פרופיל">
       <div className="profile-panel" ref={panelRef}>
         <div className="profile-header">
           <div className="profile-avatar">
@@ -134,7 +136,7 @@ export default function ProfilePanel({ user, open, onClose, useGenderText, pantr
             </div>
             {user?.email && <div className="profile-email">{user.email}</div>}
           </div>
-          <button className="profile-close" onClick={onClose}>✕</button>
+          <button className="profile-close" onClick={onClose} aria-label="סגירת פרופיל">✕</button>
         </div>
 
         {user && !user.isAnonymous && (
