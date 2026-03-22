@@ -39,7 +39,11 @@ export function usePantryStaples(user) {
       } else {
         const local = localStorage.getItem(LS_KEY);
         if (!cancelled) {
-          setPantryStaplesState(local ? JSON.parse(local) : PANTRY_DEFAULTS);
+          let parsed = PANTRY_DEFAULTS;
+          if (local) {
+            try { parsed = JSON.parse(local); } catch { /* corrupted localStorage */ }
+          }
+          setPantryStaplesState(parsed);
           setLoaded(true);
         }
       }

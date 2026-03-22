@@ -116,9 +116,12 @@ export const updateAIModel = (model, uid) =>
     updatedBy: uid
   }, { merge: true });
 
-export const onAISettingsChange = (callback) =>
+export const onAISettingsChange = (callback, onError) =>
   onSnapshot(doc(db, 'settings', 'ai'), (snap) => {
     callback(snap.exists() ? snap.data() : { activeModel: 'openai' });
+  }, (err) => {
+    console.error('AI settings listener error:', err);
+    if (onError) onError(err);
   });
 
 // ── About page content ──

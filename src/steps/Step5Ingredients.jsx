@@ -95,6 +95,8 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
   const addCustomChip = (key) => {
     const val = inputVal.trim();
     if (!val) { setAddingTab(null); return; }
+    const getMap = { proteins: customProteins, carbs: customCarbs, vegetables: customVegetables, sauces: customSauces, spices: customSpices };
+    if (getMap[key]?.includes(val)) { setInputVal(''); setAddingTab(null); return; }
     const setMap = { proteins: setCustomProteins, carbs: setCustomCarbs, vegetables: setCustomVegetables, sauces: setCustomSauces, spices: setCustomSpices };
     setMap[key](prev => [...prev, val]);
     setInputVal('');

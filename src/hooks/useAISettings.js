@@ -5,9 +5,10 @@ export function useAISettings() {
   const [activeModel, setActiveModel] = useState('openai');
 
   useEffect(() => {
-    const unsub = onAISettingsChange((data) => {
-      setActiveModel(data.activeModel || 'openai');
-    });
+    const unsub = onAISettingsChange(
+      (data) => { setActiveModel(data.activeModel || 'openai'); },
+      () => { setActiveModel('openai'); }
+    );
     return unsub;
   }, []);
 

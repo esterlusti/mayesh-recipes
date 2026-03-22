@@ -67,7 +67,7 @@ export default function ProfilePanel({ user, open, onClose, useGenderText, pantr
     setSaving(true);
     try {
       await saveUserDoc(user.uid, { equipment: profileEquip, equipmentType: profileEquipType });
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error(e); toast.error('שמירה נכשלה'); }
     setSaving(false);
   };
 

@@ -181,10 +181,14 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
   };
 
   const handleCopyToClipboard = async () => {
-    await navigator.clipboard.writeText(getShareText());
-    setCopied(true);
-    toast.success('הועתק ללוח!');
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(getShareText());
+      setCopied(true);
+      toast.success('הועתק ללוח!');
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error('העתקה נכשלה — נסו מדפדפן אחר');
+    }
   };
 
   const handleShareWhatsApp = () => {

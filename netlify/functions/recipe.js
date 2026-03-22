@@ -1,7 +1,13 @@
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
-  const body = JSON.parse(event.body);
+  let body;
+  try {
+    body = JSON.parse(event.body);
+  } catch {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) };
+  }
+
   const {
     category, kosherType, equipmentType,
     dishType, proteins, carbs, sauces, vegetables,
@@ -11,11 +17,18 @@ exports.handler = async (event) => {
     model
   } = body;
 
+  if (model && !['openai', 'gemini'].includes(model)) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid model' }) };
+  }
+  if (servings != null && (typeof servings !== 'number' || servings < 1 || servings > 200)) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid servings' }) };
+  }
+
   const useGemini = model === 'gemini';
   const apiKey = useGemini ? process.env.GEMINI_API_KEY : process.env.OPENAI_API_KEY;
   if (!apiKey) return { statusCode: 500, body: JSON.stringify({ error: 'API key missing' }) };
 
-  const sanitize = (str) => str ? str.replace(/[<>{}]/g, '').slice(0, 100) : '';
+  const sanitize = (str) => str ? str.replace(/[<>{}`\x00-\x1f]/g, '').slice(0, 100) : '';
   const sanitizeArr = (arr) => (arr || []).map(s => sanitize(s)).filter(Boolean);
   const safeIdea = sanitize(recipeIdea);
 
