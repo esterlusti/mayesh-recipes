@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "concurrently \"vite\" \"node netlify/functions/server-local.js\"",
-    "build": "vite build",
+    "build": "vite build && node scripts/generate-seo-pages.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
