@@ -15,6 +15,23 @@ export default function Step6Recipe({ recipe, loading, error, user, kosherType, 
             <span>.</span><span>.</span><span>.</span>
           </div>
         </div>
+        <div className="skeleton-wrap">
+          <div className="skeleton-line title" />
+          <div className="skeleton-line short" />
+          <div className="skeleton-section">
+            <div className="skeleton-line skeleton-section-title" />
+            <div className="skeleton-line long" />
+            <div className="skeleton-line medium" />
+            <div className="skeleton-line long" />
+            <div className="skeleton-line short" />
+          </div>
+          <div className="skeleton-section">
+            <div className="skeleton-line skeleton-section-title" />
+            <div className="skeleton-line long" />
+            <div className="skeleton-line medium" />
+            <div className="skeleton-line long" />
+          </div>
+        </div>
       </div>
     );
   }

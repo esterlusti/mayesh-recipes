@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, MessageSquare, BookOpen, Users, Bot, Trash2, Package, FileText } from 'lucide-react';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import toast from 'react-hot-toast';
 import {
   getAllRecentRecipes, getRecentQueryLogs, getAllUsers,
@@ -25,6 +26,7 @@ export default function AdminPanel({ open, onClose, user }) {
   const [loading, setLoading] = useState(false);
   const { activeModel } = useAISettings();
   const panelRef = useRef();
+  useFocusTrap(panelRef, open, onClose);
 
   // About editor
   const [aboutContent, setAboutContent] = useState('');
@@ -131,11 +133,11 @@ export default function AdminPanel({ open, onClose, user }) {
   ];
 
   return (
-    <div className="admin-overlay">
+    <div className="admin-overlay" role="dialog" aria-modal="true" aria-label="פאנל ניהול">
       <div className="admin-panel" ref={panelRef}>
         <div className="admin-header">
           <h2 className="playfair">פאנל ניהול</h2>
-          <button className="profile-close" onClick={onClose}><X size={18} /></button>
+          <button className="profile-close" onClick={onClose} aria-label="סגירת פאנל ניהול"><X size={18} /></button>
         </div>
 
         <div className="admin-tabs">
@@ -202,12 +204,14 @@ export default function AdminPanel({ open, onClose, user }) {
                   {users.map(u => (
                     <div key={u.id} className="admin-card">
                       <div className="admin-card-header">
-                        <span className="admin-card-name">{u.id.slice(0, 8)}...</span>
+                        <span className="admin-card-name">{u.displayName || u.email || u.id.slice(0, 8) + '...'}</span>
+                        {u.email && u.displayName && <span className="admin-card-email" style={{ fontSize: '11px', color: 'var(--text-60)', display: 'block' }}>{u.email}</span>}
                       </div>
                       <div className="admin-card-details">
                         {u.gender && <span className="admin-tag">{u.gender === 'male' ? 'זכר' : 'נקבה'}</span>}
                         {u.equipmentType && <span className="admin-tag">{u.equipmentType === 'meat' ? 'בשרי' : 'חלבי'}</span>}
                         {u.isAdmin && <span className="admin-tag admin-tag-admin">מנהל</span>}
+                        {!u.displayName && !u.email && <span className="admin-tag">אורח</span>}
                       </div>
                     </div>
                   ))}

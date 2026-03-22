@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, OAuthProvider,
          signInWithPopup, signInWithRedirect, getRedirectResult,
-         linkWithPopup,
+         signInWithCredential, linkWithPopup,
          signInAnonymously, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc, deleteDoc,
          collection, collectionGroup, query, orderBy, limit,
@@ -23,15 +23,21 @@ export const googleProvider = new GoogleAuthProvider();
 export const microsoftProvider = new OAuthProvider('microsoft.com');
 
 // If user is anonymous, try to link the account to keep their data.
-// If linking fails (e.g. account already exists), fall back to regular sign-in.
+// If linking fails (e.g. account already exists), fall back to credential-based sign-in.
 const signInOrLink = async (provider) => {
   const currentUser = auth.currentUser;
   if (currentUser && currentUser.isAnonymous) {
     try {
       return await linkWithPopup(currentUser, provider);
     } catch (e) {
-      // auth/credential-already-in-use — account exists, sign in normally
+      // auth/credential-already-in-use — account exists, use the credential from the error
       if (e.code === 'auth/credential-already-in-use' || e.code === 'auth/email-already-in-use') {
+        const credential = GoogleAuthProvider.credentialFromError(e)
+          || OAuthProvider.credentialFromError(e);
+        if (credential) {
+          return await signInWithCredential(auth, credential);
+        }
+        // Fallback: open a new popup if no credential available
         return await signInWithPopup(auth, provider);
       }
       throw e;
