@@ -123,70 +123,15 @@ export default function App() {
     }
   }, []);
 
-  // Show auth modal if no user
-  if (authLoading) {
-    return (
-      <div className="app-loading">
-        <div className="loading-pot"><CookingPot size={52} strokeWidth={1.5} /></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <>
-        {apiError && (
-          <div className="api-error-banner">
-            <span>⚠️ {apiError}</span>
-          </div>
-        )}
-        <div className="hero-welcome">
-          <h1 className="hero-title welcome-hero-title">מה יש לך<br /><em>בבית?</em></h1>
-          <p className="hero-joke welcome-hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
-          <p className="welcome-tagline">מתכונים בהתאמה אישית</p>
-
-          <div className="welcome-features">
-            <div className="welcome-feature">
-              <span className="feature-icon">🍳</span>
-              <span className="feature-text">מתכונים מותאמים אישית</span>
-            </div>
-            <div className="welcome-feature">
-              <span className="feature-icon">⏱️</span>
-              <span className="feature-text">מוכן תוך דקות</span>
-            </div>
-            <div className="welcome-feature">
-              <span className="feature-icon">🛒</span>
-              <span className="feature-text">רשימת קניות חכמה</span>
-            </div>
-          </div>
-
-          <button className="btn btn-start" onClick={() => setShowAuth(true)}>
-            בואו נתחיל לבשל →
-          </button>
-
-          <p className="welcome-footer">הרשמה חינמית • ללא כרטיס אשראי</p>
-        </div>
-        {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
-      </>
-    );
-  }
-
-  // Show gender select once
-  if (genderLoaded && !gender) {
-    return (
-      <GenderSelect onSelect={setGender} />
-    );
-  }
-
   // Resolve equipment labels for API
-  const getEquipmentLabels = () => {
+  const getEquipmentLabels = useCallback(() => {
     const effectiveType = kosherType === 'pareve' ? pareveEquipType : kosherType;
     const allEquip = [...(EQUIPMENT[effectiveType] || []), ...EQUIPMENT.general];
     return equipment.map(id => {
       const found = allEquip.find(e => e.id === id);
       return found ? found.label : id;
     });
-  };
+  }, [kosherType, pareveEquipType, equipment]);
 
   const handleKosherSelect = useCallback((type, pareveEquip) => {
     setKosherType(type);
@@ -267,7 +212,7 @@ export default function App() {
       setRecipeError(e.message || 'שגיאה לא צפויה');
     }
     setRecipeLoading(false);
-  }, [pendingIngredients, category, kosherType, pareveEquipType, dishType, fetchRecipe]);
+  }, [pendingIngredients, category, kosherType, pareveEquipType, dishType, fetchRecipe, getEquipmentLabels]);
 
   const handleSelectOption = useCallback(async (option) => {
     if (!lastRequestData) return;
@@ -327,6 +272,61 @@ export default function App() {
   const handleNavChange = useCallback((newPage) => {
     setPage(newPage);
   }, []);
+
+  // Show auth modal if no user
+  if (authLoading) {
+    return (
+      <div className="app-loading">
+        <div className="loading-pot"><CookingPot size={52} strokeWidth={1.5} /></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <>
+        {apiError && (
+          <div className="api-error-banner">
+            <span>⚠️ {apiError}</span>
+          </div>
+        )}
+        <div className="hero-welcome">
+          <h1 className="hero-title welcome-hero-title">מה יש לך<br /><em>בבית?</em></h1>
+          <p className="hero-joke welcome-hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
+          <p className="welcome-tagline">מתכונים בהתאמה אישית</p>
+
+          <div className="welcome-features">
+            <div className="welcome-feature">
+              <span className="feature-icon">🍳</span>
+              <span className="feature-text">מתכונים מותאמים אישית</span>
+            </div>
+            <div className="welcome-feature">
+              <span className="feature-icon">⏱️</span>
+              <span className="feature-text">מוכן תוך דקות</span>
+            </div>
+            <div className="welcome-feature">
+              <span className="feature-icon">🛒</span>
+              <span className="feature-text">רשימת קניות חכמה</span>
+            </div>
+          </div>
+
+          <button className="btn btn-start" onClick={() => setShowAuth(true)}>
+            בואו נתחיל לבשל →
+          </button>
+
+          <p className="welcome-footer">הרשמה חינמית • ללא כרטיס אשראי</p>
+        </div>
+        {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+      </>
+    );
+  }
+
+  // Show gender select once
+  if (genderLoaded && !gender) {
+    return (
+      <GenderSelect onSelect={setGender} />
+    );
+  }
 
   return (
     <>
