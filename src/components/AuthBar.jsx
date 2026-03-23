@@ -17,7 +17,7 @@ export default function AuthBar({ user, onAvatarClick, onAdminClick, useGenderTe
 
   return (
     <>
-    {import.meta.env.DEV && <div className="dev-banner">האתר בהרצה — ייתכנו שגיאות</div>}
+    <div className="dev-banner">גרסת בטא — האתר בפיתוח</div>
     <div className="auth-bar">
       <div className="auth-bar-right">
         <span className="auth-logo">מה יש</span>
