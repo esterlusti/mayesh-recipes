@@ -108,7 +108,7 @@ export default function ProfilePanel({ user, open, onClose, useGenderText, pantr
 
   const handleGoogleSignIn = async () => {
     try { await signInGoogle(); onClose(); }
-    catch (e) { console.error(e); toast.error('כניסה עם Google נכשלה'); }
+    catch (e) { console.error(e); toast.error('כניסה עם Google נכשלה — בדקי שהפופ-אפ לא נחסם'); }
   };
 
   const handleSignOut = async () => {

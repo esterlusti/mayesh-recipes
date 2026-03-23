@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, OAuthProvider,
          signInWithPopup, signInWithRedirect, getRedirectResult,
-         signInWithCredential, linkWithPopup,
+         signInWithCredential, linkWithPopup, linkWithRedirect,
          signInAnonymously, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc, deleteDoc,
          collection, collectionGroup, query, orderBy, limit,
@@ -24,31 +24,59 @@ export const microsoftProvider = new OAuthProvider('microsoft.com');
 
 // If user is anonymous, try to link the account to keep their data.
 // If linking fails (e.g. account already exists), fall back to credential-based sign-in.
+// If popup is blocked, falls back to redirect flow.
+const POPUP_BLOCKED = new Set(['auth/popup-blocked', 'auth/popup-closed-by-user']);
+
 const signInOrLink = async (provider) => {
   const currentUser = auth.currentUser;
   if (currentUser && currentUser.isAnonymous) {
     try {
       return await linkWithPopup(currentUser, provider);
     } catch (e) {
-      // auth/credential-already-in-use — account exists, use the credential from the error
+      // Account exists — sign in with the existing credential
       if (e.code === 'auth/credential-already-in-use' || e.code === 'auth/email-already-in-use') {
         const credential = GoogleAuthProvider.credentialFromError(e)
           || OAuthProvider.credentialFromError(e);
         if (credential) {
           return await signInWithCredential(auth, credential);
         }
-        // Fallback: open a new popup if no credential available
         return await signInWithPopup(auth, provider);
+      }
+      // Popup blocked — fall back to redirect
+      if (POPUP_BLOCKED.has(e.code)) {
+        return await linkWithRedirect(currentUser, provider);
       }
       throw e;
     }
   }
-  return await signInWithPopup(auth, provider);
+  try {
+    return await signInWithPopup(auth, provider);
+  } catch (e) {
+    if (POPUP_BLOCKED.has(e.code)) {
+      return await signInWithRedirect(auth, provider);
+    }
+    throw e;
+  }
 };
 
 export const signInGoogle    = () => signInOrLink(googleProvider);
 export const signInMicrosoft = () => signInOrLink(microsoftProvider);
-export const getAuthRedirectResult = () => getRedirectResult(auth);
+
+// Handles redirect result; also resolves credential-already-in-use from redirect linking
+export const getAuthRedirectResult = async () => {
+  try {
+    return await getRedirectResult(auth);
+  } catch (e) {
+    if (e.code === 'auth/credential-already-in-use' || e.code === 'auth/email-already-in-use') {
+      const credential = GoogleAuthProvider.credentialFromError(e)
+        || OAuthProvider.credentialFromError(e);
+      if (credential) {
+        return await signInWithCredential(auth, credential);
+      }
+    }
+    throw e;
+  }
+};
 export const signInGuest     = () => signInAnonymously(auth);
 export const doSignOut       = () => signOut(auth);
 
