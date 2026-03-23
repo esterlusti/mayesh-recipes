@@ -5,6 +5,9 @@
  * before the SPA fallback.
  *
  * Zero runtime cost — everything is static HTML generated at build time.
+ *
+ * Safety: MAX_PAGES caps the number of generated pages to prevent abuse
+ * or accidental bloat. The build will fail if the limit is exceeded.
  */
 
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
@@ -13,6 +16,10 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
+
+// Safety limit — if categories.js grows beyond this, the build fails
+// instead of silently generating hundreds of thin pages.
+const MAX_PAGES = 100;
 const DIST = join(ROOT, 'dist');
 const SITE_URL = 'https://mayeshrecipes.com';
 
@@ -167,8 +174,16 @@ function generatePage(dish) {
 }
 
 // ---------------------------------------------------------------------------
-// 5. Generate all pages
+// 5. Safety check + Generate all pages
 // ---------------------------------------------------------------------------
+
+if (dishes.size > MAX_PAGES) {
+  console.error(`SEO ERROR: ${dishes.size} dishes found, but MAX_PAGES is ${MAX_PAGES}.`);
+  console.error('Increase MAX_PAGES in generate-seo-pages.mjs if this is intentional.');
+  process.exit(1);
+}
+
+console.log(`SEO: Found ${dishes.size} unique dishes (limit: ${MAX_PAGES})`);
 
 for (const dish of dishes.values()) {
   const dir = join(DIST, 'recipe', dish.slug);
