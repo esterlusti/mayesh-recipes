@@ -1,70 +1,71 @@
-# 🍳 מה יש בבית? — הוראות העלאה
+# מה יש לך בבית — מחולל מתכונים חכם
+
+אפליקציית ווב שמייצרת מתכונים מותאמים אישית לפי המצרכים שיש לך במטבח.
+
+**[mayeshrecipes.com](https://mayeshrecipes.com)**
 
 ## מבנה הפרויקט
 ```
 recipe-app/
-├── index.html              ← הפרונטאנד + Firebase Auth/Firestore
-├── netlify.toml            ← הגדרות Netlify
+├── index.html                 ← דף ראשי + Firebase Auth
+├── netlify.toml               ← הגדרות Netlify + headers
+├── package.json
+├── vite.config.js
+├── src/
+│   ├── App.jsx                ← קומפוננטת אב
+│   ├── main.jsx               ← entry point
+│   ├── firebase.js            ← הגדרות Firebase
+│   ├── components/            ← קומפוננטות UI
+│   ├── steps/                 ← שלבי יצירת מתכון (1-7)
+│   ├── hooks/                 ← React hooks מותאמים
+│   ├── data/                  ← מצרכים, קטגוריות, ציוד
+│   └── styles/                ← CSS
 ├── netlify/functions/
-│   └── recipe.js           ← backend (OpenAI API key מוגן)
-└── README.md
+│   └── recipe.js              ← Serverless function (OpenAI / Gemini)
+├── scripts/
+│   └── generate-seo-pages.mjs ← מייצר דפי SEO סטטיים בזמן build
+└── public/
+    ├── favicon.svg
+    ├── robots.txt
+    ├── sitemap.xml
+    └── manifest.json
 ```
 
----
+## פיצ'רים עיקריים
+- בחירת מצרכים מהמטבח → מתכון מותאם אישית
+- תמיכה בכשרות (בשרי / חלבי / פרווה)
+- בחירת רמת קושי, זמן, סגנון
+- הורדת מתכון כ-PDF
+- כניסה עם Google / אורח
+- פאנל מנהל
+- דפי SEO סטטיים לכל מנה (~75 דפים)
 
-## שלב א׳ — GitHub
+## פיתוח מקומי
 
 ```bash
-cd recipe-app
-git init
-git add .
-git commit -m "first commit"
+npm install
+npm run dev
 ```
 
-גש ל-https://github.com/new → שם: `mayesh-recipes` → Create repository
+מריץ Vite dev server + Netlify functions server מקומי.
+
+## Build
 
 ```bash
-git remote add origin https://github.com/YOUR_USERNAME/mayesh-recipes.git
-git branch -M main
-git push -u origin main
+npm run build
 ```
 
----
+1. `vite build` — בונה את האפליקציה ל-`dist/`
+2. `generate-seo-pages.mjs` — מייצר דפי נחיתה סטטיים ב-`dist/recipe/` + sitemap.xml
 
-## שלב ב׳ — Netlify
+## דיפלוי
+- Netlify מחובר ל-GitHub — push ל-`main` גורר דיפלוי אוטומטי
+- Environment variables נדרשים: `OPENAI_API_KEY` (ואופציונלית `GEMINI_API_KEY`)
+- Firebase: הדומיין חייב להיות רשום ב-Authentication → Authorized domains
 
-1. גש ל-https://app.netlify.com
-2. **"Add new site" → "Import an existing project" → GitHub**
-3. בחרי את `mayesh-recipes`
-4. הגדרות:
-   - Build command: ריק
-   - Publish directory: `.`
-5. לחצי **Deploy**
-
----
-
-## שלב ג׳ — הוסיפי את ה-OpenAI Key
-
-**Site configuration → Environment variables → Add a variable:**
-- Key: `OPENAI_API_KEY`
-- Value: `sk-...`
-
-לחצי **Save** ← **Deploys → Trigger deploy → Clear cache and deploy**
-
----
-
-## שלב ד׳ — Firebase: הוסיפי את ה-Domain המורשה
-
-כדי שה-Google Login יעבוד ב-Netlify:
-1. גשי ל-https://console.firebase.google.com
-2. **Authentication → Settings → Authorized domains**
-3. לחצי **Add domain**
-4. הכניסי את ה-domain של Netlify שלך (למשל `amazing-app-123.netlify.app`)
-
----
-
-## עדכונים עתידיים
-```bash
-git add . && git commit -m "update" && git push
-```
-Netlify מעדכן אוטומטית תוך ~30 שניות ✅
+## SEO
+- `robots.txt` + `sitemap.xml` — מאפשרים לגוגל לסרוק את האתר
+- דפי נחיתה סטטיים לכל מנה (שניצל, חומוס ביתי, שקשוקה...)
+- JSON-LD structured data
+- Meta tags מלאים (OG, Twitter Cards, canonical)
+- Cache headers + Security headers ב-Netlify

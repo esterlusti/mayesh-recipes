@@ -347,19 +347,6 @@ export default function App() {
         onPageChange={handleNavChange}
       />
 
-      {user?.isAnonymous && (
-        <div className="guest-banner">
-          <span className="guest-banner-text">
-            <strong>גולש/ת כאורח</strong> — התחברו כדי לשמור מתכונים
-          </span>
-          <button className="guest-banner-btn guest-banner-google" onClick={() => signInGoogle().catch(e => { console.error(e); toast.error('כניסה עם Google נכשלה — נסי שוב'); })}>
-            <span className="guest-google-icon">G</span> Google
-          </button>
-          <button className="guest-banner-btn" onClick={() => setShowAuth(true)}>
-            כניסה
-          </button>
-        </div>
-      )}
 
       <Suspense fallback={null}>
         <ProfilePanel
