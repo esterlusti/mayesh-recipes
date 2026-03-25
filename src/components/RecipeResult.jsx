@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import Confetti from 'react-confetti';
-import { saveRecipe, saveRating } from '../firebase';
+import { saveRecipe, saveRating, saveSeoPage } from '../firebase';
 import { FileDown, Share2, BookmarkPlus, Check, RotateCcw, RefreshCw, ChefHat, ListChecks, Lightbulb, ShoppingCart, Utensils, Star, CookingPot, Mail, MessageCircle, Copy, X, Link, Printer } from 'lucide-react';
 import { parseRecipe } from '../utils/parseRecipe';
 
@@ -83,6 +83,17 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
 
   // Single recipe view
   const parsed = parseRecipe(recipe);
+
+  // Create SEO landing page for this recipe title
+  useEffect(() => {
+    if (!parsed.title) return;
+    const slug = parsed.title.replace(/\s+/g, '-');
+    saveSeoPage(slug, {
+      title: parsed.title,
+      kosherType: kosherType || 'pareve',
+      category: category || '',
+    }).catch(() => {}); // silent — SEO page creation is best-effort
+  }, [parsed.title]);
 
   const toggleStep = (i) => {
     setCheckedSteps(prev => ({ ...prev, [i]: !prev[i] }));
