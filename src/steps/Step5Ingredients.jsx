@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Plus, Check } from 'lucide-react';
-import { PROTEINS, VEGETABLES, SPICES, CARBS } from '../data/ingredients';
+import { PROTEINS, VEGETABLES, SPICES, CARBS, STAPLES } from '../data/ingredients';
 import { SAUCES } from '../data/sauces';
 
 const PROTEIN_TAB_LABELS = {
@@ -13,6 +13,7 @@ const getTabs = (kosherType) => [
   { key: 'proteins',   label: PROTEIN_TAB_LABELS[kosherType] || 'בשר ודגים' },
   { key: 'carbs',      label: 'דגנים ולחם' },
   { key: 'vegetables', label: 'ירקות'       },
+  { key: 'staples',    label: 'מוצרי יסוד'  },
   { key: 'flavors',    label: 'טעמים'       },
 ];
 
@@ -22,6 +23,7 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
   const [sauces, setSauces]         = useState([]);
   const [vegetables, setVegetables] = useState([]);
   const [spices, setSpices]         = useState([]);
+  const [staples, setStaples]       = useState([]);
 
   // Custom chips per section
   const [customProteins, setCustomProteins]     = useState([]);
@@ -29,6 +31,7 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
   const [customVegetables, setCustomVegetables] = useState([]);
   const [customSauces, setCustomSauces]         = useState([]);
   const [customSpices, setCustomSpices]         = useState([]);
+  const [customStaples, setCustomStaples]       = useState([]);
 
   // Input state per section
   const [addingTab, setAddingTab] = useState(null);
@@ -66,6 +69,7 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
     setVegetables(preSelect(VEGETABLES));
     setSauces(preSelect(filteredSauces));
     setSpices(preSelect(SPICES));
+    setStaples(preSelect(STAPLES));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pantryStaples.join(','), kosherType]);
 
@@ -95,16 +99,16 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
   const addCustomChip = (key) => {
     const val = inputVal.trim();
     if (!val) { setAddingTab(null); return; }
-    const getMap = { proteins: customProteins, carbs: customCarbs, vegetables: customVegetables, sauces: customSauces, spices: customSpices };
+    const getMap = { proteins: customProteins, carbs: customCarbs, vegetables: customVegetables, sauces: customSauces, spices: customSpices, staples: customStaples };
     if (getMap[key]?.includes(val)) { setInputVal(''); setAddingTab(null); return; }
-    const setMap = { proteins: setCustomProteins, carbs: setCustomCarbs, vegetables: setCustomVegetables, sauces: setCustomSauces, spices: setCustomSpices };
+    const setMap = { proteins: setCustomProteins, carbs: setCustomCarbs, vegetables: setCustomVegetables, sauces: setCustomSauces, spices: setCustomSpices, staples: setCustomStaples };
     setMap[key](prev => [...prev, val]);
     setInputVal('');
     setAddingTab(null);
   };
 
   const removeCustomChip = (key, idx) => {
-    const setMap = { proteins: setCustomProteins, carbs: setCustomCarbs, vegetables: setCustomVegetables, sauces: setCustomSauces, spices: setCustomSpices };
+    const setMap = { proteins: setCustomProteins, carbs: setCustomCarbs, vegetables: setCustomVegetables, sauces: setCustomSauces, spices: setCustomSpices, staples: setCustomStaples };
     setMap[key](prev => prev.filter((_, i) => i !== idx));
   };
 
@@ -116,11 +120,13 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
       sauces:           sauces.map(i => i.label),
       vegetables:       vegetables.map(formatItem),
       spices:           spices.map(i => i.label),
+      staples:          staples.map(formatItem),
       customProteins,
       customCarbs,
       customVegetables,
       customSauces,
       customSpices,
+      customStaples,
     });
   };
 
@@ -195,6 +201,7 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
     proteins:   (proteins?.length ?? 0) + (customProteins?.length ?? 0),
     carbs:      (carbs?.length ?? 0) + (customCarbs?.length ?? 0),
     vegetables: (vegetables?.length ?? 0) + (customVegetables?.length ?? 0),
+    staples:    (staples?.length ?? 0) + (customStaples?.length ?? 0),
     flavors:    (sauces?.length ?? 0) + (spices?.length ?? 0) + (customSauces?.length ?? 0) + (customSpices?.length ?? 0),
   };
 
@@ -235,6 +242,7 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
       proteins:   { items: proteinList,  list: proteins,   setList: setProteins,   custom: customProteins,   customKey: 'proteins'   },
       carbs:      { items: CARBS,        list: carbs,      setList: setCarbs,      custom: customCarbs,      customKey: 'carbs'      },
       vegetables: { items: VEGETABLES,   list: vegetables, setList: setVegetables, custom: customVegetables, customKey: 'vegetables' },
+      staples:    { items: STAPLES,      list: staples,    setList: setStaples,    custom: customStaples,    customKey: 'staples'    },
     };
     const current = contentMap[currentTab.key];
     const hasGroups = current.items.some(i => i.group);

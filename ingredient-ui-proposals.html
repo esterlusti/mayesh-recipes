@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הצעות UI לבחירת מרכיבים - MaYesh Recipes</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #0f0f0f;
+    color: #e8e0d8;
+    padding: 20px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  h1 { text-align: center; font-size: 1.6rem; margin: 20px 0 8px; color: #f5c542; }
+  .subtitle { text-align: center; color: #999; font-size: 0.85rem; margin-bottom: 30px; }
+  h2 { font-size: 1.2rem; color: #f5c542; margin: 40px 0 6px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+  h3 { font-size: 1rem; color: #ccc; margin: 20px 0 10px; }
+  .option-card {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0;
+    position: relative;
+  }
+  .option-card.recommended { border-color: #f5c542; }
+  .option-badge {
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    background: #f5c542;
+    color: #000;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .option-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; color: #fff; }
+  .option-desc { font-size: 0.85rem; color: #aaa; line-height: 1.6; margin-bottom: 16px; }
+
+  /* ===== DEMO A: Smart Search ===== */
+  .search-box {
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .search-box input {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 0.95rem;
+    width: 100%;
+    outline: none;
+    direction: rtl;
+  }
+  .search-icon { color: #888; font-size: 1.1rem; }
+
+  .suggestion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .suggestion-item {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .suggestion-item:hover { border-color: #f5c542; background: #252525; }
+  .suggestion-name { font-size: 0.9rem; }
+  .suggestion-cat { font-size: 0.7rem; color: #888; }
+  .suggestion-add { color: #f5c542; font-size: 1.2rem; }
+
+  /* ===== DEMO B: Visual Grid ===== */
+  .visual-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .visual-card {
+    background: #1e1e1e;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .visual-card:hover { border-color: #555; transform: scale(1.03); }
+  .visual-card.selected { border-color: #f5c542; background: #2a2510; }
+  .visual-card .emoji { font-size: 2rem; margin-bottom: 4px; display: block; }
+  .visual-card .name { font-size: 0.78rem; color: #ccc; }
+  .visual-card.selected .name { color: #f5c542; }
+  .visual-card .check-badge {
+    position: absolute;
+    top: -4px; left: -4px;
+    background: #f5c542;
+    color: #000;
+    border-radius: 50%;
+    width: 18px; height: 18px;
+    font-size: 0.65rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .visual-card { position: relative; }
+
+  /* ===== DEMO C: Swipe Panels ===== */
+  .swipe-demo {
+    background: #1e1e1e;
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .swipe-tabs {
+    display: flex;
+    border-bottom: 1px solid #333;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .swipe-tabs::-webkit-scrollbar { display: none; }
+  .swipe-tab {
+    flex: none;
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    color: #888;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .swipe-tab.active { color: #f5c542; border-bottom-color: #f5c542; }
+  .swipe-panel {
+    padding: 16px;
+    min-height: 160px;
+  }
+  .swipe-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .swipe-chip {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .swipe-chip:hover { border-color: #888; }
+  .swipe-chip.on { background: #f5c542; color: #000; border-color: #f5c542; font-weight: 600; }
+  .swipe-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+  }
+  .swipe-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #444;
+  }
+  .swipe-dot.active { background: #f5c542; width: 18px; border-radius: 3px; }
+
+  /* ===== DEMO D: Fridge Mode ===== */
+  .fridge-container {
+    background: linear-gradient(180deg, #1a2a3a 0%, #152030 100%);
+    border: 2px solid #2a4a6a;
+    border-radius: 18px;
+    padding: 16px;
+    margin: 12px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .fridge-container::before {
+    content: '';
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #4af 0%, transparent 70%);
+    opacity: 0.2;
+  }
+  .fridge-handle {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 50px;
+    border-radius: 3px;
+    background: #3a5a7a;
+  }
+  .fridge-shelf {
+    border-bottom: 1px solid #2a4a6a;
+    padding: 10px 0;
+    margin-bottom: 8px;
+  }
+  .fridge-shelf:last-child { border-bottom: none; margin-bottom: 0; }
+  .fridge-shelf-label {
+    font-size: 0.7rem;
+    color: #5a8aba;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .fridge-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .fridge-item {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    color: #b0d0f0;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .fridge-item:hover { background: rgba(255,255,255,0.15); }
+  .fridge-item.in { background: rgba(90,200,120,0.2); border-color: rgba(90,200,120,0.4); color: #8fd8a0; }
+  .fridge-item .fi-emoji { font-size: 1rem; }
+
+  /* ===== DEMO E: Quick Combos ===== */
+  .combo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .combo-card {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 14px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .combo-card:hover { border-color: #f5c542; transform: translateX(-3px); }
+  .combo-card.active { border-color: #f5c542; background: #2a2510; }
+  .combo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .combo-name { font-weight: bold; font-size: 0.95rem; }
+  .combo-emoji { font-size: 1.3rem; }
+  .combo-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .combo-tag {
+    background: #2a2a2a;
+    border-radius: 12px;
+    padding: 3px 8px;
+    font-size: 0.7rem;
+    color: #999;
+  }
+  .combo-card.active .combo-tag { background: #3a3520; color: #d4b840; }
+
+  /* ===== Pros/Cons ===== */
+  .pros-cons { margin-top: 12px; }
+  .pro, .con {
+    font-size: 0.8rem;
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pro::before { content: '+'; color: #5c5; font-weight: bold; }
+  .con::before { content: '-'; color: #c55; font-weight: bold; }
+
+  /* ===== Divider ===== */
+  .divider {
+    border: none;
+    border-top: 1px solid #333;
+    margin: 40px 0;
+  }
+
+  /* ===== Summary table ===== */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.8rem;
+  }
+  .summary-table th, .summary-table td {
+    border: 1px solid #333;
+    padding: 8px;
+    text-align: center;
+  }
+  .summary-table th { background: #222; color: #f5c542; }
+  .summary-table .star { color: #f5c542; }
+</style>
+</head>
+<body>
+
+<h1>הצעות UI לבחירת מרכיבים</h1>
+<p class="subtitle">5 אופציות לשדרוג חוויית בחירת המרכיבים באפליקציה</p>
+
+<!-- ======= OPTION A ======= -->
+<div class="option-card">
+  <div class="option-title">A. חיפוש חכם עם השלמה אוטומטית</div>
+  <div class="option-desc">
+    שורת חיפוש בראש העמוד. המשתמש מקליד "עג" ומיד רואה הצעות: עגבנייה, עגבניות שרי, רסק עגבניות.
+    בלחיצה, המרכיב נוסף לסל ואפשר להמשיך להקליד. מתחת לחיפוש: הצ'יפים הנבחרים כסיכום.
+  </div>
+
+  <h3>דמו</h3>
+  <div class="search-box">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" value="עגב" readonly>
+  </div>
+  <div class="suggestion-list">
+    <div class="suggestion-item">
+      <div>
+        <div class="suggestion-name">עגבנייה</div>
+        <div class="suggestion-cat">ירקות &gt; בצל ועגבניות</div>
+      </div>
+      <span class="suggestion-add">+</span>
+    </div>
+    <div class="suggestion-item">
+      <div>
+        <div class="suggestion-name">עגבניות שרי</div>
+        <div class="suggestion-cat">ירקות &gt; בצל ועגבניות</div>
+      </div>
+      <span class="suggestion-add">+</span>
+    </div>
+    <div class="suggestion-item">
+      <div>
+        <div class="suggestion-name">רסק עגבניות</div>
+        <div class="suggestion-cat">מוצרי יסוד &gt; ממרחים ונוזלים</div>
+      </div>
+      <span class="suggestion-add">+</span>
+    </div>
+  </div>
+
+  <div class="pros-cons">
+    <div class="pro">הכי מהיר למשתמשים שיודעים מה הם רוצים</div>
+    <div class="pro">חוצה קטגוריות — אין צורך לנחש איפה כל מרכיב</div>
+    <div class="pro">מצוין למובייל, פחות גלילה</div>
+    <div class="con">דורש שהמשתמש יידע לכתוב את שם המרכיב</div>
+    <div class="con">לא מעודד גילוי מרכיבים חדשים</div>
+  </div>
+</div>
+
+<!-- ======= OPTION B ======= -->
+<div class="option-card recommended">
+  <div class="option-badge">מומלץ</div>
+  <div class="option-title">B. גריד ויזואלי עם אימוג'ים</div>
+  <div class="option-desc">
+    כל מרכיב מוצג ככרטיס קטן עם אימוג'י גדול ושם מתחת. בלחיצה, מופיע אנימציית V צהוב ובורדר זהוב.
+    הרבה יותר סקנאבילי וכיפי מרשימת טקסט.
+  </div>
+
+  <h3>דמו</h3>
+  <div class="visual-grid">
+    <div class="visual-card selected">
+      <span class="check-badge">&#10003;</span>
+      <span class="emoji">&#129370;</span>
+      <span class="name">בצל</span>
+    </div>
+    <div class="visual-card selected">
+      <span class="check-badge">&#10003;</span>
+      <span class="emoji">&#129476;</span>
+      <span class="name">שום</span>
+    </div>
+    <div class="visual-card">
+      <span class="emoji">&#127813;</span>
+      <span class="name">עגבנייה</span>
+    </div>
+    <div class="visual-card">
+      <span class="emoji">&#129365;</span>
+      <span class="name">גזר</span>
+    </div>
+    <div class="visual-card selected">
+      <span class="check-badge">&#10003;</span>
+      <span class="emoji">&#129364;</span>
+      <span class="name">תפו"א</span>
+    </div>
+    <div class="visual-card">
+      <span class="emoji">&#129361;</span>
+      <span class="name">אבוקדו</span>
+    </div>
+    <div class="visual-card">
+      <span class="emoji">&#127798;</span>
+      <span class="name">פלפל</span>
+    </div>
+    <div class="visual-card">
+      <span class="emoji">&#127805;</span>
+      <span class="name">חציל</span>
+    </div>
+    <div class="visual-card">
+      <span class="emoji">&#129362;</span>
+      <span class="name">מלפפון</span>
+    </div>
+  </div>
+
+  <div class="pros-cons">
+    <div class="pro">הכי ויזואלי ואטרקטיבי — מרגיש כמו אפליקציית premium</div>
+    <div class="pro">קל לסרוק ולזהות מרכיבים בלי לקרוא טקסט</div>
+    <div class="pro">אימוג'ים עובדים מצוין במובייל</div>
+    <div class="con">תופס יותר מקום מאשר צ'יפים</div>
+    <div class="con">צריך לבחור אימוג'י מתאים לכל מרכיב</div>
+  </div>
+</div>
+
+<!-- ======= OPTION C ======= -->
+<div class="option-card">
+  <div class="option-title">C. פאנלים עם Swipe + אנימציה</div>
+  <div class="option-desc">
+    כל קטגוריה היא פאנל שאפשר לסוויפ ימינה/שמאלה (כמו סטוריז).
+    אינדיקטור נקודות למטה מראה את המיקום. הצ'יפים בפנים עם אנימציית כניסה.
+  </div>
+
+  <h3>דמו</h3>
+  <div class="swipe-demo">
+    <div class="swipe-tabs">
+      <div class="swipe-tab">חלבונים</div>
+      <div class="swipe-tab">דגנים</div>
+      <div class="swipe-tab active">ירקות</div>
+      <div class="swipe-tab">מוצרי יסוד</div>
+      <div class="swipe-tab">טעמים</div>
+    </div>
+    <div class="swipe-panel">
+      <div class="swipe-chips">
+        <div class="swipe-chip on">בצל</div>
+        <div class="swipe-chip on">שום</div>
+        <div class="swipe-chip">עגבנייה</div>
+        <div class="swipe-chip on">תפו"א</div>
+        <div class="swipe-chip">גזר</div>
+        <div class="swipe-chip">בטטה</div>
+        <div class="swipe-chip">פלפל אדום</div>
+        <div class="swipe-chip">קישוא</div>
+        <div class="swipe-chip">ברוקולי</div>
+        <div class="swipe-chip">חציל</div>
+        <div class="swipe-chip">פטריות</div>
+        <div class="swipe-chip">תרד</div>
+      </div>
+    </div>
+    <div class="swipe-indicator">
+      <div class="swipe-dot"></div>
+      <div class="swipe-dot"></div>
+      <div class="swipe-dot active"></div>
+      <div class="swipe-dot"></div>
+      <div class="swipe-dot"></div>
+    </div>
+  </div>
+
+  <div class="pros-cons">
+    <div class="pro">אינטראקציית swipe טבעית במובייל</div>
+    <div class="pro">כל קטגוריה מרגישה כמו עולם בפני עצמו</div>
+    <div class="con">קרוב למה שיש היום, פחות "wow"</div>
+    <div class="con">Swipe לפעמים מתנגש עם גלילת הדף</div>
+  </div>
+</div>
+
+<!-- ======= OPTION D ======= -->
+<div class="option-card">
+  <div class="option-title">D. "מצב מקרר" — ויזואליזציה של מטבח</div>
+  <div class="option-desc">
+    הממשק נראה כמו מקרר/מטבח פתוח עם מדפים. כל מדף = קטגוריה.
+    המשתמש "ממלא" את המקרר שלו. תחושה אינטראקטיבית ושונה מכל אפליקציית מתכונים.
+  </div>
+
+  <h3>דמו</h3>
+  <div class="fridge-container">
+    <div class="fridge-handle"></div>
+    <div class="fridge-shelf">
+      <div class="fridge-shelf-label">מדף עליון — חלבונים</div>
+      <div class="fridge-items">
+        <div class="fridge-item in"><span class="fi-emoji">&#127831;</span> חזה עוף</div>
+        <div class="fridge-item"><span class="fi-emoji">&#129385;</span> ביצים</div>
+        <div class="fridge-item"><span class="fi-emoji">&#129472;</span> סלמון</div>
+      </div>
+    </div>
+    <div class="fridge-shelf">
+      <div class="fridge-shelf-label">מדף אמצעי — ירקות</div>
+      <div class="fridge-items">
+        <div class="fridge-item in"><span class="fi-emoji">&#129370;</span> בצל</div>
+        <div class="fridge-item in"><span class="fi-emoji">&#129476;</span> שום</div>
+        <div class="fridge-item"><span class="fi-emoji">&#127813;</span> עגבנייה</div>
+        <div class="fridge-item"><span class="fi-emoji">&#129365;</span> גזר</div>
+      </div>
+    </div>
+    <div class="fridge-shelf">
+      <div class="fridge-shelf-label">מגירה תחתונה — מוצרי יסוד</div>
+      <div class="fridge-items">
+        <div class="fridge-item in"><span class="fi-emoji">&#129474;</span> שמן זית</div>
+        <div class="fridge-item in"><span class="fi-emoji">&#129474;</span> קמח</div>
+        <div class="fridge-item in"><span class="fi-emoji">&#129387;</span> סוכר</div>
+        <div class="fridge-item"><span class="fi-emoji">&#129474;</span> חומץ</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pros-cons">
+    <div class="pro">חוויה ייחודית ובלתי נשכחת — WOW factor</div>
+    <div class="pro">מטאפורה אינטואיטיבית: "מה יש לך במקרר?"</div>
+    <div class="pro">מבדל את האפליקציה מכל המתחרים</div>
+    <div class="con">מורכב יותר לפיתוח</div>
+    <div class="con">עלול להיות מוזר למשתמשים שלא מצפים לזה</div>
+  </div>
+</div>
+
+<!-- ======= OPTION E ======= -->
+<div class="option-card">
+  <div class="option-title">E. קומבו חכם — "מה אני מבשל?"</div>
+  <div class="option-desc">
+    במקום לבחור מרכיב-מרכיב, המשתמש בוחר "קומבו" מוכן (ערב איטלקי, שישליק ישראלי, ארוחה אסייתית)
+    שממלא אוטומטית מרכיבים. אפשר אח"כ לערוך ולהוסיף/להסיר.
+  </div>
+
+  <h3>דמו</h3>
+  <div class="combo-list">
+    <div class="combo-card active">
+      <div class="combo-header">
+        <span class="combo-name">ערב איטלקי</span>
+        <span class="combo-emoji">&#127837;</span>
+      </div>
+      <div class="combo-tags">
+        <div class="combo-tag">פסטה</div>
+        <div class="combo-tag">שמן זית</div>
+        <div class="combo-tag">שום</div>
+        <div class="combo-tag">עגבניות</div>
+        <div class="combo-tag">בזיליקום</div>
+        <div class="combo-tag">פרמזן</div>
+      </div>
+    </div>
+    <div class="combo-card">
+      <div class="combo-header">
+        <span class="combo-name">שישליק ישראלי</span>
+        <span class="combo-emoji">&#127830;</span>
+      </div>
+      <div class="combo-tags">
+        <div class="combo-tag">חזה עוף</div>
+        <div class="combo-tag">בצל</div>
+        <div class="combo-tag">פלפלים</div>
+        <div class="combo-tag">כמון</div>
+        <div class="combo-tag">פפריקה</div>
+        <div class="combo-tag">שמן</div>
+      </div>
+    </div>
+    <div class="combo-card">
+      <div class="combo-header">
+        <span class="combo-name">ארוחה אסייתית</span>
+        <span class="combo-emoji">&#127836;</span>
+      </div>
+      <div class="combo-tags">
+        <div class="combo-tag">אטריות אורז</div>
+        <div class="combo-tag">סויה</div>
+        <div class="combo-tag">שומשום</div>
+        <div class="combo-tag">ג'ינג'ר</div>
+        <div class="combo-tag">ירקות מוקפצים</div>
+      </div>
+    </div>
+    <div class="combo-card">
+      <div class="combo-header">
+        <span class="combo-name">בוקר ישראלי</span>
+        <span class="combo-emoji">&#127859;</span>
+      </div>
+      <div class="combo-tags">
+        <div class="combo-tag">ביצים</div>
+        <div class="combo-tag">עגבניות</div>
+        <div class="combo-tag">מלפפון</div>
+        <div class="combo-tag">גבינה לבנה</div>
+        <div class="combo-tag">לחם</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pros-cons">
+    <div class="pro">הכי מהיר לקבל מתכון — לחיצה אחת</div>
+    <div class="pro">עוזר למשתמשים שלא יודעים מה לבחור</div>
+    <div class="pro">ניתן לשלב עם בחירה ידנית</div>
+    <div class="con">מוגבל לקומבינציות שהגדרנו מראש</div>
+    <div class="con">פחות גמישות למי שרוצה שליטה מלאה</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ======= SUMMARY ======= -->
+<h2>סיכום והשוואה</h2>
+
+<table class="summary-table">
+  <tr>
+    <th>אופציה</th>
+    <th>WOW</th>
+    <th>מהירות</th>
+    <th>מובייל</th>
+    <th>מורכבות פיתוח</th>
+  </tr>
+  <tr>
+    <td>A. חיפוש חכם</td>
+    <td>&#9733;&#9733;</td>
+    <td class="star">&#9733;&#9733;&#9733;&#9733;&#9733;</td>
+    <td>&#9733;&#9733;&#9733;&#9733;</td>
+    <td>&#9733;&#9733;</td>
+  </tr>
+  <tr style="background:#1a1800;">
+    <td><b>B. גריד ויזואלי</b></td>
+    <td class="star">&#9733;&#9733;&#9733;&#9733;</td>
+    <td>&#9733;&#9733;&#9733;&#9733;</td>
+    <td class="star">&#9733;&#9733;&#9733;&#9733;&#9733;</td>
+    <td>&#9733;&#9733;&#9733;</td>
+  </tr>
+  <tr>
+    <td>C. Swipe פאנלים</td>
+    <td>&#9733;&#9733;&#9733;</td>
+    <td>&#9733;&#9733;&#9733;</td>
+    <td class="star">&#9733;&#9733;&#9733;&#9733;&#9733;</td>
+    <td>&#9733;&#9733;&#9733;</td>
+  </tr>
+  <tr>
+    <td>D. מצב מקרר</td>
+    <td class="star">&#9733;&#9733;&#9733;&#9733;&#9733;</td>
+    <td>&#9733;&#9733;</td>
+    <td>&#9733;&#9733;&#9733;</td>
+    <td class="star">&#9733;&#9733;&#9733;&#9733;&#9733;</td>
+  </tr>
+  <tr>
+    <td>E. קומבו חכם</td>
+    <td>&#9733;&#9733;&#9733;</td>
+    <td class="star">&#9733;&#9733;&#9733;&#9733;&#9733;</td>
+    <td>&#9733;&#9733;&#9733;&#9733;</td>
+    <td>&#9733;&#9733;</td>
+  </tr>
+</table>
+
+<div class="option-desc" style="margin: 20px 0; text-align: center; color: #f5c542;">
+  &#128161; ההמלצה שלי: <b>B (גריד ויזואלי)</b> + <b>A (חיפוש)</b> ביחד.<br>
+  גריד אימוג'ים לגלישה + שורת חיפוש למהירות = שילוב מנצח.
+</div>
+
+<div class="option-desc" style="margin: 20px 0 60px; text-align: center; color: #777; font-size: 0.75rem;">
+  אפשר גם לשלב E (קומבו) כ"קיצור דרך" בראש המסך, מעל הבחירה הידנית.
+</div>
+
+</body>
+</html>

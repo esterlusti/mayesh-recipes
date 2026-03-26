@@ -18,8 +18,8 @@ export default function StepQuick({ onGenerate, useGenderText }) {
       recipeIdea: combined,
       servings,
       difficulty,
-      proteins: [], carbs: [], sauces: [], vegetables: [], spices: [],
-      customProteins: [], customCarbs: [], customVegetables: [], customSauces: [], customSpices: [],
+      proteins: [], carbs: [], sauces: [], vegetables: [], spices: [], staples: [],
+      customProteins: [], customCarbs: [], customVegetables: [], customSauces: [], customSpices: [], customStaples: [],
       recipeStyle: 'classic',
       maxMinutes: null
     });
