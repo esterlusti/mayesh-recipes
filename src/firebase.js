@@ -88,6 +88,11 @@ export const saveRecipe = (uid, recipeData) =>
     ...recipeData, createdAt: serverTimestamp()
   });
 
+export const saveSeoPage = (slug, data) =>
+  setDoc(doc(db, 'seoPages', slug), {
+    ...data, createdAt: serverTimestamp()
+  }, { merge: true });
+
 export const deleteRecipe = (uid, recipeId) =>
   deleteDoc(doc(db, 'users', uid, 'recipes', recipeId));
 
