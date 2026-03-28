@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { X, Plus, Check } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { X, Plus, Check, Search } from 'lucide-react';
 import { PROTEINS, VEGETABLES, SPICES, CARBS, STAPLES } from '../data/ingredients';
 import { SAUCES } from '../data/sauces';
 
@@ -16,6 +16,15 @@ const getTabs = (kosherType) => [
   { key: 'staples',    label: 'מוצרי יסוד'  },
   { key: 'flavors',    label: 'טעמים'       },
 ];
+
+const SEARCH_CATEGORY_LABELS = {
+  proteins: 'חלבונים',
+  carbs: 'דגנים ולחם',
+  vegetables: 'ירקות',
+  staples: 'מוצרי יסוד',
+  sauces: 'רטבים',
+  spices: 'תבלינים',
+};
 
 export default function Step5Ingredients({ kosherType, onNext, useGenderText, pantryStaples = [] }) {
   const [proteins, setProteins]     = useState([]);
@@ -38,6 +47,10 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
   const [inputVal, setInputVal]   = useState('');
   const inputRef = useRef();
 
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchRef = useRef();
+
   const [activeTab, setActiveTab] = useState(0);
   const [visitedTabs, setVisitedTabs] = useState(new Set([0]));
 
@@ -57,6 +70,24 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
     if (kosherType === 'pareve' && (s.kosher === 'meat' || s.kosher === 'dairy')) return false;
     return true;
   });
+
+  // Build searchable index across all categories
+  const searchIndex = useMemo(() => [
+    ...proteinList.map(item => ({ ...item, category: 'proteins', list: 'proteins' })),
+    ...CARBS.map(item => ({ ...item, category: 'carbs', list: 'carbs' })),
+    ...VEGETABLES.map(item => ({ ...item, category: 'vegetables', list: 'vegetables' })),
+    ...STAPLES.map(item => ({ ...item, category: 'staples', list: 'staples' })),
+    ...filteredSauces.map(item => ({ ...item, category: 'sauces', list: 'sauces' })),
+    ...SPICES.map(item => ({ ...item, category: 'spices', list: 'spices' })),
+  ], [proteinList, filteredSauces]);
+
+  const searchResults = useMemo(() => {
+    const q = searchQuery.trim();
+    if (!q) return [];
+    return searchIndex.filter(item => item.label.includes(q));
+  }, [searchQuery, searchIndex]);
+
+  const isSearching = searchQuery.trim().length > 0;
 
   // Pre-select pantry staples on mount
   useEffect(() => {
@@ -95,6 +126,32 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
 
   const isSelected = (list, id) => list.some(i => i.id === id);
   const getQty = (list, id) => list.find(i => i.id === id)?.qty ?? null;
+
+  // Map category key to its state list & setter for search toggle
+  const categoryStateMap = {
+    proteins:   { list: proteins,   setList: setProteins   },
+    carbs:      { list: carbs,      setList: setCarbs      },
+    vegetables: { list: vegetables, setList: setVegetables },
+    staples:    { list: staples,    setList: setStaples    },
+    sauces:     { list: sauces,     setList: setSauces     },
+    spices:     { list: spices,     setList: setSpices     },
+  };
+
+  const isSelectedAny = (id) =>
+    [proteins, carbs, vegetables, staples, sauces, spices].some(l => l.some(i => i.id === id));
+
+  // Collect all selected items for summary strip
+  const allSelected = [
+    ...proteins.map(i => ({ ...i, cat: 'proteins' })),
+    ...carbs.map(i => ({ ...i, cat: 'carbs' })),
+    ...vegetables.map(i => ({ ...i, cat: 'vegetables' })),
+    ...staples.map(i => ({ ...i, cat: 'staples' })),
+    ...sauces.map(i => ({ ...i, cat: 'sauces' })),
+    ...spices.map(i => ({ ...i, cat: 'spices' })),
+  ];
+  const totalSelected = allSelected.length +
+    customProteins.length + customCarbs.length + customVegetables.length +
+    customStaples.length + customSauces.length + customSpices.length;
 
   const addCustomChip = (key) => {
     const val = inputVal.trim();
@@ -270,47 +327,114 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
   const currentCount = tabCountMap[currentTab.key];
   const nextTab = tabs[activeTab + 1];
 
+  const renderSearchResults = () => {
+    if (searchResults.length === 0) {
+      return <div className="ing-search-empty">לא נמצאו תוצאות עבור "{searchQuery}"</div>;
+    }
+    return searchResults.map(item => {
+      const state = categoryStateMap[item.list];
+      const on = isSelected(state.list, item.id);
+      return (
+        <div key={`${item.list}-${item.id}`} className="ing-search-result" onClick={() => toggle(state.list, state.setList, item)}>
+          <div className="ing-search-result-info">
+            <span className={`ing-search-result-name ${on ? 'selected' : ''}`}>{item.label}</span>
+            <span className="ing-search-result-cat">{SEARCH_CATEGORY_LABELS[item.category]}{item.group ? ` > ${item.group}` : ''}</span>
+          </div>
+          <span className={`ing-search-result-action ${on ? 'remove' : ''}`}>{on ? '✓' : '+'}</span>
+        </div>
+      );
+    });
+  };
+
   return (
     <div className="step-card ingredients-step">
       <h2 className="playfair step-title">מרכיבים</h2>
       <p className="step-sub">סמנו מה יש לכם בבית</p>
 
-      {/* Segmented tab bar */}
-      <div className="ing-seg-bar">
-        {tabs.map((tab, i) => {
-          const isDone = visitedTabs.has(i) && i !== activeTab && tabCountMap[tab.key] > 0;
-          const isActive = activeTab === i;
-          const stateClass = isActive ? 'active' : isDone ? 'done' : visitedTabs.has(i) ? 'visited' : 'future';
-          return (
-            <button
-              key={tab.key}
-              className={`ing-seg-btn ${stateClass}`}
-              onClick={() => goToTab(i)}
-            >
-              {isDone && <Check size={11} className="seg-check" />}
-              <span className="seg-label">{tab.label}</span>
-              {tabCountMap[tab.key] > 0 && !isActive && (
-                <span className="seg-count">{tabCountMap[tab.key]}</span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Section header */}
-      <div className="ing-section-header">
-        <span className="ing-section-title">{currentTab.label}</span>
-        {currentCount > 0 && (
-          <span className="ing-section-count">{currentCount} נבחרו ✓</span>
+      {/* Search bar */}
+      <div className="ing-search-bar">
+        <Search size={16} className="ing-search-icon" />
+        <input
+          ref={searchRef}
+          className="ing-search-input"
+          type="text"
+          placeholder="חיפוש מרכיב..."
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Escape') { setSearchQuery(''); searchRef.current?.blur(); } }}
+        />
+        {searchQuery && (
+          <button className="ing-search-clear" onClick={() => setSearchQuery('')}>
+            <X size={14} />
+          </button>
         )}
       </div>
 
-      {/* Tab content */}
-      <div className="ing-tab-panel">
-        <div className="ing-tab-chips">
-          {renderTabContent()}
+      {/* Summary strip */}
+      {totalSelected > 0 && (
+        <div className="ing-summary-strip">
+          <span className="ing-summary-count">{totalSelected}</span>
+          <div className="ing-summary-scroll">
+            {allSelected.map(item => (
+              <span key={`sum-${item.cat}-${item.id}`} className="ing-summary-chip">
+                {item.label}
+                <button className="ing-summary-remove" onClick={() => toggle(categoryStateMap[item.cat].list, categoryStateMap[item.cat].setList, item)}>
+                  <X size={9} />
+                </button>
+              </span>
+            ))}
+            {[...customProteins, ...customCarbs, ...customVegetables, ...customStaples, ...customSauces, ...customSpices].map((label, idx) => (
+              <span key={`sum-c-${idx}`} className="ing-summary-chip custom">{label}</span>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Search results overlay OR tab content */}
+      {isSearching ? (
+        <div className="ing-search-results">
+          {renderSearchResults()}
+        </div>
+      ) : (
+        <>
+          {/* Segmented tab bar */}
+          <div className="ing-seg-bar">
+            {tabs.map((tab, i) => {
+              const isDone = visitedTabs.has(i) && i !== activeTab && tabCountMap[tab.key] > 0;
+              const isActive = activeTab === i;
+              const stateClass = isActive ? 'active' : isDone ? 'done' : visitedTabs.has(i) ? 'visited' : 'future';
+              return (
+                <button
+                  key={tab.key}
+                  className={`ing-seg-btn ${stateClass}`}
+                  onClick={() => goToTab(i)}
+                >
+                  {isDone && <Check size={11} className="seg-check" />}
+                  <span className="seg-label">{tab.label}</span>
+                  {tabCountMap[tab.key] > 0 && !isActive && (
+                    <span className="seg-count">{tabCountMap[tab.key]}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Section header */}
+          <div className="ing-section-header">
+            <span className="ing-section-title">{currentTab.label}</span>
+            {currentCount > 0 && (
+              <span className="ing-section-count">{currentCount} נבחרו ✓</span>
+            )}
+          </div>
+
+          {/* Tab content */}
+          <div className="ing-tab-panel">
+            <div className="ing-tab-chips">
+              {renderTabContent()}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Navigation */}
       <div className="ing-nav-row">
