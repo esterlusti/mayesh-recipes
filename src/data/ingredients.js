@@ -121,13 +121,6 @@ export const STAPLES = [
   // בסיסיים
   { id: 'salt-pepper',    label: 'מלח ופלפל שחור',       group: 'בסיסיים', pantry: true },
   { id: 'sugar',          label: 'סוכר',                  group: 'בסיסיים', pantry: true },
-  { id: 'eggs-staple',    label: 'ביצים',                 group: 'בסיסיים', qtyType: 'count', qtyStep: 1, defaultQty: 3, unit: '', pantry: true },
-  { id: 'milk-staple',    label: 'חלב',                   group: 'בסיסיים', pantry: true },
-  { id: 'butter-staple',  label: 'חמאה',                  group: 'בסיסיים', qtyType: 'weight', qtyStep: 100, defaultQty: 100, unit: 'גרם' },
-  // שמנים
-  { id: 'olive-oil-s',    label: 'שמן זית',               group: 'שמנים', pantry: true },
-  { id: 'canola-oil-s',   label: 'שמן קנולה/רגיל',        group: 'שמנים', pantry: true },
-  { id: 'coconut-oil-s',  label: 'שמן קוקוס',             group: 'שמנים' },
   // קמח ואפייה
   { id: 'flour',          label: 'קמח',                   group: 'קמח ואפייה', pantry: true },
   { id: 'baking-powder',  label: 'אבקת אפייה',           group: 'קמח ואפייה', pantry: true },
@@ -136,11 +129,6 @@ export const STAPLES = [
   { id: 'cornstarch',     label: 'עמילן תירס',            group: 'קמח ואפייה' },
   { id: 'yeast',          label: 'שמרים',                 group: 'קמח ואפייה' },
   { id: 'cocoa-powder',   label: 'אבקת קקאו',             group: 'קמח ואפייה' },
-  // ממרחים ונוזלים בסיסיים
-  { id: 'honey-staple',   label: 'דבש',                   group: 'ממרחים ונוזלים', pantry: true },
-  { id: 'vinegar-staple', label: 'חומץ',                  group: 'ממרחים ונוזלים', pantry: true },
-  { id: 'tomato-paste-s', label: 'רסק עגבניות',           group: 'ממרחים ונוזלים', pantry: true },
-  { id: 'soy-sauce-s',    label: 'סויה',                  group: 'ממרחים ונוזלים' },
 ];
 
 export const SPICES = [

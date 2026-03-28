@@ -463,6 +463,7 @@ export default function App() {
                     onNext={handleIngredientsNext}
                     useGenderText={useGenderText}
                     pantryStaples={pantryStaples}
+                    savedIngredients={pendingIngredients}
                   />
                 )}
                 {step === 6 && (

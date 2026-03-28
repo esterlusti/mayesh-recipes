@@ -26,7 +26,7 @@ const SEARCH_CATEGORY_LABELS = {
   spices: 'תבלינים',
 };
 
-export default function Step5Ingredients({ kosherType, onNext, useGenderText, pantryStaples = [] }) {
+export default function Step5Ingredients({ kosherType, onNext, useGenderText, pantryStaples = [], savedIngredients }) {
   const [proteins, setProteins]     = useState([]);
   const [carbs, setCarbs]           = useState([]);
   const [sauces, setSauces]         = useState([]);
@@ -89,8 +89,23 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
 
   const isSearching = searchQuery.trim().length > 0;
 
-  // Pre-select pantry staples on mount
+  // Restore saved selections or pre-select pantry staples on mount
   useEffect(() => {
+    if (savedIngredients?._raw) {
+      setProteins(savedIngredients._raw.proteins || []);
+      setCarbs(savedIngredients._raw.carbs || []);
+      setVegetables(savedIngredients._raw.vegetables || []);
+      setSauces(savedIngredients._raw.sauces || []);
+      setSpices(savedIngredients._raw.spices || []);
+      setStaples(savedIngredients._raw.staples || []);
+      setCustomProteins(savedIngredients.customProteins || []);
+      setCustomCarbs(savedIngredients.customCarbs || []);
+      setCustomVegetables(savedIngredients.customVegetables || []);
+      setCustomSauces(savedIngredients.customSauces || []);
+      setCustomSpices(savedIngredients.customSpices || []);
+      setCustomStaples(savedIngredients.customStaples || []);
+      return;
+    }
     if (!pantryStaples.length) return;
     const preSelect = (list) =>
       list.filter(item => pantryStaples.includes(item.id))
@@ -184,6 +199,7 @@ export default function Step5Ingredients({ kosherType, onNext, useGenderText, pa
       customSauces,
       customSpices,
       customStaples,
+      _raw: { proteins, carbs, vegetables, sauces, spices, staples },
     });
   };
 

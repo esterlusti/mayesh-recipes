@@ -4,10 +4,7 @@ export const PANTRY_DEFAULTS = [
   // מוצרי יסוד
   'salt-pepper',
   'sugar',
-  'olive-oil-s',
-  'canola-oil-s',
   'flour',
-  'eggs-staple',
   // שמנים (sauces tab)
   'olive-oil',
   'canola-oil',

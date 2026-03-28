@@ -604,7 +604,7 @@ body {
   cursor: pointer; transition: background 0.15s, color 0.15s;
   font-family: inherit;
 }
-.ing-seg-btn:first-child { border-left: none; }
+.ing-seg-btn:last-child { border-left: none; }
 .ing-seg-btn.active {
   background: var(--accent); color: #fff; font-weight: 900;
 }
@@ -639,7 +639,7 @@ body {
 
 /* Navigation — see .ing-nav-row below qty-control */
 .ing-btn-next-tab { margin-top: 0; }
-.ing-tab-panel { min-height: 120px; }
+.ing-tab-panel { min-height: 120px; border-top: 2px solid #111; padding-top: 10px; margin-top: 2px; }
 .ing-tab-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 14px; }
 .ing-tab-chips .chip { padding: 9px 18px; font-size: 14px; }
 .ing-sub-header { width: 100%; font-size: 13px; font-weight: 600; color: var(--text-secondary, #888); border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 4px; margin-top: 6px; }
@@ -765,17 +765,14 @@ body {
   flex-shrink: 0;
 }
 .ing-summary-scroll {
-  display: flex; gap: 5px; overflow-x: auto;
-  scrollbar-width: none; -ms-overflow-style: none;
+  display: flex; flex-wrap: wrap; gap: 5px;
 }
-.ing-summary-scroll::-webkit-scrollbar { display: none; }
 .ing-summary-chip {
   display: flex; align-items: center; gap: 3px;
   background: rgba(232,93,4,0.12); color: var(--accent);
   font-size: 11px; font-weight: 700;
-  padding: 3px 8px; white-space: nowrap;
+  padding: 3px 8px;
   border: 1px solid rgba(232,93,4,0.25);
-  flex-shrink: 0;
 }
 .ing-summary-chip.custom {
   background: var(--accent); color: #fff;
