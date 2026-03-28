@@ -117,8 +117,21 @@ export const CARBS = [
   { id: 'tortilla',       label: 'טורטיות',               group: 'לחם ומאפים' },
 ];
 
+export const STAPLES = [
+  // בסיסיים
+  { id: 'salt-pepper',    label: 'מלח ופלפל שחור',       group: 'בסיסיים', pantry: true },
+  { id: 'sugar',          label: 'סוכר',                  group: 'בסיסיים', pantry: true },
+  // קמח ואפייה
+  { id: 'flour',          label: 'קמח',                   group: 'קמח ואפייה', pantry: true },
+  { id: 'baking-powder',  label: 'אבקת אפייה',           group: 'קמח ואפייה', pantry: true },
+  { id: 'vanilla',        label: 'תמצית וניל',            group: 'קמח ואפייה', pantry: true },
+  { id: 'baking-soda',    label: 'סודה לשתייה',           group: 'קמח ואפייה' },
+  { id: 'cornstarch',     label: 'עמילן תירס',            group: 'קמח ואפייה' },
+  { id: 'yeast',          label: 'שמרים',                 group: 'קמח ואפייה' },
+  { id: 'cocoa-powder',   label: 'אבקת קקאו',             group: 'קמח ואפייה' },
+];
+
 export const SPICES = [
-  { id: 'salt-pepper',    label: 'מלח ופלפל שחור',      pantry: true },
   { id: 'cumin',          label: 'כמון',                  pantry: true },
   { id: 'sweet-paprika',  label: 'פפריקה מתוקה',          pantry: true },
   { id: 'hot-paprika',    label: 'פפריקה חריפה' },
@@ -140,8 +153,4 @@ export const SPICES = [
   { id: 'smoked-paprika', label: 'פפריקה מעושנת' },
   { id: 'nigella',        label: 'קצח (ניגלה)' },
   { id: 'sumac',          label: 'סומאק' },
-  { id: 'sugar',          label: 'סוכר',                  pantry: true },
-  { id: 'vanilla',        label: 'תמצית וניל',            pantry: true },
-  { id: 'baking-powder',  label: 'אבקת אפייה',            pantry: true },
-  { id: 'flour',          label: 'קמח',                   pantry: true },
 ];

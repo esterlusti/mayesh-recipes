@@ -11,7 +11,7 @@ exports.handler = async (event) => {
   const {
     category, kosherType, equipmentType,
     dishType, proteins, carbs, sauces, vegetables,
-    spices, customProteins, customCarbs, customVegetables, customSauces, customSpices,
+    spices, staples, customProteins, customCarbs, customVegetables, customSauces, customSpices, customStaples,
     equipment, servings, recipeIdea,
     difficulty, recipeStyle, maxMinutes, selectedOption, forceSingle,
     model
@@ -41,6 +41,7 @@ exports.handler = async (event) => {
     buildSection('חלבונים', proteins, customProteins),
     buildSection('פחמימות', carbs, customCarbs),
     buildSection('ירקות', vegetables, customVegetables),
+    buildSection('מוצרי יסוד', staples, customStaples),
     buildSection('רטבים', sauces, customSauces),
     buildSection('תבלינים', spices, customSpices),
   ].filter(Boolean);

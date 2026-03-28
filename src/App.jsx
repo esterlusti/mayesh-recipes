@@ -192,11 +192,13 @@ export default function App() {
       sauces: mergedData.sauces,
       vegetables: mergedData.vegetables,
       spices: mergedData.spices,
+      staples: mergedData.staples,
       customProteins: mergedData.customProteins,
       customCarbs: mergedData.customCarbs,
       customVegetables: mergedData.customVegetables,
       customSauces: mergedData.customSauces,
       customSpices: mergedData.customSpices,
+      customStaples: mergedData.customStaples,
       equipment: getEquipmentLabels(),
       servings: mergedData.servings,
       recipeIdea: mergedData.recipeIdea,
@@ -461,6 +463,7 @@ export default function App() {
                     onNext={handleIngredientsNext}
                     useGenderText={useGenderText}
                     pantryStaples={pantryStaples}
+                    savedIngredients={pendingIngredients}
                   />
                 )}
                 {step === 6 && (
