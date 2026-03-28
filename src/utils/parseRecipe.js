@@ -1,6 +1,6 @@
 export function parseRecipe(text) {
   const lines = text.split('\n');
-  let title = '', timePrep = '', timeCook = '', diff = '', tip = '', serving = '';
+  let title = '', timePrep = '', timeCook = '', diff = '', tip = '', serving = '', seoBlurb = '';
   const ingredients = [];
   const steps = [];
   let section = '';
@@ -13,6 +13,7 @@ export function parseRecipe(text) {
     if (trimmed.startsWith('DIFFICULTY:')) { diff = trimmed.replace('DIFFICULTY:', '').trim(); continue; }
     if (trimmed.startsWith('SERVING:')) { serving = trimmed.replace('SERVING:', '').trim(); continue; }
     if (trimmed.startsWith('TIP:')) { tip = trimmed.replace('TIP:', '').trim(); continue; }
+    if (trimmed.startsWith('SEO_BLURB:')) { seoBlurb = trimmed.replace('SEO_BLURB:', '').trim(); continue; }
     if (trimmed === 'INGREDIENTS:') { section = 'ing'; continue; }
     if (trimmed === 'STEPS:') { section = 'steps'; continue; }
     if (section === 'ing' && trimmed) {
@@ -22,5 +23,5 @@ export function parseRecipe(text) {
       steps.push(trimmed.replace(/^\d+[.)]\s*/, ''));
     }
   }
-  return { title, timePrep, timeCook, difficulty: diff, ingredients, steps, serving, tip };
+  return { title, timePrep, timeCook, difficulty: diff, ingredients, steps, serving, tip, seoBlurb };
 }

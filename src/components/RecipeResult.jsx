@@ -92,6 +92,10 @@ export default function RecipeResult({ recipe, user, kosherType, category, servi
       title: parsed.title,
       kosherType: kosherType || 'pareve',
       category: category || '',
+      seoBlurb: parsed.seoBlurb || '',
+      timePrep: parsed.timePrep || '',
+      timeCook: parsed.timeCook || '',
+      difficulty: parsed.difficulty || '',
     }).catch(() => {}); // silent — SEO page creation is best-effort
   }, [parsed.title]);
 
