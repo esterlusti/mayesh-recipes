@@ -79,8 +79,8 @@ function generateHTML(data, slug) {
     .c{max-width:600px;margin:0 auto;padding:2rem 1.5rem}
     .logo{text-align:center;margin-bottom:1.5rem}
     .logo a{text-decoration:none;color:inherit;display:inline-flex;flex-direction:column;align-items:center;gap:.3rem}
-    .logo img{width:48px;height:48px}
-    .logo span{font-family:'Rubik',sans-serif;font-size:1.3rem}
+    .logo img{height:60px;width:auto}
+    .logo span{display:none}
     .bc{font-size:.85rem;color:#707070;margin-bottom:1rem;text-align:center}
     .bc a{color:#e85d04;text-decoration:none}
     .badge{display:inline-block;padding:.3rem .8rem;font-size:.85rem;font-weight:600;border:2px solid #111;margin-bottom:1rem;text-align:center;background:${kc.bg};color:${kc.color}}
@@ -96,7 +96,7 @@ function generateHTML(data, slug) {
   <div class="c">
     <div class="logo">
       <a href="/">
-        <img src="/favicon.svg" alt="מה יש לך בבית" width="48" height="48">
+        <img src="/logo.png" alt="מה יש לך בבית">
         <span>מה יש לך בבית</span>
       </a>
     </div>

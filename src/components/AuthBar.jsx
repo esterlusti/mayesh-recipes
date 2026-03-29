@@ -20,7 +20,7 @@ export default function AuthBar({ user, onAvatarClick, onAdminClick, useGenderTe
     <div className="dev-banner">גרסת בטא — האתר בפיתוח</div>
     <div className="auth-bar">
       <div className="auth-bar-right">
-        <span className="auth-logo">מה יש</span>
+        <img src="/logo.png" alt="מה יש לך בבית" className="auth-logo-img" />
         <nav className="auth-nav" aria-label="ניווט ראשי">
           {navItems.map(item => (
             <button

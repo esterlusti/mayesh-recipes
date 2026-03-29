@@ -87,6 +87,9 @@ body {
   font-size: 20px; color: var(--accent); letter-spacing: -0.5px;
   text-decoration: none;
 }
+.auth-logo-img {
+  height: 36px; width: auto; display: block;
+}
 .auth-bar-right { display: flex; align-items: center; gap: 16px; }
 .auth-bar-left { display: flex; align-items: center; gap: 10px; }
 
@@ -283,6 +286,7 @@ body {
   margin-bottom: 20px; letter-spacing: 0.1em; text-transform: uppercase;
   border: 1px solid var(--border);
 }
+.hero-logo { width: min(340px, 75vw); height: auto; margin-bottom: 8px; }
 .hero-title {
   font-size: clamp(38px, 7vw, 60px);
   line-height: 1.2; margin-bottom: 6px;
@@ -290,6 +294,7 @@ body {
   font-family: 'Rubik', sans-serif;
   font-style: normal;
 }
+.welcome-logo { width: min(280px, 60vw); height: auto; margin-bottom: 12px; animation: fadeInUp 0.5s ease-out both; }
 .welcome-hero-title { animation: fadeInUp 0.6s ease-out 0.1s both; }
 .welcome-hero-joke { margin-bottom: 28px; animation: fadeInUp 0.6s ease-out 0.25s both; }
 .hero-title em {
@@ -881,7 +886,8 @@ body {
   font-family: 'Rubik', sans-serif;
 }
 .servings-input::-webkit-inner-spin-button,
-.servings-input::-webkit-outer-spin-button { opacity: 1; }
+.servings-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.servings-input { -moz-appearance: textfield; }
 
 /* Recipe idea card */
 .ing-idea-card {
