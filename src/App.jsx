@@ -294,7 +294,6 @@ export default function App() {
         )}
         <div className="hero-welcome">
           <img src="/logo.png" alt="מה יש לך בבית" className="welcome-logo" />
-          <h1 className="hero-title welcome-hero-title">מה יש לך<br /><em>בבית?</em></h1>
           <p className="hero-joke welcome-hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
           <p className="welcome-tagline">מתכונים בהתאמה אישית</p>
 
