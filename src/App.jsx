@@ -293,6 +293,7 @@ export default function App() {
           </div>
         )}
         <div className="hero-welcome">
+          <img src="/logo.png" alt="מה יש לך בבית" className="welcome-logo" />
           <h1 className="hero-title welcome-hero-title">מה יש לך<br /><em>בבית?</em></h1>
           <p className="hero-joke welcome-hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
           <p className="welcome-tagline">מתכונים בהתאמה אישית</p>
@@ -413,8 +414,7 @@ export default function App() {
         <main className="main-content" style={{ paddingTop: 85 }}>
           {step === 1 && (
             <section className="hero">
-              <div className="hero-deco">בישול ביתי &nbsp;•&nbsp; בהתאמה אישית</div>
-              <h1 className="hero-title">מה יש לך<br /><em>בבית?</em></h1>
+              <img src="/logo.png" alt="מה יש לך בבית" className="hero-logo" />
               <p className="hero-joke"><span className="hero-joke-brace">&#123;</span> חוץ מאסוך שמן <span className="hero-joke-brace">&#125;</span></p>
               <p className="hero-sub">מתכון בהתאמה אישית לפי הרכיבים הקיימים בבית</p>
             </section>

@@ -152,6 +152,7 @@ STEPS:
 
 SERVING: [one short suggestion — what to serve alongside this dish]
 TIP: [one useful tip that makes a real difference]
+SEO_BLURB: [2-3 inviting sentences in Hebrew about this dish — what makes it special, what occasion it's great for, or a general cooking insight. This is NOT the recipe itself — it's a teaser that makes someone want to cook it. Write in a warm, personal tone.]
 
 RESPONSE FORMAT — DUAL recipe (key ingredient missing):
 

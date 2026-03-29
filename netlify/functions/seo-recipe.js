@@ -27,14 +27,27 @@ async function fetchSeoPage(slug) {
     title: doc.fields.title?.stringValue || '',
     kosherType: doc.fields.kosherType?.stringValue || 'pareve',
     category: doc.fields.category?.stringValue || '',
+    seoBlurb: doc.fields.seoBlurb?.stringValue || '',
+    timePrep: doc.fields.timePrep?.stringValue || '',
+    timeCook: doc.fields.timeCook?.stringValue || '',
+    difficulty: doc.fields.difficulty?.stringValue || '',
   };
 }
 
+const difficultyLabels = { easy: 'קל', medium: 'בינוני', advanced: 'מתקדם',
+  'קל': 'קל', 'בינוני': 'בינוני', 'מאתגר': 'מאתגר' };
+
+function escapeHTML(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function generateHTML(data, slug) {
-  const { title, kosherType, category } = data;
+  const { title, kosherType, category, seoBlurb, timePrep, timeCook, difficulty } = data;
   const kc = kosherColors[kosherType] || kosherColors.pareve;
   const kosherLabel = kosherLabels[kosherType] || 'פרווה';
+  const diffLabel = difficultyLabels[difficulty] || '';
   const url = `${SITE_URL}/r/${encodeURIComponent(slug)}`;
+  const hasMeta = timePrep || timeCook || diffLabel;
 
   return `<!DOCTYPE html>
 <html lang="he" dir="rtl">
@@ -42,7 +55,7 @@ function generateHTML(data, slug) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>מתכון ${title} — מה יש לך בבית</title>
-  <meta name="description" content="רוצים להכין ${title}? בחרו את המצרכים שיש לכם במטבח וקבלו מתכון ${title} מותאם אישית. מחולל מתכונים חכם בחינם!">
+  <meta name="description" content="${seoBlurb ? escapeHTML(seoBlurb) : `רוצים להכין ${escapeHTML(title)}? בחרו את המצרכים שיש לכם במטבח וקבלו מתכון מותאם אישית. מחולל מתכונים חכם בחינם!`}">
   <link rel="canonical" href="${url}">
   <meta property="og:title" content="מתכון ${title} — מה יש לך בבית">
   <meta property="og:description" content="הכינו ${title} מהמצרכים שיש לכם בבית. מחולל מתכונים חכם!">
@@ -79,8 +92,8 @@ function generateHTML(data, slug) {
     .c{max-width:600px;margin:0 auto;padding:2rem 1.5rem}
     .logo{text-align:center;margin-bottom:1.5rem}
     .logo a{text-decoration:none;color:inherit;display:inline-flex;flex-direction:column;align-items:center;gap:.3rem}
-    .logo img{width:48px;height:48px}
-    .logo span{font-family:'Rubik',sans-serif;font-size:1.3rem}
+    .logo img{height:60px;width:auto}
+    .logo span{display:none}
     .bc{font-size:.85rem;color:#707070;margin-bottom:1rem;text-align:center}
     .bc a{color:#e85d04;text-decoration:none}
     .badge{display:inline-block;padding:.3rem .8rem;font-size:.85rem;font-weight:600;border:2px solid #111;margin-bottom:1rem;text-align:center;background:${kc.bg};color:${kc.color}}
@@ -88,6 +101,9 @@ function generateHTML(data, slug) {
     .desc{font-size:1.05rem;line-height:1.7;color:#555;text-align:center;margin-bottom:2rem}
     .cta{display:block;width:100%;padding:1rem;font-size:1.2rem;font-weight:700;background:#e85d04;color:#fff;border:3px solid #111;cursor:pointer;text-decoration:none;text-align:center;font-family:'Heebo',sans-serif;transition:transform .1s}
     .cta:hover{transform:translateY(-2px);background:#cc4f00}
+    .blurb{font-size:1.05rem;line-height:1.8;color:#444;text-align:center;margin-bottom:1.5rem}
+    .recipe-meta{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:1.5rem}
+    .meta-item{display:flex;align-items:center;gap:.3rem;background:#fff;border:2px solid #111;padding:.4rem .8rem;font-size:.85rem;font-weight:600}
     .footer{text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:2px solid rgba(17,17,17,.15);color:#707070;font-size:.85rem}
     .footer a{color:#e85d04;text-decoration:none}
   </style>
@@ -96,15 +112,23 @@ function generateHTML(data, slug) {
   <div class="c">
     <div class="logo">
       <a href="/">
-        <img src="/favicon.svg" alt="מה יש לך בבית" width="48" height="48">
+        <img src="/logo.png" alt="מה יש לך בבית">
         <span>מה יש לך בבית</span>
       </a>
     </div>
     <nav class="bc"><a href="/">דף הבית</a> &larr; מתכון ${title}</nav>
     <div style="text-align:center"><span class="badge">${kosherLabel}${category ? ` · ${category}` : ''}</span></div>
-    <h1>מתכון ${title}</h1>
-    <p class="desc">רוצים להכין ${title}? ספרו לנו אילו מצרכים יש לכם במטבח ונייצר לכם מתכון ${title} מותאם אישית — מהיר, טעים ובדיוק מה שיש לכם בבית.</p>
-    <a class="cta" href="/">בואו נבשל ${title}!</a>
+    <h1>מתכון ${escapeHTML(title)}</h1>
+    ${hasMeta ? `<div class="recipe-meta">
+      ${timePrep ? `<span class="meta-item">⏱️ הכנה: ${escapeHTML(timePrep)}</span>` : ''}
+      ${timeCook ? `<span class="meta-item">🔥 בישול: ${escapeHTML(timeCook)}</span>` : ''}
+      ${diffLabel ? `<span class="meta-item">📊 ${escapeHTML(diffLabel)}</span>` : ''}
+    </div>` : ''}
+    ${seoBlurb
+      ? `<p class="blurb">${escapeHTML(seoBlurb)}</p>`
+      : `<p class="desc">רוצים להכין ${escapeHTML(title)}? ספרו לנו אילו מצרכים יש לכם במטבח ונייצר לכם מתכון ${escapeHTML(title)} מותאם אישית — מהיר, טעים ובדיוק מה שיש לכם בבית.</p>`
+    }
+    <a class="cta" href="/">בואו נבשל ${escapeHTML(title)}!</a>
     <footer class="footer">
       <p><a href="/">מה יש לך בבית</a> — מחולל מתכונים חכם שעובד עם מה שיש לכם במטבח</p>
     </footer>
